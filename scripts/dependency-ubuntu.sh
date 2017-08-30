@@ -144,6 +144,7 @@ sudo apt-get install \
 # I3
 echo "Installing Window Manager - i3"
 
+
 # EMACS
 echo "Installing Emacs"
 
@@ -217,6 +218,9 @@ echo "Installing some python stuff..."
 sudo apt-get install \
   python-pillow \
   python-urllib3 -y
+
+echo "Installing some i3 python stuff"
+pip install i3-py
 
 echo "Installing some perl stuff..."
 sudo apt-get install \

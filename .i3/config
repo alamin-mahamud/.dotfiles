@@ -1,5 +1,5 @@
-###############################################################################################################
 #   Filename: i3/config                                                                                       #
+###############################################################################################################
 # Maintainer: Md. Alamin Mahamud
 #        URL:
 #                                                                                                             #
@@ -45,18 +45,10 @@ set $ws8  "8:  "
 set $ws9  "9:  "
 set $ws10 "10:  "
 
-set $default_gaps_inner 0
-set $default_gaps_outer 0
+set $default_gaps_inner 1
+set $default_gaps_outer 1
 gaps inner $default_gaps_inner
 gaps outer $default_gaps_outer
-
-workspace $ws1 gaps inner 0
-workspace $ws1 gaps outer 0
-workspace $ws9 gaps inner 0
-workspace $ws9 gaps outer 0
-workspace $ws10 gaps inner 0
-workspace $ws10 gaps outer 0
-
 
 workspace_auto_back_and_forth yes
 force_display_urgency_hint 0 ms
@@ -66,11 +58,19 @@ floating_minimum_size -1 x -1
 floating_maximum_size -1 x -1
 
 #                       BORDER      BACKGROUND  TEXT        INDICATOR   CHILD_BORDER
-client.focused          $black      $black      $darkwhite  $darkblack  $darkblack
-client.unfocused        $black      $black      $white      $darkblack  $darkblack
-client.focused_inactive $black      $black      $white      $darkblack  $darkblack
-client.urgent           $darkred    $darkred    $black      $darkred    $darkred
-client.background       $black
+#client.focused          $black      $black      $darkwhite  $darkblack  $darkblack
+#client.unfocused        $black      $black      $white      $darkblack  $darkblack
+#client.focused_inactive $black      $black      $white      $darkblack  $darkblack
+#client.urgent           $darkred    $darkred    $black      $darkred    $darkred
+#client.background       $black
+
+
+# Colors
+client.focused          #c6ff00 #c6ff00 #000000 #dddddd
+client.focused_inactive #333333 #333333 #c6ff00 #ffffff
+client.unfocused        #333333 #333333 #888888 #292d2e
+client.urgent           #2f343a #900000 #ffffff #900000
+
 
 # start a terminal
 bindsym $mod+Shift+Return exec $HOME/scripts/fullscreen_wrap.sh /home/alamin/bin/terminal
@@ -185,15 +185,15 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 
-set $mode_power power
+set $mode_power ' L E P H R S'
 bindsym $mod+Shift+e mode "$mode_power"
 mode "$mode_power" {
     bindsym l mode "default", exec --no-startup-id $HOME/.i3/i3exit lock
     bindsym e mode "default", exec --no-startup-id $HOME/.i3/i3exit logout
-    bindsym s mode "default", exec --no-startup-id $HOME/.i3/i3exit suspend
+    bindsym p mode "default", exec --no-startup-id $HOME/.i3/i3exit suspend
     bindsym h mode "default", exec --no-startup-id $HOME/.i3/i3exit hibernate
     bindsym r mode "default", exec --no-startup-id $HOME/.i3/i3exit reboot
-    bindsym p mode "default", exec --no-startup-id $HOME/.i3/i3exit shutdown
+    bindsym s mode "default", exec --no-startup-id $HOME/.i3/i3exit shutdown
 
     bindsym Return mode "default"
     bindsym Escape mode "default"
@@ -214,7 +214,7 @@ mode "$mode_gaps" {
     bindsym Escape mode "default"
 }
 
-mode "$mode_gaps_inner" {
+ mode "$mode_gaps_inner" {
     bindsym plus  gaps inner current plus 5
     bindsym minus gaps inner current minus 5
     bindsym 0     mode "default", gaps inner current set 0
@@ -344,13 +344,14 @@ bar {
         separator          $transparent
 
 #                          BORDER       BACKGROUND   TEXT
-        focused_workspace  $transparent $transparent $darkwhite
+        focused_workspace  #0000cd #0000cd $white
         inactive_workspace $transparent $transparent $white
-        active_workspace   $transparent $transparent $white
-        urgent_workspace   $darkred     $darkred     $transparent
-        binding_mode       $darkred     $darkred     $transparent
+        active_workspace   $transparent $transparent #0000cd
+        urgent_workspace   #ffff00     $transparent $white
+        binding_mode       #0000cd     #0000cd     $white
     }
 }
+
 
 # Set background
 exec_always feh --bg-scale /home/alamin/.bing-wallpapers/arch.jpg
@@ -382,5 +383,7 @@ exec --no-startup-id nm-applet
 
 #exec --no-startup-id dunst &
 #exec --no-startup-id xedgewarp -b
+
+exec --no-startup-id dropbox &
 
 exec_always --no-startup-id "pgrep --exact xev || xev -root -event randr | grep --line-buffered ScreenChangeNotify | while read change; do pkill -RTMIN+4 i3blocks; done"

@@ -6,7 +6,7 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
     done
     unset f
 fi
-
+nn
 xrdb -load ~/.Xresources
 
 xset s off
@@ -15,7 +15,7 @@ xset s noblank
 
 xset r rate 200 20
 
-setxkbmap de
+setxkbmap en_us
 setxkbmap -option ctrl:nocaps
 xmodmap -e 'clear lock'
 xmodmap -e 'keycode 66 = Hyper_L'

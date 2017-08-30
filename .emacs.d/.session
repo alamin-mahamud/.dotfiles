@@ -1,0 +1,10 @@
+;;; Automatically generated on Wed Aug 30 10:48:14 2017
+;;; Invoked by alamin@laptop using 25.2.1
+(setq-default session-file-alist '(("~/dotfiles/.emacs.d/custom.el" 1 nil 1 nil nil 1513 (overwrite-mode))))
+(setq-default file-name-history '("~/dotfiles/.i3/config" "/home/alamin/.i3/config" "~/dotfiles/.emacs.d/custom.el"))
+(setq-default search-ring '("power"))
+(setq-default counsel-git-grep-cmd-history '("git --no-pager grep --full-name -n --no-color -i -e '%s'"))
+(setq-default extended-command-history '("list-co"))
+(setq-default occur-collect-regexp-history '("\\1"))
+(setq-default serial-name-history '("/dev/ttyS0"))
+(setq-default serial-speed-history '("9600" "1200" "2400" "4800" "14400" "19200" "28800" "38400" "57600" "115200"))

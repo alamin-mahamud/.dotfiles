@@ -3,8 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "yagist" "yagist.el" (22949 38919 123851 454000))
-;;; Generated autoloads from yagist.el
+;;;### (autoloads nil "yagist" "../../../../.emacs.d/elpa-25.2/yagist-20160417.2208/yagist.el"
+;;;;;;  "992d31305e6df0d84c0eed57634d4c41")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/yagist-20160417.2208/yagist.el
 
 (autoload 'yagist-region "yagist" "\
 Post the current region as a new paste at gist.github.com
@@ -81,6 +82,12 @@ Yagist minor mode is enabled in all buffers where
 See `yagist-minor-mode' for more information on Yagist minor mode.
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/yagist-20160417.2208/yagist-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/yagist-20160417.2208/yagist.el")
+;;;;;;  (22950 48009 351853 185000))
 
 ;;;***
 

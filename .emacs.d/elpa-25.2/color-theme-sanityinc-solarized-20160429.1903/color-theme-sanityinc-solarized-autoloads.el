@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "color-theme-sanityinc-solarized" "color-theme-sanityinc-solarized.el"
-;;;;;;  (22949 38789 839394 476000))
-;;; Generated autoloads from color-theme-sanityinc-solarized.el
+;;;### (autoloads nil "color-theme-sanityinc-solarized" "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-solarized-20160429.1903/color-theme-sanityinc-solarized.el"
+;;;;;;  "8e85855855349c54c0ee20122ebc23bd")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-solarized-20160429.1903/color-theme-sanityinc-solarized.el
 
 (when (boundp 'custom-theme-load-path) (add-to-list 'custom-theme-load-path (file-name-as-directory (file-name-directory load-file-name))))
 
@@ -21,9 +21,12 @@ Apply the light solarized theme.
 
 ;;;***
 
-;;;### (autoloads nil nil ("color-theme-sanityinc-solarized-pkg.el"
-;;;;;;  "sanityinc-solarized-dark-theme.el" "sanityinc-solarized-light-theme.el")
-;;;;;;  (22949 38789 811394 377000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-solarized-20160429.1903/color-theme-sanityinc-solarized-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-solarized-20160429.1903/color-theme-sanityinc-solarized-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-solarized-20160429.1903/color-theme-sanityinc-solarized.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-solarized-20160429.1903/sanityinc-solarized-dark-theme.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-solarized-20160429.1903/sanityinc-solarized-light-theme.el")
+;;;;;;  (22950 47889 964035 299000))
 
 ;;;***
 

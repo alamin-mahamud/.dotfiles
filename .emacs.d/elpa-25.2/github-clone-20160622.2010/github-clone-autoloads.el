@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "github-clone" "github-clone.el" (22949 38929
-;;;;;;  263887 63000))
-;;; Generated autoloads from github-clone.el
+;;;### (autoloads nil "github-clone" "../../../../.emacs.d/elpa-25.2/github-clone-20160622.2010/github-clone.el"
+;;;;;;  "3f783bcc6b541a4fbcf3fe14562ce661")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/github-clone-20160622.2010/github-clone.el
 
 (autoload 'github-clone-add-parent-remote "github-clone" "\
 Obtain the parent of CHILD-REMOTE and add it as a remote.
@@ -54,6 +54,12 @@ Fork and clone USER-REPO-URL into DIRECTORY, which defaults to
 the current directory in eshell (`default-directory').
 
 \(fn USER-REPO-URL &optional DIRECTORY)" nil nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/github-clone-20160622.2010/github-clone-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/github-clone-20160622.2010/github-clone.el")
+;;;;;;  (22950 48019 343821 172000))
 
 ;;;***
 

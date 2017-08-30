@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "highlight-escape-sequences" "highlight-escape-sequences.el"
-;;;;;;  (22949 38882 35720 940000))
-;;; Generated autoloads from highlight-escape-sequences.el
+;;;### (autoloads nil "highlight-escape-sequences" "../../../../.emacs.d/elpa-25.2/highlight-escape-sequences-20161028.1617/highlight-escape-sequences.el"
+;;;;;;  "a5051d4ed498260fd869866139a47b45")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/highlight-escape-sequences-20161028.1617/highlight-escape-sequences.el
 
 (autoload 'turn-on-hes-mode "highlight-escape-sequences" "\
 Turn on highlighting of escape sequences.
@@ -31,6 +31,12 @@ or call the function `hes-mode'.")
 Toggle highlighting of escape sequences.
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/highlight-escape-sequences-20161028.1617/highlight-escape-sequences-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/highlight-escape-sequences-20161028.1617/highlight-escape-sequences.el")
+;;;;;;  (22950 47969 587956 253000))
 
 ;;;***
 

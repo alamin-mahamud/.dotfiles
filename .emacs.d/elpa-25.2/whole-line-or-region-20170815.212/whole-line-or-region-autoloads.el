@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "whole-line-or-region" "whole-line-or-region.el"
-;;;;;;  (22949 38881 55717 486000))
-;;; Generated autoloads from whole-line-or-region.el
+;;;### (autoloads nil "whole-line-or-region" "../../../../.emacs.d/elpa-25.2/whole-line-or-region-20170815.212/whole-line-or-region.el"
+;;;;;;  "045582828673107899bf8197774459aa")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/whole-line-or-region-20170815.212/whole-line-or-region.el
 
 (defvar whole-line-or-region-extensions-alist '((copy-region-as-kill whole-line-or-region-copy-region-as-kill nil) (kill-region whole-line-or-region-kill-region nil) (kill-ring-save whole-line-or-region-kill-ring-save nil) (yank whole-line-or-region-yank nil)) "\
 List of functions for whole-line-or-region to swap.
@@ -117,6 +117,12 @@ See `comment-dwim' for details of RAW-PREFIX usage.
 Call `comment-dwim' on region or PREFIX whole lines.
 
 \(fn PREFIX)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/whole-line-or-region-20170815.212/whole-line-or-region-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/whole-line-or-region-20170815.212/whole-line-or-region.el")
+;;;;;;  (22950 47968 643958 212000))
 
 ;;;***
 

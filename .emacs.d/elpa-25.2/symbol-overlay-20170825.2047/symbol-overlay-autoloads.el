@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "symbol-overlay" "symbol-overlay.el" (22949
-;;;;;;  38866 235665 205000))
-;;; Generated autoloads from symbol-overlay.el
+;;;### (autoloads nil "symbol-overlay" "../../../../.emacs.d/elpa-25.2/symbol-overlay-20170825.2047/symbol-overlay.el"
+;;;;;;  "865014afe97d91b3f9a83297df943e07")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/symbol-overlay-20170825.2047/symbol-overlay.el
 
 (autoload 'symbol-overlay-mode "symbol-overlay" "\
 Minor mode for auto-highlighting symbol at point.
@@ -84,6 +84,12 @@ Query replace symbol at point.
 Rename symbol at point on all its occurrences.
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/symbol-overlay-20170825.2047/symbol-overlay-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/symbol-overlay-20170825.2047/symbol-overlay.el")
+;;;;;;  (22950 47955 387983 232000))
 
 ;;;***
 

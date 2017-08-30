@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "browse-at-remote" "browse-at-remote.el" (22949
-;;;;;;  38892 31756 160000))
-;;; Generated autoloads from browse-at-remote.el
+;;;### (autoloads nil "browse-at-remote" "../../../../.emacs.d/elpa-25.2/browse-at-remote-20170720.1518/browse-at-remote.el"
+;;;;;;  "bbaf81021ca7ee827b9f2daa47982492")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/browse-at-remote-20170720.1518/browse-at-remote.el
 
 (autoload 'browse-at-remote "browse-at-remote" "\
 Browse the current file with `browse-url'.
@@ -28,6 +28,12 @@ Add the URL of the current file to the kill ring.
 
 Works like `browse-at-remote', but puts the address in the
 kill ring instead of opening it with `browse-url'.")
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/browse-at-remote-20170720.1518/browse-at-remote-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/browse-at-remote-20170720.1518/browse-at-remote.el")
+;;;;;;  (22950 47979 455934 400000))
 
 ;;;***
 

@@ -3,8 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "avy" "avy.el" (22949 38874 627694 818000))
-;;; Generated autoloads from avy.el
+;;;### (autoloads nil "avy" "../../../../.emacs.d/elpa-25.2/avy-20170819.1039/avy.el"
+;;;;;;  "367d154b80e6f6bb9ce6cfcb910ff893")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/avy-20170819.1039/avy.el
 
 (autoload 'avy-goto-char "avy" "\
 Jump to the currently visible CHAR.
@@ -235,6 +236,12 @@ Read one or many consecutive chars and jump to the first one.
 The window scope is determined by `avy-all-windows' (ARG negates it).
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/avy-20170819.1039/avy-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/avy-20170819.1039/avy.el")
+;;;;;;  (22950 47963 147969 150000))
 
 ;;;***
 

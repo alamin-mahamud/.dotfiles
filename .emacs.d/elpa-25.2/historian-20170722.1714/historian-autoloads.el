@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "historian" "historian.el" (22949 38828 647532
-;;;;;;  267000))
-;;; Generated autoloads from historian.el
+;;;### (autoloads nil "historian" "../../../../.emacs.d/elpa-25.2/historian-20170722.1714/historian.el"
+;;;;;;  "e422cf26bb36f079d5a746cd79a1e4a1")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/historian-20170722.1714/historian.el
 
 (autoload 'historian-save "historian" "\
 
@@ -36,6 +36,12 @@ or call the function `historian-mode'.")
 historian minor mode
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/historian-20170722.1714/historian-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/historian-20170722.1714/historian.el")
+;;;;;;  (22950 47920 644026 138000))
 
 ;;;***
 

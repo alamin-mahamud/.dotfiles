@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "bug-reference-github" "bug-reference-github.el"
-;;;;;;  (22949 38920 27854 630000))
-;;; Generated autoloads from bug-reference-github.el
+;;;### (autoloads nil "bug-reference-github" "../../../../.emacs.d/elpa-25.2/bug-reference-github-20131202.1303/bug-reference-github.el"
+;;;;;;  "26d2d9913e6ca14d164d78e6f943cf80")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/bug-reference-github-20131202.1303/bug-reference-github.el
 
 (autoload 'bug-reference-github-set-url-format "bug-reference-github" "\
 Automatically set `bug-reference-url-format'.
@@ -28,8 +28,10 @@ What it does is:
 
 ;;;***
 
-;;;### (autoloads nil nil ("bug-reference-github-pkg.el") (22949
-;;;;;;  38920 159855 94000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/bug-reference-github-20131202.1303/bug-reference-github-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/bug-reference-github-20131202.1303/bug-reference-github-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/bug-reference-github-20131202.1303/bug-reference-github.el")
+;;;;;;  (22950 48010 403849 928000))
 
 ;;;***
 

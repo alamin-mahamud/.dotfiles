@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "git-blamed" "git-blamed.el" (22949 38897 635775
-;;;;;;  890000))
-;;; Generated autoloads from git-blamed.el
+;;;### (autoloads nil "git-blamed" "../../../../.emacs.d/elpa-25.2/git-blamed-20161028.1226/git-blamed.el"
+;;;;;;  "e5dddae20154743d3eb92cb84799238e")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/git-blamed-20161028.1226/git-blamed.el
 
 (autoload 'git-blamed-mode "git-blamed" "\
 Toggle minor mode for displaying Git blame
@@ -18,6 +18,12 @@ With prefix ARG, turn the mode on if ARG is positive.
 Recalculate all blame information in the current buffer
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/git-blamed-20161028.1226/git-blamed-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/git-blamed-20161028.1226/git-blamed.el")
+;;;;;;  (22950 47986 343917 667000))
 
 ;;;***
 

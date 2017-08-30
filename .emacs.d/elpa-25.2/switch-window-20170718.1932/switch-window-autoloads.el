@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "switch-window" "switch-window.el" (22949 38843
-;;;;;;  815585 971000))
-;;; Generated autoloads from switch-window.el
+;;;### (autoloads nil "switch-window" "../../../../.emacs.d/elpa-25.2/switch-window-20170718.1932/switch-window.el"
+;;;;;;  "a8916fba22692c68c098c2ae722a45ad")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/switch-window-20170718.1932/switch-window.el
 
 (autoload 'switch-window-then-delete "switch-window" "\
 Display an overlay in each window showing a unique key, then
@@ -52,8 +52,12 @@ Select a window then swap it buffer with current window's buffer.
 
 ;;;***
 
-;;;### (autoloads nil nil ("switch-window-asciiart.el" "switch-window-mvborder.el"
-;;;;;;  "switch-window-pkg.el") (22949 38843 851586 99000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/switch-window-20170718.1932/switch-window-asciiart.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/switch-window-20170718.1932/switch-window-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/switch-window-20170718.1932/switch-window-mvborder.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/switch-window-20170718.1932/switch-window-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/switch-window-20170718.1932/switch-window.el")
+;;;;;;  (22950 47936 748010 417000))
 
 ;;;***
 

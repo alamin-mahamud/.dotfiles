@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "ivy-historian" "ivy-historian.el" (22949 38829
-;;;;;;  447535 103000))
-;;; Generated autoloads from ivy-historian.el
+;;;### (autoloads nil "ivy-historian" "../../../../.emacs.d/elpa-25.2/ivy-historian-20170715.2120/ivy-historian.el"
+;;;;;;  "b62b3bedf3208de45a2fda9ca74b8d1e")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/ivy-historian-20170715.2120/ivy-historian.el
 
 (defvar ivy-historian-mode nil "\
 Non-nil if Ivy-Historian mode is enabled.
@@ -21,6 +21,12 @@ or call the function `ivy-historian-mode'.")
 historian minor mode
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/ivy-historian-20170715.2120/ivy-historian-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/ivy-historian-20170715.2120/ivy-historian.el")
+;;;;;;  (22950 47921 544025 454000))
 
 ;;;***
 

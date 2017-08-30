@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "darcsum" "darcsum.el" (22949 38894 207763
-;;;;;;  822000))
-;;; Generated autoloads from darcsum.el
+;;;### (autoloads nil "darcsum" "../../../../.emacs.d/elpa-25.2/darcsum-20140315.2110/darcsum.el"
+;;;;;;  "b47c723b6a6d6206018b658cc7822005")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/darcsum-20140315.2110/darcsum.el
 
 (autoload 'darcsum-changes "darcsum" "\
 Show the changes in another buffer.
@@ -36,8 +36,11 @@ working directory is assumed.
 
 ;;;***
 
-;;;### (autoloads nil nil ("50darcsum.el" "darcsum-pkg.el") (22949
-;;;;;;  38894 175763 710000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/darcsum-20140315.2110/50darcsum.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/darcsum-20140315.2110/darcsum-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/darcsum-20140315.2110/darcsum-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/darcsum-20140315.2110/darcsum.el")
+;;;;;;  (22950 47981 707929 62000))
 
 ;;;***
 

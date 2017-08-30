@@ -3,8 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "dired+" "dired+.el" (22949 38798 627425 729000))
-;;; Generated autoloads from dired+.el
+;;;### (autoloads nil "dired+" "../../../../.emacs.d/elpa-25.2/dired+-20170818.1411/dired+.el"
+;;;;;;  "a62766b2eef404f2d3424979fc480474")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/dired+-20170818.1411/dired+.el
 
 (defvar diff-switches "-c" "\
 *A string or list of strings specifying switches to be passed to diff.")
@@ -2114,6 +2115,12 @@ Describe Dired+.
 Send a bug report about a Dired+ problem.
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/dired+-20170818.1411/dired+-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/dired+-20170818.1411/dired+.el")
+;;;;;;  (22950 47896 480035 692000))
 
 ;;;***
 

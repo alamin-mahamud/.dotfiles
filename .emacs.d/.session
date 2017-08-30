@@ -1,10 +1,11 @@
-;;; Automatically generated on Wed Aug 30 10:48:14 2017
+;;; Automatically generated on Wed Aug 30 22:08:39 2017
 ;;; Invoked by alamin@laptop using 25.2.1
-(setq-default session-file-alist '(("~/dotfiles/.emacs.d/custom.el" 1 nil 1 nil nil 1513 (overwrite-mode))))
-(setq-default file-name-history '("~/dotfiles/.i3/config" "/home/alamin/.i3/config" "~/dotfiles/.emacs.d/custom.el"))
-(setq-default search-ring '("power"))
+(setq-default session-file-alist '(("~/dotfiles/.i3/config" 1665 13347 1 nil nil 15019 (overwrite-mode))))
+(setq-default file-name-history '(#("/home/alamin/dotfiles/.i3/config" 0 32 (ivy-index 1)) #("/home/alamin/dotfiles/.config/i3blocks/config" 0 45 (ivy-index 2)) "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "/home/alamin/.Xresources" "/home/alamin/scripts/volume" "/home/alamin/dotfiles/scripts/i3blocks_scripts/microphone" "/home/alamin/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/custom/custom_bandwidth" "/home/alamin/dotfiles/scripts/i3blocks_scripts/custom/custom_bandwidth" "/home/alamin/scripts/network.sh" "~/.config/i3blocks/config" "/home/alamin/.config/i3blocks/" "/home/alamin/.i3/config" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/custom.el"))
+(setq-default search-ring '("#" "#edb"))
+(setq-default buffer-name-history '("config • i3blocks"))
+(setq-default command-history '((list-colors-display)))
 (setq-default counsel-git-grep-cmd-history '("git --no-pager grep --full-name -n --no-color -i -e '%s'"))
-(setq-default extended-command-history '("list-co"))
+(setq-default extended-command-history '("lis" "list-color"))
 (setq-default occur-collect-regexp-history '("\\1"))
-(setq-default serial-name-history '("/dev/ttyS0"))
-(setq-default serial-speed-history '("9600" "1200" "2400" "4800" "14400" "19200" "28800" "38400" "57600" "115200"))
+(setq-default smex-history '(list-colors-display cd ri 5x5 arp dbx dig))

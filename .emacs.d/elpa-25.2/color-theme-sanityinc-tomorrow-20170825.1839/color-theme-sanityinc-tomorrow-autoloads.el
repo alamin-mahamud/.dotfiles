@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "color-theme-sanityinc-tomorrow" "color-theme-sanityinc-tomorrow.el"
-;;;;;;  (22949 38791 627400 837000))
-;;; Generated autoloads from color-theme-sanityinc-tomorrow.el
+;;;### (autoloads nil "color-theme-sanityinc-tomorrow" "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/color-theme-sanityinc-tomorrow.el"
+;;;;;;  "bf61962e90ab39f346f1958a5be5880b")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/color-theme-sanityinc-tomorrow.el
 
 (when (boundp 'custom-theme-load-path) (add-to-list 'custom-theme-load-path (file-name-as-directory (file-name-directory load-file-name))))
 
@@ -36,11 +36,15 @@ Apply the tomorrow blue theme.
 
 ;;;***
 
-;;;### (autoloads nil nil ("color-theme-sanityinc-tomorrow-pkg.el"
-;;;;;;  "sanityinc-tomorrow-blue-theme.el" "sanityinc-tomorrow-bright-theme.el"
-;;;;;;  "sanityinc-tomorrow-day-theme.el" "sanityinc-tomorrow-eighties-theme.el"
-;;;;;;  "sanityinc-tomorrow-night-theme.el") (22949 38791 915401
-;;;;;;  862000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/color-theme-sanityinc-tomorrow-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/color-theme-sanityinc-tomorrow-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/color-theme-sanityinc-tomorrow.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/sanityinc-tomorrow-blue-theme.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/sanityinc-tomorrow-bright-theme.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/sanityinc-tomorrow-day-theme.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/sanityinc-tomorrow-eighties-theme.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/color-theme-sanityinc-tomorrow-20170825.1839/sanityinc-tomorrow-night-theme.el")
+;;;;;;  (22950 47891 444035 498000))
 
 ;;;***
 

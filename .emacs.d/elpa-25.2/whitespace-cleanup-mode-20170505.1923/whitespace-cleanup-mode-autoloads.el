@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "whitespace-cleanup-mode" "whitespace-cleanup-mode.el"
-;;;;;;  (22949 38888 167742 549000))
-;;; Generated autoloads from whitespace-cleanup-mode.el
+;;;### (autoloads nil "whitespace-cleanup-mode" "../../../../.emacs.d/elpa-25.2/whitespace-cleanup-mode-20170505.1923/whitespace-cleanup-mode.el"
+;;;;;;  "11c990d87308dd8db6690c45e2350251")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/whitespace-cleanup-mode-20170505.1923/whitespace-cleanup-mode.el
 
 (let ((loads (get 'whitespace-cleanup 'custom-loads))) (if (member '"whitespace-cleanup-mode" loads) nil (put 'whitespace-cleanup 'custom-loads (cons '"whitespace-cleanup-mode" loads))))
 
@@ -37,6 +37,12 @@ Whitespace-Cleanup mode is enabled in all buffers where
 See `whitespace-cleanup-mode' for more information on Whitespace-Cleanup mode.
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/whitespace-cleanup-mode-20170505.1923/whitespace-cleanup-mode-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/whitespace-cleanup-mode-20170505.1923/whitespace-cleanup-mode.el")
+;;;;;;  (22950 47975 235944 55000))
 
 ;;;***
 

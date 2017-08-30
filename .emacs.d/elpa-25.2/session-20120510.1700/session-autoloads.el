@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "session" "session.el" (22949 38846 931596
-;;;;;;  994000))
-;;; Generated autoloads from session.el
+;;;### (autoloads nil "session" "../../../../.emacs.d/elpa-25.2/session-20120510.1700/session.el"
+;;;;;;  "3f0e3f3f4be833faef89daf386a83905")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/session-20120510.1700/session.el
 
 (autoload 'session-jump-to-last-change "session" "\
 Jump to the position of the last change.
@@ -29,6 +29,12 @@ best, this function is called at the end of the Emacs startup, i.e., add
 this function to `after-init-hook'.
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/session-20120510.1700/session-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/session-20120510.1700/session.el")
+;;;;;;  (22950 47938 660008 67000))
 
 ;;;***
 

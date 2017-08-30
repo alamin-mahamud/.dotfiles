@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "default-text-scale" "default-text-scale.el"
-;;;;;;  (22949 38847 823600 149000))
-;;; Generated autoloads from default-text-scale.el
+;;;### (autoloads nil "default-text-scale" "../../../../.emacs.d/elpa-25.2/default-text-scale-20170826.2215/default-text-scale.el"
+;;;;;;  "758e8dfec95b4b57fb3d11519d87e972")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/default-text-scale-20170826.2215/default-text-scale.el
 
 (autoload 'default-text-scale-increase "default-text-scale" "\
 Increase the height of the default face by `default-text-scale-amount'.
@@ -28,6 +28,12 @@ for a description of this minor mode.")
 Change the size of the \"default\" face in every frame.
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/default-text-scale-20170826.2215/default-text-scale-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/default-text-scale-20170826.2215/default-text-scale.el")
+;;;;;;  (22950 47942 472003 79000))
 
 ;;;***
 

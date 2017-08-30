@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "browse-kill-ring" "browse-kill-ring.el" (22949
-;;;;;;  38867 723670 457000))
-;;; Generated autoloads from browse-kill-ring.el
+;;;### (autoloads nil "browse-kill-ring" "../../../../.emacs.d/elpa-25.2/browse-kill-ring-20160125.9/browse-kill-ring.el"
+;;;;;;  "10daba951c7274f324258254bd2a25a8")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/browse-kill-ring-20160125.9/browse-kill-ring.el
 
 (autoload 'browse-kill-ring-default-keybindings "browse-kill-ring" "\
 Set up M-y (`yank-pop') so that it can invoke `browse-kill-ring'.
@@ -19,6 +19,12 @@ behavior.  This function sets things up so that M-y will invoke
 Display items in the `kill-ring' in another buffer.
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/browse-kill-ring-20160125.9/browse-kill-ring-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/browse-kill-ring-20160125.9/browse-kill-ring.el")
+;;;;;;  (22950 47956 875980 657000))
 
 ;;;***
 

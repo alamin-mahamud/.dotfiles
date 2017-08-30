@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "move-dup" "move-dup.el" (22949 38879 951713
-;;;;;;  594000))
-;;; Generated autoloads from move-dup.el
+;;;### (autoloads nil "move-dup" "../../../../.emacs.d/elpa-25.2/move-dup-20170513.1911/move-dup.el"
+;;;;;;  "5ea067da3591da7019f2dff6abd3cb4d")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/move-dup-20170513.1911/move-dup.el
 
 (autoload 'md/move-region "move-dup" "\
 Interactive function to move the current selection N lines.
@@ -94,6 +94,12 @@ Move-Dup mode is enabled in all buffers where
 See `move-dup-mode' for more information on Move-Dup mode.
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/move-dup-20170513.1911/move-dup-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/move-dup-20170513.1911/move-dup.el")
+;;;;;;  (22950 47967 443960 667000))
 
 ;;;***
 

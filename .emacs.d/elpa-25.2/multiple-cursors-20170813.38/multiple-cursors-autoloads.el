@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "mc-edit-lines" "mc-edit-lines.el" (22949 38877
-;;;;;;  471704 849000))
-;;; Generated autoloads from mc-edit-lines.el
+;;;### (autoloads nil "mc-edit-lines" "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-edit-lines.el"
+;;;;;;  "bfeaf3af38600ff1a9447951936f1d85")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-edit-lines.el
 
 (autoload 'mc/edit-lines "mc-edit-lines" "\
 Add one cursor to each line of the active region.
@@ -33,9 +33,9 @@ Add one cursor to the beginning of each line in the active region.
 
 ;;;***
 
-;;;### (autoloads nil "mc-hide-unmatched-lines-mode" "mc-hide-unmatched-lines-mode.el"
-;;;;;;  (22949 38877 595705 286000))
-;;; Generated autoloads from mc-hide-unmatched-lines-mode.el
+;;;### (autoloads nil "mc-hide-unmatched-lines-mode" "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-hide-unmatched-lines-mode.el"
+;;;;;;  "95db90b7f4d131eb3a7ce3c722f6ddd9")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-hide-unmatched-lines-mode.el
 
 (autoload 'mc-hide-unmatched-lines-mode "mc-hide-unmatched-lines-mode" "\
 Minor mode when enabled hides all lines where no cursors (and
@@ -48,9 +48,9 @@ mode. To leave this mode press <return> or \"C-g\"
 
 ;;;***
 
-;;;### (autoloads nil "mc-mark-more" "mc-mark-more.el" (22949 38877
-;;;;;;  699705 654000))
-;;; Generated autoloads from mc-mark-more.el
+;;;### (autoloads nil "mc-mark-more" "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-mark-more.el"
+;;;;;;  "37640e1a8b98318035497790efafa0f3")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-mark-more.el
 
 (autoload 'mc/mark-next-like-this "mc-mark-more" "\
 Find and mark the next part of the buffer matching the currently active region
@@ -246,9 +246,9 @@ Mark the tag we're in and its pair for renaming.
 
 ;;;***
 
-;;;### (autoloads nil "mc-mark-pop" "mc-mark-pop.el" (22949 38877
-;;;;;;  575705 216000))
-;;; Generated autoloads from mc-mark-pop.el
+;;;### (autoloads nil "mc-mark-pop" "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-mark-pop.el"
+;;;;;;  "d6ca90158891ee1716fda33be322cacd")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-mark-pop.el
 
 (autoload 'mc/mark-pop "mc-mark-pop" "\
 Add a cursor at the current point, pop off mark ring and jump
@@ -258,9 +258,9 @@ to the popped mark.
 
 ;;;***
 
-;;;### (autoloads nil "mc-separate-operations" "mc-separate-operations.el"
-;;;;;;  (22949 38877 631705 413000))
-;;; Generated autoloads from mc-separate-operations.el
+;;;### (autoloads nil "mc-separate-operations" "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-separate-operations.el"
+;;;;;;  "a161caec27e8924871f0d80e1bd53a15")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-separate-operations.el
 
 (autoload 'mc/insert-numbers "mc-separate-operations" "\
 Insert increasing numbers for each cursor, starting at
@@ -298,9 +298,9 @@ Aligns all cursors with whitespace like `mc/vertical-align' does
 
 ;;;***
 
-;;;### (autoloads nil "multiple-cursors-core" "multiple-cursors-core.el"
-;;;;;;  (22949 38877 435704 723000))
-;;; Generated autoloads from multiple-cursors-core.el
+;;;### (autoloads nil "multiple-cursors-core" "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/multiple-cursors-core.el"
+;;;;;;  "68d3e93d89e1d8989d5f44eb720310c8")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/multiple-cursors-core.el
 
 (autoload 'multiple-cursors-mode "multiple-cursors-core" "\
 Mode while multiple cursors are active.
@@ -309,9 +309,9 @@ Mode while multiple cursors are active.
 
 ;;;***
 
-;;;### (autoloads nil "rectangular-region-mode" "rectangular-region-mode.el"
-;;;;;;  (22949 38877 539705 89000))
-;;; Generated autoloads from rectangular-region-mode.el
+;;;### (autoloads nil "rectangular-region-mode" "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/rectangular-region-mode.el"
+;;;;;;  "bb42251d280db9f283d85d64528ab1f9")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/rectangular-region-mode.el
 
 (autoload 'set-rectangular-region-anchor "rectangular-region-mode" "\
 Anchors the rectangular region at point.
@@ -328,8 +328,18 @@ A mode for creating a rectangular region to edit
 
 ;;;***
 
-;;;### (autoloads nil nil ("mc-cycle-cursors.el" "multiple-cursors-pkg.el"
-;;;;;;  "multiple-cursors.el") (22949 38877 731705 766000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-cycle-cursors.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-edit-lines.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-hide-unmatched-lines-mode.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-mark-more.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-mark-pop.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/mc-separate-operations.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/multiple-cursors-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/multiple-cursors-core.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/multiple-cursors-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/multiple-cursors.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/multiple-cursors-20170813.38/rectangular-region-mode.el")
+;;;;;;  (22950 47965 139965 278000))
 
 ;;;***
 

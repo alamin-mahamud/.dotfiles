@@ -3,8 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "anzu" "anzu.el" (22949 38802 923440 996000))
-;;; Generated autoloads from anzu.el
+;;;### (autoloads nil "anzu" "../../../../.emacs.d/elpa-25.2/anzu-20161017.907/anzu.el"
+;;;;;;  "03484cdf6ce4e2f7b974c66f05576344")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/anzu-20161017.907/anzu.el
 
 (autoload 'anzu-mode "anzu" "\
 minor-mode which display search information in mode-line.
@@ -67,6 +68,12 @@ anzu version of `isearch-query-replace'.
 anzu version of `isearch-query-replace-regexp'.
 
 \(fn ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/anzu-20161017.907/anzu-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/anzu-20161017.907/anzu.el")
+;;;;;;  (22950 47901 152035 191000))
 
 ;;;***
 

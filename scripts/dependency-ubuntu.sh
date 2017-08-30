@@ -226,3 +226,7 @@ echo "Installing some perl stuff..."
 sudo apt-get install \
   perl-anyevent-i3 \
   perl-json-xs -y
+
+
+echo "Installing TERMTE"
+/bin/bash ./install_termite.sh

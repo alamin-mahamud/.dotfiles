@@ -3,8 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "gh-api" "gh-api.el" (22949 38926 63875 829000))
-;;; Generated autoloads from gh-api.el
+;;;### (autoloads nil "gh-api" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-api.el"
+;;;;;;  "38881a8bfebe86b28b06d628456603d7")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-api.el
 
 (require 'eieio)
 
@@ -24,9 +25,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-auth" "gh-auth.el" (22949 38926 419877
-;;;;;;  79000))
-;;; Generated autoloads from gh-auth.el
+;;;### (autoloads nil "gh-auth" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-auth.el"
+;;;;;;  "fb0f53cc635afe64a86525f13eca9dda")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-auth.el
 
 (require 'eieio)
 
@@ -40,9 +41,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-cache" "gh-cache.el" (22949 38926 267876
-;;;;;;  545000))
-;;; Generated autoloads from gh-cache.el
+;;;### (autoloads nil "gh-cache" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-cache.el"
+;;;;;;  "5b0231f832dc2f22ba8ce21394271406")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-cache.el
 
 (require 'eieio)
 
@@ -52,9 +53,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-comments" "gh-comments.el" (22949 38925
-;;;;;;  895875 238000))
-;;; Generated autoloads from gh-comments.el
+;;;### (autoloads nil "gh-comments" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-comments.el"
+;;;;;;  "bea0ca94b0dabfb64d8020e3bb86c8d7")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-comments.el
 
 (require 'eieio)
 
@@ -62,9 +63,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-common" "gh-common.el" (22949 38926 155876
-;;;;;;  152000))
-;;; Generated autoloads from gh-common.el
+;;;### (autoloads nil "gh-common" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-common.el"
+;;;;;;  "3b3bcf2dae87759c4b31696baec7c0ec")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-common.el
 
 (require 'eieio)
 
@@ -88,9 +89,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-gist" "gh-gist.el" (22949 38925 963875
-;;;;;;  477000))
-;;; Generated autoloads from gh-gist.el
+;;;### (autoloads nil "gh-gist" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-gist.el"
+;;;;;;  "20523c3286c01aa35889ff7023a60f93")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-gist.el
 
 (require 'eieio)
 
@@ -110,17 +111,17 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-issue-comments" "gh-issue-comments.el"
-;;;;;;  (22949 38926 203876 320000))
-;;; Generated autoloads from gh-issue-comments.el
+;;;### (autoloads nil "gh-issue-comments" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-issue-comments.el"
+;;;;;;  "da237ed3e14591f5cea7a554657a09ff")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-issue-comments.el
 
 (require 'eieio)
 
 ;;;***
 
-;;;### (autoloads nil "gh-issues" "gh-issues.el" (22949 38926 315876
-;;;;;;  714000))
-;;; Generated autoloads from gh-issues.el
+;;;### (autoloads nil "gh-issues" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-issues.el"
+;;;;;;  "6d44391f8350f08f917ed76643f98e20")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-issues.el
 
 (require 'eieio)
 
@@ -138,9 +139,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-oauth" "gh-oauth.el" (22949 38925 927875
-;;;;;;  351000))
-;;; Generated autoloads from gh-oauth.el
+;;;### (autoloads nil "gh-oauth" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-oauth.el"
+;;;;;;  "733bfe52a434f43a94204985dc1cf567")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-oauth.el
 
 (require 'eieio)
 
@@ -154,9 +155,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-orgs" "gh-orgs.el" (22949 38926 179876
-;;;;;;  236000))
-;;; Generated autoloads from gh-orgs.el
+;;;### (autoloads nil "gh-orgs" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-orgs.el"
+;;;;;;  "1283be0bc7f3385e4caf253d3a54447f")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-orgs.el
 
 (require 'eieio)
 
@@ -170,17 +171,17 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-pull-comments" "gh-pull-comments.el" (22949
-;;;;;;  38926 383876 952000))
-;;; Generated autoloads from gh-pull-comments.el
+;;;### (autoloads nil "gh-pull-comments" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-pull-comments.el"
+;;;;;;  "bb509a96ed0228edca749280f98c4180")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-pull-comments.el
 
 (require 'eieio)
 
 ;;;***
 
-;;;### (autoloads nil "gh-pulls" "gh-pulls.el" (22949 38926 347876
-;;;;;;  826000))
-;;; Generated autoloads from gh-pulls.el
+;;;### (autoloads nil "gh-pulls" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-pulls.el"
+;;;;;;  "5d037a6f1dece16c26d13ec944c39213")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-pulls.el
 
 (require 'eieio)
 
@@ -196,9 +197,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-repos" "gh-repos.el" (22949 38926 235876
-;;;;;;  432000))
-;;; Generated autoloads from gh-repos.el
+;;;### (autoloads nil "gh-repos" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-repos.el"
+;;;;;;  "f77e384c3065dbbb0b3f98f7f4b3b535")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-repos.el
 
 (require 'eieio)
 
@@ -212,16 +213,17 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-search" "gh-search.el" (22949 38925 995875
-;;;;;;  590000))
-;;; Generated autoloads from gh-search.el
+;;;### (autoloads nil "gh-search" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-search.el"
+;;;;;;  "c773b865ecf881befc9f9b7094603ec5")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-search.el
 
 (eieio-defclass-autoload 'gh-search-api '(gh-api-v3) "gh-search" nil)
 
 ;;;***
 
-;;;### (autoloads nil "gh-url" "gh-url.el" (22949 38925 839875 41000))
-;;; Generated autoloads from gh-url.el
+;;;### (autoloads nil "gh-url" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-url.el"
+;;;;;;  "a81ed904c8e6ac5736a66152063de0f9")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-url.el
 
 (require 'eieio)
 
@@ -233,9 +235,9 @@
 
 ;;;***
 
-;;;### (autoloads nil "gh-users" "gh-users.el" (22949 38926 131876
-;;;;;;  67000))
-;;; Generated autoloads from gh-users.el
+;;;### (autoloads nil "gh-users" "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-users.el"
+;;;;;;  "adfe30f405ca1a42c18748882ebed4fc")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-users.el
 
 (require 'eieio)
 
@@ -245,8 +247,27 @@
 
 ;;;***
 
-;;;### (autoloads nil nil ("gh-pkg.el" "gh-profile.el" "gh.el") (22949
-;;;;;;  38926 99875 955000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-api.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-auth.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-cache.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-comments.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-common.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-gist.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-issue-comments.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-issues.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-oauth.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-orgs.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-profile.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-pull-comments.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-pulls.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-repos.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-search.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-url.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh-users.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/gh-20170512.2049/gh.el")
+;;;;;;  (22950 48016 891829 250000))
 
 ;;;***
 

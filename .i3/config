@@ -1,7 +1,7 @@
-#   Filename: i3/config                                                                                       #
 ###############################################################################################################
-# Maintainer: Md. Alamin Mahamud
-#        URL:
+# Filename: .i3/config                                                                                        #
+# Maintainer: Md. Alamin Mahamud                                                                              #
+#        URL:                                                                                                 # 
 #                                                                                                             #
 # Sets i3 settings for the session                                                                            #
 ###############################################################################################################
@@ -30,7 +30,7 @@ set_from_resource $white       color15 #000000
 # Use custom colors for black
 set $black       #282828
 set $darkblack   #1d2021
-set $transparent #00000000
+set $transparent #282828
 
 set $height 34
 
@@ -45,8 +45,8 @@ set $ws8  "8:  "
 set $ws9  "9:  "
 set $ws10 "10:  "
 
-set $default_gaps_inner 1
-set $default_gaps_outer 1
+set $default_gaps_inner 0
+set $default_gaps_outer 0
 gaps inner $default_gaps_inner
 gaps outer $default_gaps_outer
 
@@ -58,23 +58,23 @@ floating_minimum_size -1 x -1
 floating_maximum_size -1 x -1
 
 #                       BORDER      BACKGROUND  TEXT        INDICATOR   CHILD_BORDER
-#client.focused          $black      $black      $darkwhite  $darkblack  $darkblack
-#client.unfocused        $black      $black      $white      $darkblack  $darkblack
-#client.focused_inactive $black      $black      $white      $darkblack  $darkblack
-#client.urgent           $darkred    $darkred    $black      $darkred    $darkred
-#client.background       $black
+client.focused          $black      $black      $darkwhite  $dark#black  $darkblack
+client.unfocused        $black      $black      $white      $darkblack  $darkblack
+client.focused_inactive $black      $black      $white      $darkblack  $darkblack
+client.urgent           $darkred    $darkred    $black      $darkred    $darkred
+client.background       $black
 
 
 # Colors
-client.focused          #c6ff00 #c6ff00 #000000 #dddddd
-client.focused_inactive #333333 #333333 #c6ff00 #ffffff
-client.unfocused        #333333 #333333 #888888 #292d2e
-client.urgent           #2f343a #900000 #ffffff #900000
+#client.focused          #c6ff00 #c6ff00 #000000 #dddddd
+#client.focused_inactive #333333 #333333 #c6ff00 #ffffff
+#client.unfocused        #333333 #333333 #888888 #292d2e
+#client.urgent           #2f343a #900000 #ffffff #900000
 
 
 # start a terminal
-bindsym $mod+Shift+Return exec $HOME/scripts/fullscreen_wrap.sh /home/alamin/bin/terminal
-bindsym $mod+Return exec $HOME/scripts/fullscreen_wrap.sh terminator
+bindsym $mod+Shift+Return exec /home/alamin/bin/terminal
+bindsym $mod+Return exec terminator
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -166,9 +166,11 @@ bindsym $mod+Shift+s sticky toggle
 # put YouTube into fullscreen and execute this for media mode
 #bindsym $mod+y fullscreen disable; floating enable; resize set 600 400; sticky enable; move window to position 1940 54
 
-bindsym XF86AudioLowerVolume exec --no-startup-id $HOME/scripts/volume_control.py down 5
-bindsym XF86AudioRaiseVolume exec --no-startup-id $HOME/scripts/volume_control.py up 5
-bindsym XF86AudioMute exec --no-startup-id $HOME/scripts/volume_control.py toggle
+# change volume or toggle mute
+bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && pkill -RTMIN+1 i3blocks 
+bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master 5%- && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMute exec amixer -q -D pulse sset Master toggle && pkill -RTMIN+1
+
 bindsym $mod+Shift+v exec --no-startup-id "killall pavucontrol; $HOME/scripts/fullscreen_wrap.sh pavucontrol -t 3"
 
 bindsym XF86MonBrightnessDown exec --no-startup-id ${HOME}/scripts/backlight.sh -dec 10
@@ -268,9 +270,9 @@ mode "$mode_brightness" {
 }
 
 # fix graphics glitch
-new_window none
+#new_window none
 
-
+for_window [class="^.*"] border pixel 0
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="bubble"] floating enable
 for_window [window_role="task_dialog"] floating enable
@@ -332,23 +334,24 @@ bar {
     font pango:Hack, FontAwesome 12
     strip_workspace_numbers yes
     separator_symbol "■"
-#    bindsym button4 nop
-#    bindsym button5 nop
-#    tray_output eDP1
-#    tray_output LVDS-0
-#    tray_padding 0
+    bindsym button4 nop
+    bindsym button5 nop
+    #tray_output eDP1
+    #tray_output LVDS-0
+    tray_padding 0
     height $height
+
     colors {
         statusline         $white
-        background         $transparent
-        separator          $transparent
+        background         $transparent 
+        separator          $red
 
 #                          BORDER       BACKGROUND   TEXT
-        focused_workspace  #0000cd #0000cd $white
+        focused_workspace  $white       $transparent $white
         inactive_workspace $transparent $transparent $white
-        active_workspace   $transparent $transparent #0000cd
-        urgent_workspace   #ffff00     $transparent $white
-        binding_mode       #0000cd     #0000cd     $white
+        active_workspace   $transparent $transparent $red
+        urgent_workspace   $transparent $transparent $red
+        binding_mode       $white       $transparent $white
     }
 }
 
@@ -375,9 +378,10 @@ exec --no-startup-id i3-msg 'exec terminator'
 
 # AUTOSTART
 exec_always --no-startup-id feh --bg-fill $HOME/.config/wallpapers/arch.jpg
+
 exec --no-startup-id compton -b
 
-exec --no-startup-id nm-applet
+#exec --no-startup-id nm-applet
 #exec --no-startup-id blueman-applet &
 #exec --no-startup-id redshift-gtk &
 
@@ -387,3 +391,27 @@ exec --no-startup-id nm-applet
 exec --no-startup-id dropbox &
 
 exec_always --no-startup-id "pgrep --exact xev || xev -root -event randr | grep --line-buffered ScreenChangeNotify | while read change; do pkill -RTMIN+4 i3blocks; done"
+
+# ranger
+bindsym Ctrl+r exec terminator -e ranger
+# htop
+bindsym Ctrl+h exec terminator -e htop
+
+# flash
+bindsym $mod+grave	exec --no-startup-id bash ~/scripts/flash_win.sh &
+
+
+#Makes the mouse invisible after a brief period
+exec --no-startup-id unclutter -idle 1
+
+hide_edge_borders both
+
+# use scratchpad
+bindsym $mod+p [instance="^scratchpad$"] scratchpad show
+exec_always flock -w1 ~/.config/i3/scratchpad/lockfile ~/.i3/scratchpad/perpetual_terminal.sh
+for_window [instance="^scratchpad$"] move scratchpad
+
+
+# toggle mouse
+bindsym $mod+m exec xinput --disable 12
+bindsym $mod+Shift+m exec xinput --enable 12

@@ -1,11 +1,7 @@
-;;; Character sets
-
-
 ;;; Changing font sizes
 
 (require-package 'default-text-scale)
-(global-set-key (kbd "C-M-=") 'default-text-scale-increase)
-(global-set-key (kbd "C-M--") 'default-text-scale-decrease)
+(add-hook 'after-init-hook 'default-text-scale-mode)
 
 
 (defun sanityinc/maybe-adjust-visual-fill-column ()
@@ -20,8 +16,5 @@ This is helpful for writeroom-mode, in particular."
           'sanityinc/maybe-adjust-visual-fill-column)
 
 
-;;; default font-size
-
-(set-face-attribute 'default nil :height 140)
 
 (provide 'init-fonts)

@@ -3,8 +3,10 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil nil ("with-editor-pkg.el" "with-editor.el")
-;;;;;;  (22949 38905 567803 801000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/with-editor-20170817.1240/with-editor-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/with-editor-20170817.1240/with-editor-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/with-editor-20170817.1240/with-editor.el")
+;;;;;;  (22950 47994 739895 654000))
 
 ;;;***
 

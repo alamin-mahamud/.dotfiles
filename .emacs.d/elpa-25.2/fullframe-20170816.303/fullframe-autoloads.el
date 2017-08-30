@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "fullframe" "fullframe.el" (22949 38781 727365
-;;;;;;  600000))
-;;; Generated autoloads from fullframe.el
+;;;### (autoloads nil "fullframe" "../../../../.emacs.d/elpa-25.2/fullframe-20170816.303/fullframe.el"
+;;;;;;  "a75b64fbe881b09f0f1b2e773cba77c1")
+;;; Generated autoloads from ../../../../.emacs.d/elpa-25.2/fullframe-20170816.303/fullframe.el
 
 (autoload 'fullframe/current-buffer-window-config "fullframe" "\
 Return the window-configuration stored for the current buffer.
@@ -48,6 +48,12 @@ AFTER-COMMAND-ON-FUNC is called after COMMAND-ON was called and
 the window it generated is the only one in in the frame.
 
 \(fn COMMAND-ON COMMAND-OFF &optional KILL-ON-COFF AFTER-COMMAND-ON-FUNC)" nil t)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa-25.2/fullframe-20170816.303/fullframe-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa-25.2/fullframe-20170816.303/fullframe.el")
+;;;;;;  (22950 47881 384032 798000))
 
 ;;;***
 

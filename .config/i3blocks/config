@@ -3,18 +3,18 @@ separator_block_width=5
 border_top=0
 border_left=0
 border_right=0
-border_bottom=4
-border=#ffff35
+border_bottom=2
+border=#a89984
 
 ##fortune
 [fortune]
-command=$HOME/scripts/custom/fortune.sh
+command=$HOME/scripts/fortune.sh
 min_width=200
 align=center
 interval=5
 signal=1
 markup=pango
-border=#0000ff
+#border=#9400d3
 
 #[output]
 #command=$HOME/scripts/monitor.sh
@@ -35,13 +35,25 @@ border=#0000ff
 #signal=3
 #urgent=true
 
-[volume]
-command=$HOME/scripts/custom/volume
-interval=5
-signal=1
-markup=pango
-border=#cc241d
+[countdown]
+instance=tomorrow 00:00:00
+label=  
+interval=1
+command=$HOME/scripts/countdown
+#border=#0000cd
 
+[volume]
+command=$HOME/scripts/volume -a
+interval=1d
+signal=1
+#markup=pango
+#border=#ff1493
+
+#[microphone]
+#label=
+#interval=1
+#command=$HOME/scripts/microphone
+#border=#d79921
 
 #[brightness]
 #label=    
@@ -50,45 +62,73 @@ border=#cc241d
 #signal=2
 #border=#d79921
 
+
+# Internet Speed
+# vivien script
 [bandwidth]
-command=$HOME/scripts/custom/bandwidth
-instance=enp7s0;in;
+command=$HOME/scripts/bandwidth
 interval=1
-border=#00ff00
+#border=#00ff00
 align=center
-label=   
+instance=wlp6s0
+
+[bandwidth]
+command=$HOME/scripts/bandwidth
+interval=1
+#border=#00ff00
+align=center
+instance=enp7s0
 
 #[temperature]
 #command=echo "$($HOME/scripts/temperature.sh 'Core 0') $($HOME/scripts/temperature.sh 'Core 1') "
 #interval=5
 #border=#b16286
 
-[wireless]
-label=    
-command=[[ -z "$(iwgetid -r)" ]] || echo "$(iwgetid -r) "
-interval=2
-border=#98971a
+# vivien script 
+[wifi]
+command=$HOME/scripts/wifi
+label= 
+instance=wlp6s0
+interval=10
+#border=#00ff00
+
+[iface]
+label=  
+instance=enp7s0
+interval=1
+#border=#efefef
+command=$HOME/scripts/iface
+
+[ip-address]
+label= 
+interval=60
+command=$HOME/scripts/ip_address
+#border=#00ff00
 
 [space]
 label=
 interval=30
-command=$HOME/scripts/custom/space
-border=#ff00ff
+command=$HOME/scripts/space
+#border=#fffafa
 
 #[battery]
 #command=$HOME/scripts/battery.sh
 #interval=persist
 #border=#458588
 
-
 [dropbox]
-command=$HOME/scripts/custom/dropbox
+command=$HOME/scripts/dropbox
 interval=10
+#border=#ffb90f
 
 [time]
 label=    
 command=echo "`date +'%a %d %b'` <b>`date +'%T'`</b> "; [[ -z "${BLOCK_BUTTON}" ]] || gsimplecal &
 interval=1
 markup=pango
-border=#00ff7f
+#border=#0000ff
 separator_block_width=0
+
+#[nm]
+#command= nm-applet &
+#border=#00ff7f

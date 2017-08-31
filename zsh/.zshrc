@@ -106,6 +106,8 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias w1="sudo ./wifi.sh"
 alias w2="sudo nmcli con up 'WE WiFi'"
+alias zipdot="rm -rf ~/Dropbox/dotfiles.zip && zip -r ~/Dropbox/dotfiles.zip ~/dotfiles"
+
 
 fortune
 #screenfetch -D arch -E

@@ -337,10 +337,14 @@ birthday_format="+%a %d %b %Y %l:%M %p"
 # this order: 'title', '@', 'underline', 'subtitle', 'colon', 'info'
 #
 # Example:
-# colors=(distro)      - Text is colored based on Distro colors.
-# colors=(4 6 1 8 8 6) - Text is colored in the order above.
-colors=(distro)
+#colors=(distro)     # - Text is colored based on Distro colors.
+colors=(1 6 1 4 4 5) #- Text is colored in the order above.
+#colors=(1 1 1 1 1 1)
 
+# 1 red
+# 2 green
+# 3 ye
+# 4 blue
 
 # Text Options
 
@@ -596,8 +600,8 @@ ascii_distro="arch"
 #
 # Example:
 # ascii_colors=(distro)      - Ascii is colored based on Distro colors.
-# ascii_colors=(4 6 1 8 8 6) - Ascii is colored using these colors.
-ascii_colors=(distro)
+ ascii_colors=(5 5 5 5 5 5) #- Ascii is colored using these colors.
+
 
 # Logo size
 # Arch, Crux and Gentoo have a smaller logo

@@ -58,9 +58,9 @@ floating_minimum_size -1 x -1
 floating_maximum_size -1 x -1
 
 #                       BORDER      BACKGROUND  TEXT        INDICATOR   CHILD_BORDER
-client.focused          $black      $black      $darkwhite  $dark#black  $darkblack
-client.unfocused        $black      $black      $white      $darkblack  $darkblack
-client.focused_inactive $black      $black      $white      $darkblack  $darkblack
+client.focused          $black      $black      $white  $dark#black  $darkblack
+client.unfocused        $black      $black      $darkwhite      $darkblack  $darkblack
+client.focused_inactive $black      $black      $darkwhite      $darkblack  $darkblack
 client.urgent           $darkred    $darkred    $black      $darkred    $darkred
 client.background       $black
 

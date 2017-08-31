@@ -1,8 +1,11 @@
-;;; Automatically generated on Thu Aug 31 18:43:36 2017
-;;; Invoked by root@laptop using 25.2.1
-(setq-default kill-ring '(#("    " 0 4 (fontified t))))
-(setq-default session-file-alist '(("~/dotfiles/.config/neofetch/config" 11307 6092 1 nil nil 11307 (overwrite-mode)) ("~/dotfiles/.emacs.d/org-clock-save.el" 54 nil 1 nil nil 54 (overwrite-mode))))
-(setq-default file-name-history '("~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.config/terminator/config" "~/.config/neofetch/config" "~/.config/terminator/config" "/home/alamin/.config/i3blocks/config" "/home/alamin/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp"))
+;;; Automatically generated on Thu Aug 31 19:06:24 2017
+;;; Invoked by alamin@laptop using 25.2.1
+(setq-default kill-ring '(#("
+
+
+" 0 1 (fontified t) 1 2 (fontified t) 2 3 (fontified t))))
+(setq-default session-file-alist '(("~/dotfiles/.i3/config" 2521 14596 1 nil nil 2431 (overwrite-mode)) ("~/dotfiles/.emacs.d/org-clock-save.el" 54 nil 1 nil nil 54 (overwrite-mode))))
+(setq-default file-name-history '("~/.emacs.d/org-clock-save.el" #("/home/alamin/dotfiles/.i3/config" 0 32 (ivy-index 1)) "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.config/terminator/config" "~/dotfiles/.config/neofetch/config" "~/.config/neofetch/config"))
 (setq-default search-ring '("red" "002b36" "#" "#edb"))
 (setq-default buffer-name-history '("config • i3blocks"))
 (setq-default counsel-git-grep-cmd-history '("git --no-pager grep --full-name -n --no-color -i -e '%s'"))

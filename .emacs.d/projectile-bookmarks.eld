@@ -1,1 +1,1 @@
-("~/dotfiles/")
+("~/dotfiles/" "~/Competitive-Programming/")

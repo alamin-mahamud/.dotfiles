@@ -177,8 +177,8 @@ bindsym XF86MonBrightnessDown exec --no-startup-id ${HOME}/scripts/backlight.sh 
 bindsym XF86MonBrightnessUp exec --no-startup-id ${HOME}/scripts/backlight.sh -inc 10
 
 # screenshot
-bindsym --release Print exec --no-startup-id "maim -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
-bindsym --release Shift+Print exec --no-startup-id "maim -s -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
+bindsym Print exec --no-startup-id "maim -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/Screenshots/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
+bindsym Shift+Print exec --no-startup-id "maim -s -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/Screenshots/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
 
 bindsym $mod+n exec --no-startup-id thunar
 
@@ -388,7 +388,7 @@ exec --no-startup-id compton -b
 #exec --no-startup-id dunst &
 #exec --no-startup-id xedgewarp -b
 
-exec --no-startup-id dropbox &
+exec --no-startup-id dropbox start &
 
 exec_always --no-startup-id "pgrep --exact xev || xev -root -event randr | grep --line-buffered ScreenChangeNotify | while read change; do pkill -RTMIN+4 i3blocks; done"
 

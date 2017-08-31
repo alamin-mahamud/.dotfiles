@@ -43,13 +43,15 @@ command=$HOME/scripts/countdown
 #border=#0000cd
 
 [volume]
-command=$HOME/scripts/volume -a
-interval=1d
+command=$HOME/scripts/volume 5% pulse
+interval=1
 signal=1
 min_width=80
 align=center
 #markup=pango
 #border=#ff1493
+label= 🔊
+instance=Master
 
 #[microphone]
 #label=

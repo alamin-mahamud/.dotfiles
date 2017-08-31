@@ -1,13 +1,16 @@
-;;; Automatically generated on Thu Aug 31 19:06:24 2017
+;;; Automatically generated on Thu Aug 31 20:13:23 2017
 ;;; Invoked by alamin@laptop using 25.2.1
-(setq-default kill-ring '(#("
+(setq-default kill-ring '(#("    
+" 0 4 (fontified t) 4 5 (fontified t)) #("
+" 0 1 (fontified t)) #("Find file: ~/dotfiles/.i3/" 0 26 (face minibuffer-prompt front-sticky t rear-nonsticky t field t read-only t)) #("
 
 
 " 0 1 (fontified t) 1 2 (fontified t) 2 3 (fontified t))))
-(setq-default session-file-alist '(("~/dotfiles/.i3/config" 2521 14596 1 nil nil 2431 (overwrite-mode)) ("~/dotfiles/.emacs.d/org-clock-save.el" 54 nil 1 nil nil 54 (overwrite-mode))))
-(setq-default file-name-history '("~/.emacs.d/org-clock-save.el" #("/home/alamin/dotfiles/.i3/config" 0 32 (ivy-index 1)) "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.config/terminator/config" "~/dotfiles/.config/neofetch/config" "~/.config/neofetch/config"))
+(setq-default session-file-alist '(("~/Dropbox/log-files/book-portfolio/book_august_2017.org" 39525 96797 1 nil nil nil (overwrite-mode)) ("~/dotfiles/.emacs.d/org-clock-save.el" 54 nil 1 nil nil 54 (overwrite-mode)) ("~/dotfiles/.i3/config" 2521 14596 1 nil nil 2431 (overwrite-mode))))
+(setq-default file-name-history '("~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" #("/home/alamin/Dropbox/log-files/book-portfolio/book_august_2017.org" 0 66 (ivy-index 2)) "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.config/terminator/config" "~/dotfiles/.config/neofetch/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/dotfiles/.i3/config" "/home/alamin/dotfiles/.i3/config" "~/.config/neofetch/config"))
 (setq-default search-ring '("red" "002b36" "#" "#edb"))
-(setq-default buffer-name-history '("config • i3blocks"))
+(setq-default buffer-name-history '("recentf" "book_august_2017.org" "config • .i3" "*Calendar*" "config • i3blocks"))
+(setq-default command-history '((describe-key "0" 1 nil) (describe-key "" 1 nil) (kill-buffer "recentf") (kill-buffer "book_august_2017.org") (kill-buffer "config • .i3") (kill-buffer "*Calendar*")))
 (setq-default counsel-git-grep-cmd-history '("git --no-pager grep --full-name -n --no-color -i -e '%s'"))
 (setq-default extended-command-history '("lis" "list-color"))
 (setq-default occur-collect-regexp-history '("\\1"))

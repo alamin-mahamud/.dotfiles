@@ -166,10 +166,18 @@ bindsym $mod+Shift+s sticky toggle
 # put YouTube into fullscreen and execute this for media mode
 #bindsym $mod+y fullscreen disable; floating enable; resize set 600 400; sticky enable; move window to position 1940 54
 
+## ALSA
 # change volume or toggle mute
 bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && pkill -RTMIN+1 i3blocks 
 bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master 5%- && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioMute exec amixer -q -D pulse sset Master toggle && pkill -RTMIN+1
+
+
+# Pulse Audio controls
+#bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% && pkill --signal SIGRTMIN+12 i3blocks#increase sound volume
+#bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
+#bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+
 
 bindsym $mod+Shift+v exec --no-startup-id "killall pavucontrol; $HOME/scripts/fullscreen_wrap.sh pavucontrol -t 3"
 
@@ -419,3 +427,6 @@ bindsym $mod+Shift+m exec xinput --enable 12
 # dropbox
 bindsym Mod1+Hyper_L exec dropbox start
 bindsym Mod1+Shift+Hyper_L exec dropbox stop
+
+# Max Sound
+bindsym Mod1+F3 exec pactl set-sink-mute 0 0 && pactl set-sink-volume 0 150%

@@ -393,9 +393,9 @@ exec --no-startup-id dropbox &
 exec_always --no-startup-id "pgrep --exact xev || xev -root -event randr | grep --line-buffered ScreenChangeNotify | while read change; do pkill -RTMIN+4 i3blocks; done"
 
 # ranger
-bindsym Ctrl+r exec terminator -e ranger
+bindsym Mod1+r exec terminator -e ranger
 # htop
-bindsym Ctrl+h exec terminator -e htop
+bindsym Mod1+h exec terminator -e htop
 
 # flash
 bindsym $mod+grave	exec --no-startup-id bash ~/scripts/flash_win.sh &

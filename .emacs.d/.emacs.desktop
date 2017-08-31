@@ -2,19 +2,19 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Wed Aug 30 22:08:39 2017
+;; Created Thu Aug 31 09:43:11 2017
 ;; Desktop file format version 208
 ;; Emacs version 25.2.1
 
 ;; Global section:
-(setq desktop-saved-frameset [frameset 1 (22950 58119 823595 620000) (desktop . "208") "alamin@laptop" nil nil ((((font-backend xft x) (font . "-DAMA-Ubuntu Mono-normal-normal-normal-*-17-*-*-*-m-0-iso10646-1") (font-parameter . "Ubuntu Mono 13") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#eaeaea") (background-color . "#000000") (mouse-color . "black") (border-color . "#424242") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (scroll-bar-foreground . "#ebdbb2") (scroll-bar-background . "#ebdbb2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (fullscreen) (display-type . color) (background-mode . dark) (cursor-color . "#d54e53") (environment) (frameset--id . "CCB2-7248-DB4F-0404") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (sticky) (visibility . t) (height . 43) (width . 48) (left . 911) (top . 34)) ((min-height . 4) (min-width . 10) (min-height-ignore . 2) (min-width-ignore . 4) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 68) (min-pixel-width . 90) (min-pixel-height-ignore . 34) (min-pixel-width-ignore . 36) (min-pixel-height-safe . 17) (min-pixel-width-safe . 18)) leaf (pixel-width . 455) (pixel-height . 700) (total-width . 50) (total-height . 41) (normal-height . 1.0) (normal-width . 1.0) (buffer "config —£À .i3" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1665) (start . 1403))))])
+(setq desktop-saved-frameset [frameset 1 (22951 34255 544534 22000) (desktop . "208") "root@laptop" nil nil ((((font-backend xft x) (font . "-DAMA-Ubuntu Mono-normal-normal-normal-*-17-*-*-*-m-0-iso10646-1") (font-parameter . "Ubuntu Mono 13") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#eaeaea") (background-color . "#000000") (mouse-color . "black") (border-color . "#424242") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (scroll-bar-foreground . "#ebdbb2") (scroll-bar-background . "#ebdbb2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (fullscreen) (display-type . color) (background-mode . dark) (cursor-color . "#d54e53") (sticky) (environment) (frameset--id . "CCB2-7248-DB4F-0404") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (visibility . t) (height . 41) (width . 48) (left . 0) (top . 58)) ((min-height . 4) (min-width . 10) (min-height-ignore . 2) (min-width-ignore . 4) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 68) (min-pixel-width . 90) (min-pixel-height-ignore . 34) (min-pixel-width-ignore . 36) (min-pixel-height-safe . 17) (min-pixel-width-safe . 18)) leaf (pixel-width . 451) (pixel-height . 676) (total-width . 50) (total-height . 39) (normal-height . 1.0) (normal-width . 1.0) (buffer "sshd_config" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 468) (start . 1))))])
 (setq comint-input-ring nil)
 (setq compile-history nil)
 (setq desktop-missing-file-warning nil)
 (setq dired-regexp-history nil)
 (setq extended-command-history '("lis" "list-color"))
 (setq face-name-history nil)
-(setq file-name-history '("/home/alamin/dotfiles/.i3/config" "/home/alamin/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.i3/config" "~/scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.Xresources" "/home/alamin/.Xresources" "/home/alamin/scripts/volume" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "/home/alamin/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "/home/alamin/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/custom/custom_bandwidth" "~/dotfiles/.config/i3blocks/config" "/home/alamin/dotfiles/scripts/i3blocks_scripts/custom/custom_bandwidth" "/home/alamin/scripts/network.sh" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3blocks/config" "~/.config/i3blocks/config" "/home/alamin/.config/i3blocks/" "~/dotfiles/.i3/config" "/home/alamin/.i3/config" "~/dotfiles/.emacs.d/recentf" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.emacs.d/custom.el"))
+(setq file-name-history '("~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/git/.gitconfig" "~/dotfiles/.i3/config" "/etc/ssh/sshd_config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/git/.gitconfig" "~/dotfiles/.i3/config" "/etc/ssh/sshd_config" "/home/alamin/.i3/config" "/.i3/config" "/etc/ssh/sshd_config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "/home/alamin/dotfiles/git/.gitconfig" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "/home/alamin/dotfiles/.i3/config" "/home/alamin/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.i3/config" "~/scripts/volume" "~/dotfiles/.Xresources" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.Xresources" "/home/alamin/.Xresources" "/home/alamin/scripts/volume" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "/home/alamin/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "/home/alamin/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/scripts/i3blocks_scripts/custom/custom_bandwidth" "~/dotfiles/.config/i3blocks/config" "/home/alamin/dotfiles/scripts/i3blocks_scripts/custom/custom_bandwidth" "/home/alamin/scripts/network.sh" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3blocks/config" "~/.config/i3blocks/config" "/home/alamin/.config/i3blocks/"))
 (setq grep-find-history nil)
 (setq grep-history nil)
 (setq ido-buffer-history nil)
@@ -30,7 +30,7 @@
 (setq read-expression-history nil)
 (setq regexp-history nil)
 (setq regexp-search-ring nil)
-(setq register-alist '((48 . "27408b")))
+(setq register-alist '((48 . "\n")))
 (setq search-ring '("#" "#edb"))
 (setq shell-command-history nil)
 (setq tags-file-name nil)
@@ -38,16 +38,100 @@
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
 (desktop-create-buffer 208
+  "/etc/ssh/sshd_config"
+  "sshd_config"
+  'fundamental-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode text-scale-mode)
+  468
+  '(2215 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (overwrite-mode))
+  '((mark-ring (688 1853 1485 3135 1677 1485 1485 688))))
+
+(desktop-create-buffer 208
+  nil
+  "/"
+  'dired-mode
+  '(anzu-mode global-auto-revert-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-dired-mode)
+  209
+  '(nil nil)
+  t
+  '("/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "home"
+  'dired-mode
+  '(anzu-mode global-auto-revert-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-dired-mode)
+  207
+  '(nil nil)
+  t
+  '("/home/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "alamin"
+  'dired-mode
+  '(anzu-mode global-auto-revert-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-dired-mode)
+  971
+  '(nil nil)
+  t
+  '("/home/alamin/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "dotfiles"
+  'dired-mode
+  '(anzu-mode global-auto-revert-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-dired-mode)
+  725
+  '(nil nil)
+  t
+  '("/home/alamin/dotfiles/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  ".i3"
+  'dired-mode
+  '(anzu-mode global-auto-revert-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-dired-mode)
+  230
+  '(nil nil)
+  t
+  '("/home/alamin/dotfiles/.i3/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
   "/home/alamin/dotfiles/.i3/config"
   "config"
   'conf-space-mode
   '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode)
-  1665
-  '(13347 nil)
+  14825
+  '(15408 nil)
   nil
   nil
   '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
-  '((mark-ring (5570 5789 5789 6155 5570 13175 13639))))
+  '((mark-ring (15408 1665 13347 5570 5789 5789 6155 5570 13175 13639))))
+
+(desktop-create-buffer 208
+  "/home/alamin/dotfiles/git/.gitconfig"
+  ".gitconfig"
+  'gitconfig-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode)
+  656
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
 
 (desktop-create-buffer 208
   "/home/alamin/dotfiles/.config/i3blocks/config"
@@ -74,10 +158,10 @@
   '((mark-ring (1022 207))))
 
 (desktop-create-buffer 208
-  "/home/alamin/scripts/volume"
+  "/home/alamin/dotfiles/scripts/i3blocks_scripts/volume"
   "volume"
   'sh-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode)
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-mode flycheck-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode symbol-overlay-mode rainbow-delimiters-mode)
   260
   '(260 t)
   nil
@@ -89,7 +173,7 @@
   "/home/alamin/dotfiles/scripts/i3blocks_scripts/microphone"
   "microphone"
   'sh-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode)
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-mode flycheck-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode symbol-overlay-mode rainbow-delimiters-mode)
   184
   '(1 nil)
   t
@@ -101,7 +185,7 @@
   "/home/alamin/dotfiles/scripts/i3blocks_scripts/iface"
   "iface"
   'sh-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode)
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-mode flycheck-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode symbol-overlay-mode rainbow-delimiters-mode)
   1983
   '(996 nil)
   nil

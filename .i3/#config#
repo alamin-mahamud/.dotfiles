@@ -417,5 +417,5 @@ bindsym $mod+Shift+m exec xinput --enable 12
 
 
 # dropbox
-bindsym Mod1+Hyper_L exec dropbox start
-bindsym Mod1+Shift+Hyper_L exec dropbox stop
+bindsym Mod1+Hyper_L exec bash dropbox start
+bindsym Mod1+Shift+Hyper_L exec bash dropbox stop

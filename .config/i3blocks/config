@@ -37,7 +37,7 @@ markup=pango
 
 [countdown]
 instance=tomorrow 00:00:00
-label=  
+label=  
 interval=1
 command=$HOME/scripts/countdown
 #border=#0000cd
@@ -46,6 +46,8 @@ command=$HOME/scripts/countdown
 command=$HOME/scripts/volume -a
 interval=1d
 signal=1
+min_width=80
+align=center
 #markup=pango
 #border=#ff1493
 
@@ -71,6 +73,7 @@ interval=1
 #border=#00ff00
 align=center
 instance=wlp6s0
+min_width=80
 
 [bandwidth]
 command=$HOME/scripts/bandwidth
@@ -78,6 +81,7 @@ interval=1
 #border=#00ff00
 align=center
 instance=enp7s0
+min_width=100
 
 #[temperature]
 #command=echo "$($HOME/scripts/temperature.sh 'Core 0') $($HOME/scripts/temperature.sh 'Core 1') "
@@ -87,7 +91,7 @@ instance=enp7s0
 # vivien script 
 [wifi]
 command=$HOME/scripts/wifi
-label= 
+label=  
 instance=wlp6s0
 interval=10
 #border=#00ff00
@@ -106,10 +110,12 @@ command=$HOME/scripts/ip_address
 #border=#00ff00
 
 [space]
-label=
+label=  
 interval=30
 command=$HOME/scripts/space
 #border=#fffafa
+min_width=80
+align=center
 
 #[battery]
 #command=$HOME/scripts/battery.sh

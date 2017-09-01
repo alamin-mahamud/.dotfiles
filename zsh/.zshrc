@@ -111,7 +111,5 @@ alias zipdot="rm -rf ~/Dropbox/dotfiles.zip && zip -r ~/Dropbox/dotfiles.zip ~/d
 
 fortune
 #screenfetch -D arch -E
-neofetch
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#neofetch 
+neofetch --ascii_distro redhat --ascii_colors distro

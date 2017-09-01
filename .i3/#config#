@@ -431,4 +431,4 @@ exec_always --no-startup-id $HOME/scripts/wall.sh
 #exec --no-startup-id ~/.i3/bin/wallpaper.sh
 
 # NM
-#exec --no-startup-id nm-applet
+exec --no-startup-id nm-applet

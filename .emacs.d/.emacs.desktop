@@ -2,19 +2,19 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Thu Aug 31 23:32:22 2017
+;; Created Fri Sep  1 17:13:49 2017
 ;; Desktop file format version 208
 ;; Emacs version 25.2.1
 
 ;; Global section:
-(setq desktop-saved-frameset [frameset 1 (22952 18470 137243 451000) (desktop . "208") "alamin@laptop" nil nil ((((font-backend xft x) (font . "-DAMA-Ubuntu Mono-normal-normal-normal-*-17-*-*-*-m-0-iso10646-1") (font-parameter . "Ubuntu Mono 13") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#eaeaea") (background-color . "#000000") (mouse-color . "black") (border-color . "#424242") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (scroll-bar-foreground . "#ebdbb2") (scroll-bar-background . "#ebdbb2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (fullscreen) (display-type . color) (background-mode . dark) (cursor-color . "#d54e53") (environment) (sticky) (frameset--id . "CCB2-7248-DB4F-0404") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (visibility . t) (height . 43) (width . 74) (left . 683) (top . 34)) ((min-height . 4) (min-width . 10) (min-height-ignore . 2) (min-width-ignore . 4) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 68) (min-pixel-width . 90) (min-pixel-height-ignore . 34) (min-pixel-width-ignore . 36) (min-pixel-height-safe . 17) (min-pixel-width-safe . 18)) leaf (pixel-width . 683) (pixel-height . 717) (total-width . 76) (total-height . 42) (normal-height . 1.0) (normal-width . 1.0) (buffer "config —£À neofetch" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 11583) (start . 11193))))])
+(setq desktop-saved-frameset [frameset 1 (22953 16621 183771 156000) (desktop . "208") "alamin@laptop" nil nil ((((font-backend xft x) (font . "-DAMA-Ubuntu Mono-normal-normal-normal-*-17-*-*-*-m-0-iso10646-1") (font-parameter . "Ubuntu Mono 13") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#eaeaea") (background-color . "#000000") (mouse-color . "black") (border-color . "#424242") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (scroll-bar-foreground . "#ebdbb2") (scroll-bar-background . "#ebdbb2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (fullscreen) (display-type . color) (background-mode . dark) (cursor-color . "#d54e53") (environment) (sticky) (frameset--id . "CCB2-7248-DB4F-0404") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (visibility . t) (height . 26) (width . 74) (left . 683) (top . 321)) ((min-height . 4) (min-width . 10) (min-height-ignore . 2) (min-width-ignore . 4) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 68) (min-pixel-width . 90) (min-pixel-height-ignore . 34) (min-pixel-width-ignore . 36) (min-pixel-height-safe . 17) (min-pixel-width-safe . 18)) leaf (pixel-width . 683) (pixel-height . 430) (total-width . 76) (total-height . 25) (normal-height . 1.0) (normal-width . 1.0) (buffer "volume" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 2739) (start . 2335))))])
 (setq comint-input-ring nil)
 (setq compile-history nil)
 (setq desktop-missing-file-warning nil)
 (setq dired-regexp-history nil)
 (setq extended-command-history '("lis" "list-color"))
 (setq face-name-history nil)
-(setq file-name-history '("~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.config/neofetch/config" "~/dotfiles/.emacs.d/recentf" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.config/neofetch/config" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.config/neofetch/config" "/home/alamin/.config/neofetch/config" "~/dotfiles/.emacs.d/recentf" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "~/dotfiles/zsh/.zshrc" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/zsh/.zshrc" "/home/alamin/.zshrc" "~/dotfiles/.i3/config" "/home/alamin/.i3/config" "~/dotfiles/.config/i3blocks/config" "/home/alamin/.config/i3blocks/config" "~/dotfiles/scripts/i3blocks_scripts/volume" "/home/alamin/scripts/volume" "/home/alamin/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/terminator/config" "~/dotfiles/.config/neofetch/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/dotfiles/.config/i3blocks/config" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.config/terminator/config" "~/dotfiles/.config/neofetch/config" "~/dotfiles/.emacs.d/recentf" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.config/terminator/config" "~/dotfiles/.config/neofetch/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.config/terminator/config" "~/dotfiles/.config/neofetch/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/scripts/i3blocks_scripts/microphone" "~/dotfiles/.Xresources" "~/dotfiles/git/.gitconfig" "~/Dropbox/log-files/all_log.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/Competitive-Programming/Algorithm_Challenge/Data_Structures_And_Libraries/230 Borrowers.cpp" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.config/terminator/config" "~/dotfiles/.config/neofetch/config" "~/dotfiles/.i3/config" "~/.emacs.d/org-clock-save.el"))
+(setq file-name-history '("~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.i3/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/fred.c" "~/Linux_Playground/Beginning_Linux_Programming/hello2.c" "/etc/rc0.d/K01alsa-utils" "~/.emacs.d/org-clock-save.el" "/etc/rc0.d/K01alsa-utils" "/etc/rc.d" "~/*scratch*" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.i3/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/hello2.c" "~/Linux_Playground/Beginning_Linux_Programming/fred.c" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/hello2.c" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/fred.c" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/bill.c" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.i3/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.i3/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/Linux_Playground/hello.c" "~/.emacs.d/org-clock-save.el" "~/Linux_Playground/hello.c" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.i3/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/.emacs.d/org-clock-save.el" "/home/alamin/Dropbox/log-files/all_log.org" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.i3/config" "~/Dropbox/log-files/all_log.org" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "/home/alamin/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "~/dotfiles/zsh/.zshrc" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/all_log.org" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.emacs.d/recentf" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.config/neofetch/config" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/.i3/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.config/neofetch/config" "~/dotfiles/.emacs.d/recentf"))
 (setq grep-find-history nil)
 (setq grep-history nil)
 (setq ido-buffer-history nil)
@@ -30,7 +30,7 @@
 (setq read-expression-history nil)
 (setq regexp-history nil)
 (setq regexp-search-ring nil)
-(setq register-alist '((48 . "bash")))
+(setq register-alist '((48 . "œô·Èœô·¸œô·ßœô·¦ œô·®œô·Áœô¶üœô·¤œô·¬œô·¾ œô¶æœô·²œô·Àœô·° œô·°œô¶úœô·¨œô·¾œô·¬œô·²œô·À - https://www.mediafire.com/folder/lj1q45kylmwx6\n\n")))
 (setq search-ring '("color" "red" "002b36" "#" "#edb"))
 (setq shell-command-history nil)
 (setq tags-file-name nil)
@@ -38,40 +38,136 @@
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
 (desktop-create-buffer 208
-  "/home/alamin/dotfiles/.config/neofetch/config"
-  "config"
+  "/home/alamin/dotfiles/scripts/i3blocks_scripts/volume"
+  "volume"
   'sh-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
-  11583
-  '(1 nil)
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode text-scale-mode)
+  2739
+  '(2723 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (1830 2739 1 1 1 1 1 1 1 1 1 1 2739 2487 2739 2739))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/hello2.c"
+  "hello2.c"
+  'c-mode
+  '(abbrev-mode anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  68
+  '(68 nil)
   t
   nil
   '((buffer-file-coding-system . utf-8-unix))
-  '((mark-ring (6203 6203 6137 6133 6127 6131 6139 6193))))
+  '((mark-ring nil)))
 
 (desktop-create-buffer 208
-  "/home/alamin/dotfiles/zsh/.zshrc"
-  ".zshrc"
-  'sh-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
-  3470
-  '(1 nil)
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/fred.c"
+  "fred.c"
+  'c-mode
+  '(abbrev-mode anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  101
+  '(19 nil)
+  t
+  nil
+  '((buffer-file-coding-system . undecided-unix))
+  '((mark-ring (101 19 101 101 98 101))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/bill.c"
+  "bill.c"
+  'c-mode
+  '(abbrev-mode anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  35
+  '(19 nil)
+  t
+  nil
+  '((buffer-file-coding-system . utf-8-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/lib.h"
+  "lib.h"
+  'c-mode
+  '(abbrev-mode anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  120
+  '(nil nil)
+  t
+  nil
+  '((buffer-file-coding-system . utf-8-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/hello.c"
+  "hello.c"
+  'c-mode
+  '(abbrev-mode anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  73
+  '(76 nil)
+  t
+  nil
+  '((buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (76 76))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Dropbox/log-files/all_log.org"
+  "all_log.org"
+  'org-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode page-break-lines-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode text-scale-mode)
+  54714
+  '(10548 nil)
   nil
   nil
-  '((buffer-file-coding-system . undecided-unix) (overwrite-mode))
-  '((mark-ring (3470))))
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines . t))
+  '((mark-ring (55203 10548 57083 57072 57299 57055 55148 55168 55158 54416 49592))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Dropbox/log-files/book-portfolio/book_september_2017.org"
+  "book_september_2017.org"
+  'org-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode page-break-lines-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode)
+  14865
+  '(14955 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines . t))
+  '((mark-ring (14955 14955 14955 14955 14955 14955 1 1))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Dropbox/log-files/book-portfolio/book_august_2017.org"
+  "book_august_2017.org"
+  'org-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode page-break-lines-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode)
+  96366
+  '(79703 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines . t))
+  '((mark-ring (80605 82955 96747 1 96647))))
 
 (desktop-create-buffer 208
   "/home/alamin/dotfiles/.i3/config"
   "config"
   'conf-space-mode
   '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode text-scale-mode)
-  15933
-  '(15878 nil)
+  15820
+  '(15884 nil)
   nil
   nil
   '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
-  '((mark-ring (15878 15878 15877 15843 15843 6025 6212 14634 14634 6153 6261 15877 15877 15878 15856 15933))))
+  '((mark-ring (15884 15884 15883 15849 15849 6025 6212 14634 14634 6153 6261 15883 15883 15884 15862 15904))))
+
+(desktop-create-buffer 208
+  "/home/alamin/dotfiles/zsh/.zshrc"
+  ".zshrc"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  3853
+  '(3853 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (overwrite-mode))
+  '((mark-ring (1 3470))))
 
 (desktop-create-buffer 208
   "/home/alamin/dotfiles/.config/i3blocks/config"
@@ -90,46 +186,10 @@
   ".i3"
   'dired-mode
   '(anzu-mode global-auto-revert-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-dired-mode)
-  230
+  1
   '(nil nil)
   t
   '("/home/alamin/dotfiles/.i3/")
   nil
-  '((mark-ring nil)))
-
-(desktop-create-buffer 208
-  "/home/alamin/dotfiles/scripts/i3blocks_scripts/volume"
-  "volume"
-  'sh-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
-  2739
-  '(2723 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
-  '((mark-ring (1830 2739 1 1 1 1 1 1 1 1 1 1 2739 2487 2739))))
-
-(desktop-create-buffer 208
-  "/home/alamin/Dropbox/log-files/book-portfolio/book_august_2017.org"
-  "book_august_2017.org"
-  'org-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode page-break-lines-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode)
-  95808
-  '(95481 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines . t))
-  '((mark-ring (1 95381))))
-
-(desktop-create-buffer 208
-  "/home/alamin/dotfiles/.emacs.d/recentf"
-  "recentf"
-  'fundamental-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode)
-  1
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . utf-8-emacs-unix))
   '((mark-ring nil)))
 

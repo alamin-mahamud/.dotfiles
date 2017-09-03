@@ -171,3 +171,5 @@
 ;; coding: utf-8
 ;; no-byte-compile: t
 ;; End:
+
+(set-face-attribute 'default nil :height 80)

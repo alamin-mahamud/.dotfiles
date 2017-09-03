@@ -425,9 +425,10 @@ bindsym Mod1+F3 exec pactl set-sink-mute 0 0 && pactl set-sink-volume 0 150%
 
 # WallPaper Looper
 # Set background
-#exec --no-startup-id feh --bg-fill $HOME/.config/wallpapers/arch.jpg
+exec --no-startup-id feh --bg-fill -D 10 -z $HOME/.config/wallpapers/
+
 #exec_always --no-startup-id nitrogen --restore
-exec_always --no-startup-id $HOME/scripts/wall.sh
+#exec_always --no-startup-id $HOME/scripts/wall.sh
 #exec --no-startup-id ~/.i3/bin/wallpaper.sh
 
 # NM

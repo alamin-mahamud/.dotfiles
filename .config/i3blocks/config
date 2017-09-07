@@ -75,7 +75,7 @@ interval=1
 #border=#00ff00
 align=center
 instance=wlp6s0
-min_width=80
+#min_width=80
 
 [bandwidth]
 command=$HOME/scripts/bandwidth
@@ -83,7 +83,7 @@ interval=1
 #border=#00ff00
 align=center
 instance=enp7s0
-min_width=100
+#min_width=100
 
 #[temperature]
 #command=echo "$($HOME/scripts/temperature.sh 'Core 0') $($HOME/scripts/temperature.sh 'Core 1') "
@@ -116,7 +116,7 @@ label= 
 interval=30
 command=$HOME/scripts/space
 #border=#fffafa
-min_width=80
+#min_width=80
 align=center
 
 #[battery]

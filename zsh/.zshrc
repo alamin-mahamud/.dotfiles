@@ -23,7 +23,7 @@ export TERM=xterm-256color
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/alamin/.oh-my-zsh
+export ZSH=/home/alamin/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -50,7 +50,7 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-ENABLE_CORRECTION="true"
+#ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 # COMPLETION_WAITING_DOTS="true"
@@ -107,9 +107,14 @@ source $ZSH/oh-my-zsh.sh
 alias w1="sudo ./wifi.sh"
 alias w2="sudo nmcli con up 'WE WiFi'"
 alias zipdot="rm -rf ~/Dropbox/dotfiles.zip && zip -r ~/Dropbox/dotfiles.zip ~/dotfiles"
+alias em='emacs25 -nw'
+alias emacs='emacs25'
+alias tm='tmux new-session -s'
+
+
 
 
 fortune
 #screenfetch -D arch -E
-#neofetch 
+#neofetch
 neofetch --ascii_distro redhat --ascii_colors distro

@@ -2,19 +2,19 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Sun Sep  3 00:41:28 2017
+;; Created Thu Sep  7 08:59:21 2017
 ;; Desktop file format version 208
-;; Emacs version 25.2.1
+;; Emacs version 25.1.1
 
 ;; Global section:
-(setq desktop-saved-frameset [frameset 1 (22954 64344 795181 50000) (desktop . "208") "alamin@laptop" nil nil ((((font-backend xft x) (font . "-DAMA-Ubuntu Mono-normal-normal-normal-*-17-*-*-*-m-0-iso10646-1") (font-parameter . "Ubuntu Mono 13") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#eaeaea") (background-color . "#000000") (mouse-color . "black") (border-color . "#424242") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (scroll-bar-foreground . "#ebdbb2") (scroll-bar-background . "#ebdbb2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (fullscreen) (display-type . color) (background-mode . dark) (cursor-color . "#d54e53") (environment) (sticky) (frameset--id . "CCB2-7248-DB4F-0404") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (visibility . t) (height . 21) (width . 74) (left . 0) (top . 401)) ((min-height . 4) (min-width . 10) (min-height-ignore . 2) (min-width-ignore . 4) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 68) (min-pixel-width . 90) (min-pixel-height-ignore . 34) (min-pixel-width-ignore . 36) (min-pixel-height-safe . 17) (min-pixel-width-safe . 18)) leaf (pixel-width . 683) (pixel-height . 350) (total-width . 75) (total-height . 20) (normal-height . 1.0) (normal-width . 1.0) (buffer "env" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1) (start . 1))))])
+(setq desktop-saved-frameset [frameset 1 (22960 46601 957975 874000) (desktop . "208") "alamin@laptop" nil nil ((((tty-type . "xterm-256color") (tty . "/dev/tty") (display-type . color) (background-mode . dark) (foreground-color . "#eaeaea") (cursor-color . "#d54e53") (tool-bar-lines . 0) (vertical-scroll-bars) (menu-bar-lines . 0) (background-color . "#000000") (border-color . "#424242") (font . "tty") (height . 25) (width . 69) (modeline . t) (unsplittable) (internal-border-width . 0) (frameset--id . "4393-089A-6B7F-A3F7") (frameset--mini t) (minibuffer . t)) ((min-height . 4) (min-width . 10) (min-height-ignore . 2) (min-width-ignore . 2) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 4) (min-pixel-width . 10) (min-pixel-height-ignore . 2) (min-pixel-width-ignore . 2) (min-pixel-height-safe . 1) (min-pixel-width-safe . 2)) leaf (pixel-width . 69) (pixel-height . 24) (total-width . 69) (total-height . 24) (normal-height . 1.0) (normal-width . 1.0) (buffer "script0038.sh" (selected . t) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 47) (start . 1))))])
 (setq comint-input-ring nil)
 (setq compile-history nil)
 (setq desktop-missing-file-warning nil)
 (setq dired-regexp-history nil)
-(setq extended-command-history '("lis" "list-color"))
+(setq extended-command-history '("set-fringe-style " "set-fringe" "fringe" "eshell" "linum-mode" "esh" "doc-" "fri" "lis" "list-color"))
 (setq face-name-history nil)
-(setq file-name-history '("/home/alamin/Linux_Playground/Beginning_Linux_Programming/env" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/second_script.sh" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/fred.c" "~/Linux_Playground/Beginning_Linux_Programming/hello2.c" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3lock/i3lock.sh" "~/Linux_Playground/Beginning_Linux_Programming/first_script.sh" "/home/alamin/Dropbox/log-files/all_log.org" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/first_script.sh" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/fred.c" "~/Linux_Playground/Beginning_Linux_Programming/hello2.c" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3lock/i3lock.sh" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/fred.c" "~/Linux_Playground/Beginning_Linux_Programming/hello2.c" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3lock/i3lock.sh" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/fred.c" "~/Linux_Playground/Beginning_Linux_Programming/hello2.c" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3lock/i3lock.sh" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/fred.c" "~/Linux_Playground/Beginning_Linux_Programming/hello2.c" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3lock/i3lock.sh" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/Dropbox/log-files/book-portfolio/book_august_2017.org" "~/Dropbox/log-files/book-portfolio/book_september_2017.org" "~/Dropbox/log-files/all_log.org" "~/Linux_Playground/Beginning_Linux_Programming/hello.c" "~/Linux_Playground/Beginning_Linux_Programming/lib.h" "~/Linux_Playground/Beginning_Linux_Programming/bill.c" "~/Linux_Playground/Beginning_Linux_Programming/fred.c" "~/Linux_Playground/Beginning_Linux_Programming/hello2.c" "~/dotfiles/scripts/i3blocks_scripts/volume" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3lock/i3lock.sh" "~/.emacs.d/org-clock-save.el" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/.config/i3lock/i3lock.sh" "/home/alamin/.config/i3lock/i3lock.sh" "/home/alamin/dotfiles/.i3/config" "~/dotfiles/.config/i3blocks/config" "~/dotfiles/zsh/.zshrc" "~/dotfiles/.i3/config" "~/Dropbox/log-files/book-portfolio/book_august_2017.org"))
+(setq file-name-history '("/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0038.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0037.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0036.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0016.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0018.sh" "~/dotfiles/.emacs.d/recentf" "~/Linux_Playground/Beginning_Linux_Programming/scripts0014.sh" "~/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0020.sh" "~/Dropbox/log-files/all_log.org" "~/dotfiles/.i3/config" "~/Linux_Playground/Beginning_Linux_Programming/script0013.sh" "~/dotfiles/scripts/i3blocks_scripts/iface" "~/dotfiles/.config/i3blocks/config" "~/Linux_Playground/Beginning_Linux_Programming/script0028.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0029.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0030.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0031.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0033.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0032.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0035.sh" "~/.emacs.d/org-clock-save.el" "~/Linux_Playground/Beginning_Linux_Programming/script0035.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0034.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0033.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0032.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0033.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0031.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0030.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0029.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0028.sh" "/home/alamin/dotfiles/.config/i3blocks/config" "~/dotfiles/scripts/i3blocks_scripts/iface" "/home/alamin/scripts/iface" "~/Linux_Playground/Beginning_Linux_Programming/script0013.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0016.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0018.sh" "~/dotfiles/.emacs.d/recentf" "~/Linux_Playground/Beginning_Linux_Programming/scripts0014.sh" "~/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0020.sh" "~/dotfiles/.config/i3blocks/config" "~/Dropbox/log-files/all_log.org" "~/dotfiles/.i3/config" "~/.emacs.d/org-clock-save.el" "~/Linux_Playground/Beginning_Linux_Programming/script0013.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0016.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0018.sh" "~/dotfiles/.emacs.d/recentf" "~/Linux_Playground/Beginning_Linux_Programming/scripts0014.sh" "~/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0020.sh" "~/dotfiles/.i3/config" "~/dotfiles/.config/i3blocks/config" "~/Dropbox/log-files/all_log.org" "~/.emacs.d/org-clock-save.el" "~/Dropbox/log-files/all_log.org" "/home/alamin/Dropbox/log-files/" "~/dotfiles/.config/i3blocks/config" "/home/alamin/.config/i3blocks/config" "~/dotfiles/.i3/config" "/home/alamin/.i3/config" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0020.sh" "~/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0013.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0016.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0018.sh" "~/dotfiles/.emacs.d/recentf" "~/Linux_Playground/Beginning_Linux_Programming/scripts0014.sh" "~/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0013.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0016.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0018.sh" "~/dotfiles/.emacs.d/recentf" "~/Linux_Playground/Beginning_Linux_Programming/scripts0014.sh" "~/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0013.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0016.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0018.sh" "~/dotfiles/.emacs.d/recentf" "~/Linux_Playground/Beginning_Linux_Programming/scripts0014.sh" "~/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0013.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0016.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0018.sh" "~/dotfiles/.emacs.d/recentf" "~/Linux_Playground/Beginning_Linux_Programming/script0018.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0017.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0016.sh" "~/dotfiles/.emacs.d/recentf" "~/dotfiles/tmux/.tmux.conf" "~/Linux_Playground/Beginning_Linux_Programming/s_until.sh" "~/Desktop/resume-master/cv.tex" "~/Linux_Playground/Beginning_Linux_Programming/script0009.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0010.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0007.sh" "~/Linux_Playground/Beginning_Linux_Programming/script0013.sh" "~/Linux_Playground/Beginning_Linux_Programming/scripts0014.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh" "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0015.sj"))
 (setq grep-find-history nil)
 (setq grep-history nil)
 (setq ido-buffer-history nil)
@@ -30,7 +30,7 @@
 (setq read-expression-history nil)
 (setq regexp-history nil)
 (setq regexp-search-ring nil)
-(setq register-alist '((48 . "DISPLAY=:0\nSHLVL=2\n")))
+(setq register-alist '((48 . "1234789012347890\n12347890\n\n12345678900")))
 (setq search-ring '("color" "red" "002b36" "#" "#edb"))
 (setq shell-command-history nil)
 (setq tags-file-name nil)
@@ -38,26 +38,266 @@
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
 (desktop-create-buffer 208
-  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/env"
-  "env"
-  'fundamental-mode
-  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode)
-  1
-  '(2161 nil)
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0038.sh"
+  "script0038.sh"
+  'sh-mode
+  '(overwrite-mode anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  47
+  '(1 nil)
   nil
   nil
-  nil
-  '((mark-ring (2157 2157 2157 1 1 1))))
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode . overwrite-mode-textual))
+  '((mark-ring (1))))
 
 (desktop-create-buffer 208
-  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/second_script.sh"
-  "second_script.sh"
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0037.sh"
+  "script0037.sh"
   'sh-mode
   '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
-  156
+  52
   '(nil nil)
   nil
   nil
   '((buffer-file-coding-system . utf-8-unix))
   '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0036.sh"
+  "script0036.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  1071
+  '(502 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (362 362 1 287 362 362 502))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0035.sh"
+  "script0035.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  1
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (1 1 1 1 1 1 1))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0032.sh"
+  "script0032.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  47
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (1 1))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0033.sh"
+  "script0033.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  45
+  '(45 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0031.sh"
+  "script0031.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  40
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (1 1 40))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0030.sh"
+  "script0030.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  67
+  '(38 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (67))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0029.sh"
+  "script0029.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  90
+  '(90 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (90 1 1 89 90 90 90 90))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0028.sh"
+  "script0028.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  86
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (1 1 86 86))))
+
+(desktop-create-buffer 208
+  "/home/alamin/dotfiles/.config/i3blocks/config"
+  "config"
+  'conf-unix-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode)
+  1632
+  '(603 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (617 617 603 617 228 2131 182 1602 617 617 617 617 617 617 603 1632))))
+
+(desktop-create-buffer 208
+  "/home/alamin/dotfiles/scripts/i3blocks_scripts/iface"
+  "iface"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  1559
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (overwrite-mode))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0013.sh"
+  "script0013.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  547
+  '(547 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-emacs-unix) (overwrite-mode))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/dotfiles/.i3/config"
+  "config"
+  'conf-space-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode)
+  877
+  '(13439 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (6110 6110))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Dropbox/log-files/all_log.org"
+  "all_log.org"
+  'org-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode page-break-lines-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode flycheck-mode)
+  1506
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines . t))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "log-files"
+  'dired-mode
+  '(anzu-mode global-auto-revert-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode diff-hl-dired-mode)
+  233
+  '(nil nil)
+  t
+  '("/home/alamin/Dropbox/log-files/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0020.sh"
+  "script0020.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/scripts0015.sh"
+  "scripts0015.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  1
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (1 1 1 1 1 1 1 76 62 76))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/scripts0014.sh"
+  "scripts0014.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode linum-mode)
+  368
+  '(355 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (355))))
+
+(desktop-create-buffer 208
+  "/home/alamin/dotfiles/.emacs.d/recentf"
+  "recentf"
+  'fundamental-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode company-mode counsel-mode)
+  181
+  '(181 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-emacs-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0018.sh"
+  "script0018.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  478
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (1 1 1 302 426 551))))
+
+(desktop-create-buffer 208
+  "/home/alamin/Linux_Playground/Beginning_Linux_Programming/script0016.sh"
+  "script0016.sh"
+  'sh-mode
+  '(anzu-mode global-auto-revert-mode undo-tree-mode whole-line-or-region-local-mode hes-mode whitespace-cleanup-mode auto-compile-on-load-mode immortal-scratch-mode projectile-mode guide-key-mode goto-address-prog-mode paredit-everywhere-mode bug-reference-prog-mode diff-hl-mode symbol-overlay-mode rainbow-delimiters-mode company-mode counsel-mode flycheck-mode)
+  274
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (1))))
 

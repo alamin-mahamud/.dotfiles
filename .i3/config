@@ -8,7 +8,7 @@
 set $mod Mod4
 font pango:Hack, FontAwesome 12
 floating_modifier $mod
-set $editor termite
+set $editor terminator
 
 # Colors
 
@@ -172,12 +172,10 @@ bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && pkill -R
 bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master 5%- && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioMute exec amixer -q -D pulse sset Master toggle && pkill -RTMIN+1
 
-
 # Pulse Audio controls
 #bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% && pkill --signal SIGRTMIN+12 i3blocks#increase sound volume
 #bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
 #bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
-
 
 bindsym $mod+Shift+v exec --no-startup-id "killall pavucontrol; $HOME/scripts/fullscreen_wrap.sh pavucontrol -t 3"
 
@@ -309,7 +307,6 @@ for_window [class="(?i)pavucontrol" instance="pavucontrol-bar"] move down $heigh
 #assign [class="(?i)eclipse" window_type="normal"] $ws3
 assign [class="(?i)thunderbird"]                  $ws9
 
-
 set $mode_resize resize
 bindsym $mod+r mode "$mode_resize"
 mode "$mode_resize" {
@@ -332,7 +329,6 @@ mode "$mode_resize" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-
 
 bar {
     #verbose yes
@@ -372,15 +368,13 @@ exec --no-startup-id compton -b
 #exec --no-startup-id twmnd
 
 # Startup
-exec --no-startup-id i3-msg 'exec terminator'
-#exec --no-startup-id i3-msg 'workspace 2:  ; exec google-chrome'
+exec --no-startup-id i3-msg 'exec terminator &' 
+exec --no-startup-id i3-msg 'fullscreen &'
+#Exec --no-startup-id i3-msg 'workspace 2:  ; exec google-chrome'
 #exec --no-startup-id i3-msg 'workspace 3:  ; exec emacs'
 
-
 # AUTOSTART
-
 exec --no-startup-id compton -b
-
 
 #exec --no-startup-id blueman-applet &
 #exec --no-startup-id redshift-gtk &
@@ -398,7 +392,6 @@ bindsym Mod1+h exec terminator -e htop
 # flash
 bindsym $mod+grave	exec --no-startup-id ~/scripts/flash_win.sh
 
-
 #Makes the mouse invisible after a brief period
 exec --no-startup-id unclutter -idle 1
 
@@ -409,12 +402,10 @@ bindsym $mod+p [instance="^scratchpad$"] scratchpad show
 exec_always flock -w1 ~/.config/i3/scratchpad/lockfile ~/.i3/scratchpad/perpetual_terminal.sh
 for_window [instance="^scratchpad$"] move scratchpad
 
-
 # toggle mouse
 exec --no-startup-id xinput --disable 12
 bindsym $mod+m exec xinput --disable 12
 bindsym $mod+Shift+m exec xinput --enable 12
-
 
 # dropbox
 bindsym Mod1+Hyper_L exec dropbox start

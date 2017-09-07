@@ -1,1 +1,1 @@
-("~/Linux_Playground/" "~/dotfiles/" "~/.oh-my-zsh/" "~/Competitive-Programming/")
+("~/dotfiles/" "~/Linux_Playground/" "~/.oh-my-zsh/" "~/Competitive-Programming/")

@@ -2,4 +2,3 @@
 .emacs.d/
 !.emacs.d/init.el
 !.emacs.d/README.org
-recentf

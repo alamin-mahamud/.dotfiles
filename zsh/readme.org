@@ -1,0 +1,8 @@
+#+TITLE: ZSH Config
+zsh is a superset of the venerable Bash shell
+
+features:
++ first class funcitons
++ modular enhancements
++ pre-installed on mac
++ fantastic tab completion

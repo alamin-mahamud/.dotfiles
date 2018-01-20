@@ -12,35 +12,34 @@ export LANG=C
 print_info() {
     info title
     info underline
-
     info "OS" distro
     info "Model" model
     info "Kernel" kernel
     info "Uptime" uptime
-    info "Packages" packages
-    info "Shell" shell
     info "Resolution" resolution
-    info "DE" de
-    info "WM" wm
-    info "WM Theme" wm_theme
-    info "Theme" theme
-    info "Icons" icons
-    info "Terminal" term
-    info "Terminal Font" term_font
     info "CPU" cpu
     info "GPU" gpu
     info "Memory" memory
-    #info "CPU Usage" cpu_usage
-    #info "Disk" disk
-#    info "Battery" battery
-#    info "Font" font
-#    info "Song" song
+    info "CPU Usage" cpu_usage
+    info "Disk" disk
+    info "Battery" battery
 #    info "Local IP" local_ip
-#    info "Public IP" public_ip
+    info "Public IP" public_ip
 #    info "Users" users
     info "Birthday" birthday
+#    info "Shell" shell
+#    info "Packages" packages
+#    info "DE" de
+#    info "WM" wm
+#    info "WM Theme" wm_theme
+#    info "Theme" theme
+#    info "Icons" icons
+#    info "Terminal" term
+#   info "Terminal Font" term_font
+#    info "Font" font
+#    info "Song" song
 
-info line_break
+    info line_break
     info cols
     info line_break
 }
@@ -489,7 +488,7 @@ disk_display="off"
 # Flag:     --image
 #
 # NOTE: Change this to 'wallpaper', '/path/to/img' or /path/to/dir/' to enable image mode. You can also launch neofetch with '--image wallpaper' and etc.
-image_source="$(artwork)"
+#image_source="$(artwork)"
 
 # Thumbnail directory
 #

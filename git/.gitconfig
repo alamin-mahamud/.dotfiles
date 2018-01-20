@@ -17,6 +17,7 @@
     diff = auto
     status = auto
     branch = auto
+	ui = true
 [push]
     default = simple
 [merge]
@@ -28,3 +29,7 @@
 	fontdiff = -family Hack -size 11 -weight normal -slant roman -underline 0 -overstrike 0
 [credential]
 	helper = cache --timeout=86400
+[commit]
+        template = ~/.gitmessage
+[core]
+	editor = emacsclient

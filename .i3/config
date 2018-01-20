@@ -5,26 +5,27 @@
 #                                                                                                             #
 # Sets i3 settings for the session                                                                            #
 ###############################################################################################################
+
 set $mod Mod4
 font pango:Hack, FontAwesome 12
 floating_modifier $mod
-set $editor terminator
 
-# Colors
-
+# Color
+set_from_resource $black       color0  #000000
 set_from_resource $darkred     color1  #000000
-set_from_resource $red         color9  #000000
 set_from_resource $darkgreen   color2  #000000
-set_from_resource $green       color10 #000000
 set_from_resource $darkyellow  color3  #000000
-set_from_resource $yellow      color11 #000000
 set_from_resource $darkblue    color4  #000000
-set_from_resource $blue        color12 #000000
 set_from_resource $darkmagenta color5  #000000
-set_from_resource $magenta     color13 #000000
 set_from_resource $darkcyan    color6  #000000
-set_from_resource $cyan        color14 #000000
 set_from_resource $darkwhite   color7  #000000
+set_from_resource $darkgrey    color8  #000000
+set_from_resource $red         color9  #000000
+set_from_resource $green       color10 #000000
+set_from_resource $yellow      color11 #000000
+set_from_resource $blue        color12 #000000
+set_from_resource $magenta     color13 #000000
+set_from_resource $cyan        color14 #000000
 set_from_resource $white       color15 #000000
 
 # Use custom colors for black
@@ -32,18 +33,18 @@ set $black       #282828
 set $darkblack   #1d2021
 set $transparent #282828
 
-set $height 34
+set $height 36
 
-set $ws1  "1:  "
-set $ws2  "2:  "
-set $ws3  "3:  "
-set $ws4  "4:  "
-set $ws5  "5:  "
-set $ws6  "6:  "
-set $ws7  "7:  "
-set $ws8  "8:  "
-set $ws9  "9:  "
-set $ws10 "10:  "
+set $ws1  "1:  "
+set $ws2  "2:  "
+set $ws3  "3:  "
+set $ws4  "4:  "
+set $ws5  "5:  "
+set $ws6  "6:  "
+set $ws7  "7:  "
+set $ws8  "8:  "
+set $ws9  "9:  "
+set $ws10 "10:  "
 
 set $default_gaps_inner 0
 set $default_gaps_outer 0
@@ -58,7 +59,7 @@ floating_minimum_size -1 x -1
 floating_maximum_size -1 x -1
 
 #                       BORDER      BACKGROUND  TEXT        INDICATOR   CHILD_BORDER
-client.focused          $black      $black      $white  $dark#black  $darkblack
+client.focused          $black      $black      $white  $dark $darkblack  #darkblack
 client.unfocused        $black      $black      $darkwhite      $darkblack  $darkblack
 client.focused_inactive $black      $black      $darkwhite      $darkblack  $darkblack
 client.urgent           $darkred    $darkred    $black      $darkred    $darkred
@@ -73,7 +74,7 @@ client.background       $black
 
 
 # start a terminal
-bindsym $mod+Shift+Return exec /home/alamin/bin/terminal
+bindsym $mod+Shift+Return exec gnome-terminal
 bindsym $mod+Return exec terminator
 
 # kill focused window
@@ -81,8 +82,7 @@ bindsym $mod+Shift+q kill
 
 # start rofi (a program launcher)
 bindsym $mod+d exec --no-startup-id "rofi -combi-modi drun,run -show combi"
-#bindsym $mod+d exec --no-startup-id rofi -show run
-bindsym $mod+Shift+d exec --no-startup-id rofi -show window
+bindsym $mod+Shift+d exec --no-startup-id rofi -show run
 bindsym Mod1+Tab exec --no-startup-id rofi -show window
 
 # change focus
@@ -207,6 +207,14 @@ mode "$mode_power" {
     bindsym Escape mode "default"
 }
 
+set $mode_apps 'G E'
+bindsym $mod+x mode "$mode_apps"
+mode "$mode_apps" {
+     bindsym g mode "default", exec --no-startup-id google-chrome
+     bindsym e mode "default", exec --no-startup-id emacs
+     bindsym Return mode "default"
+     bindsym Escape mode "default"
+}
 set $mode_gaps gaps
 set $mode_gaps_outer outer gaps
 set $mode_gaps_inner inner gaps
@@ -293,6 +301,8 @@ for_window [class="(?i)VirtualBox" title="(?i)Manager"] floating enable
 for_window [class="(?i)VirtualBox"] floating enable
 for_window [class="(?i)blueman"] floating enable
 for_window [class="(?i)pinentry"] floating enable
+for_window [class="(?i)skype"] floating disable
+for_window [class="(?i)vlc"] floating disable
 
 #for_window [instance="sun-awt-X11-XFramePeer"] floating enable
 for_window [instance="__scratchpad"] floating enable
@@ -302,10 +312,6 @@ for_window [class="(?i)recordmydesktop"] floating enable
 for_window [class="(?i)pavucontrol"] floating enable, move position mouse
 for_window [class="(?i)pavucontrol" instance="pavucontrol-bar"] move down $height px
 
-#assign [class="(?i)chrome"]                       $ws1
-#assign [class="(?i)eclipse" window_type="splash"] $ws3
-#assign [class="(?i)eclipse" window_type="normal"] $ws3
-assign [class="(?i)thunderbird"]                  $ws9
 
 set $mode_resize resize
 bindsym $mod+r mode "$mode_resize"
@@ -344,6 +350,7 @@ bar {
     #tray_output LVDS-0
     tray_padding 0
     height $height
+    mode hide
 
     colors {
         statusline         $white
@@ -351,30 +358,56 @@ bar {
         separator          $red
 
 #                          BORDER       BACKGROUND   TEXT
-        focused_workspace  $white       $transparent $white
+        focused_workspace  $white      $transparent $white
         inactive_workspace $transparent $transparent $white
         active_workspace   $transparent $transparent $red
         urgent_workspace   $transparent $transparent $red
-        binding_mode       $white       $transparent $white
+        binding_mode       $white      $transparent $white
     }
 }
-
 
 
 # Compositing Manager
 exec --no-startup-id compton -b
 
 # Tiling Window Manager Notification Daemon
-#exec --no-startup-id twmnd
+exec --no-startup-id twmnd
+
+# Workspace assignment
+assign [class="^Terminator$"] → $ws1
+assign [class="^Emacs$"] → $ws2
+assign [class="^Google-chrome$"] → $ws3
+assign [class="^Spotify$"] → $ws4
+assign [class="^Thunderbird$"] → $ws5
+assign [class="^Transmission-gtk$"] → $ws6
+assign [class="^vlc$"] → $ws7
+assign [class="^Cheese$"] → $ws7
+assign [class="^Skype$"] → $ws8
+assign [class="^Messenger for Desktop$"] → $ws8
+assign [class="^Nautilus$"] → $ws9
+assign [class="^Filezilla$"] → $ws9
+assign [class="^Evince$"] → $ws10
+
+# spotify workaround
+for_window [class="Spotify"] move to workspace $ws4
 
 # Startup
-exec --no-startup-id i3-msg 'exec terminator &' 
-exec --no-startup-id i3-msg 'fullscreen &'
-#Exec --no-startup-id i3-msg 'workspace 2:  ; exec google-chrome'
-#exec --no-startup-id i3-msg 'workspace 3:  ; exec emacs'
+exec --no-startup-id i3-msg 'exec emacs'
+exec --no-startup-id i3-msg 'exec terminator'
+exec --no-startup-id i3-msg 'exec google-chrome'
+exec --no-startup-id i3-msg 'exec spotify'
+exec --no-startup-id i3-msg 'exec thunderbird'
+exec --no-startup-id i3-msg 'exec transmission-gtk'
+exec --no-startup-id i3-msg 'exec vlc'
+exec --no-startup-id i3-msg 'exec cheese'
+exec --no-startup-id i3-msg 'exec skypeforlinux'
+exec --no-startup-id i3-msg 'exec messengerfordesktop'
+exec --no-startup-id i3-msg 'exec nautilus'
+exec --no-startup-id i3-msg 'exec filezilla'
+exec --no-startup-id i3-msg 'exec dropbox start'
+exec --no-startup-id i3-msg 'exec evince'
 
 # AUTOSTART
-exec --no-startup-id compton -b
 
 #exec --no-startup-id blueman-applet &
 #exec --no-startup-id redshift-gtk &
@@ -384,10 +417,6 @@ exec --no-startup-id compton -b
 
 exec_always --no-startup-id "pgrep --exact xev || xev -root -event randr | grep --line-buffered ScreenChangeNotify | while read change; do pkill -RTMIN+4 i3blocks; done"
 
-# ranger
-bindsym Mod1+r exec terminator -e ranger
-# htop
-bindsym Mod1+h exec terminator -e htop
 
 # flash
 bindsym $mod+grave	exec --no-startup-id ~/scripts/flash_win.sh
@@ -398,12 +427,12 @@ exec --no-startup-id unclutter -idle 1
 hide_edge_borders both
 
 # use scratchpad
-bindsym $mod+p [instance="^scratchpad$"] scratchpad show
-exec_always flock -w1 ~/.config/i3/scratchpad/lockfile ~/.i3/scratchpad/perpetual_terminal.sh
-for_window [instance="^scratchpad$"] move scratchpad
+#bindsym $mod+p [instance="^scratchpad$"] scratchpad show
+#exec_always flock -w1 ~/.config/i3/scratchpad/lockfile ~/.i3/scratchpad/perpetual_terminal.sh
+#for_window [instance="^scratchpad$"] move scratchpad
 
-# toggle mouse
-exec --no-startup-id xinput --disable 12
+#manage toggle mouse
+exec --no-startup-id xinput --enable 12
 bindsym $mod+m exec xinput --disable 12
 bindsym $mod+Shift+m exec xinput --enable 12
 
@@ -412,15 +441,16 @@ bindsym Mod1+Hyper_L exec dropbox start
 bindsym Mod1+Shift+Hyper_L exec dropbox stop
 
 # Max Sound
-bindsym Mod1+F3 exec pactl set-sink-mute 0 0 && pactl set-sink-volume 0 150%
+bindsym Mod1+F12 exec pactl set-sink-mute 0 0 && pactl set-sink-volume 0 150%
 
 # WallPaper Looper
 # Set background
-exec --no-startup-id feh --bg-fill -D 10 -z $HOME/.config/wallpapers/
-
+exec --no-startup-id feh --bg-fill $HOME/.config/wallpapers/282828.png
+#exec --no-startup-id feh --bg-fill -D 1 -z ~/home/alamin/.config/wallpapers/
 #exec_always --no-startup-id nitrogen --restore
 #exec_always --no-startup-id $HOME/scripts/wall.sh
 #exec --no-startup-id ~/.i3/bin/wallpaper.sh
+#exec --no-startup-id xsetroot -solid "#333333"
 
 # NM
-exec --no-startup-id nm-applet &
+exec --no-startup-id nm-applet

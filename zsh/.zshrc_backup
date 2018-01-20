@@ -1,0 +1,32 @@
+#emacs
+alias sem='sudo emacs -nw'
+alias em='emacsclient'
+alias zshrc='emacsclient ~/.zshrc'
+alias tm='tmux new-session -s'
+alias ldm='sudo systemctl start lightdm.service'
+alias s='startx'
+alias iy='sudo apt-get install -y'
+
+
+# django
+alias run_='python manage.py runserver'
+
+# virtualenvs
+VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/work
+source ~/.local/bin/virtualenvwrapper.sh
+
+# fonts
+source ~/.fonts/*.sh
+
+# path
+PATH=$PATH:~/Downloads/Linux/node/bin
+PATH=$PATH:~/.local/bin
+
+# folder shortcuts
+alias dlab_=/home/alamin/work/python/django/Django-Lab
+alias port_='/home/alamin/work/python/django/portfolio/'
+
+#tm  $$
+neofetch --ascii_distro redhat --ascii_colors distro

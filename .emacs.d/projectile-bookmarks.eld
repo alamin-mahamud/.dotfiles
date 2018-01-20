@@ -1,1 +1,1 @@
-("~/dotfiles/" "~/Linux_Playground/" "~/.oh-my-zsh/" "~/Competitive-Programming/")
+("~/Dropbox/dotfiles/" "~/Dropbox/dotfiles/.emacs.d/" "~/Dropbox/work/python/python-learning/" "~/Dropbox/work/Competitive-Programming/")

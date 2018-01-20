@@ -14,7 +14,7 @@ ln -sf $DOT/git/.gitconfig
 ln -sf $DOT/git/.gitignore
 ln -sf $DOT/git/.gitmessage
 
-ln -sf $DOT/scripts
+ln -sf $DOT/scripts/scripts
 
 ln -sf $DOT/.fonts
 

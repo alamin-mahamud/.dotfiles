@@ -1,6 +1,5 @@
 # A colorful shell is a happy shell. But the escaped codes are arcane and miserable to work with.
 
-
 autoload colors; colors
 
 # The variables are wrapped in \%\{\%\}. This should be the case for every

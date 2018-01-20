@@ -18,15 +18,19 @@
 # My dotfiles
 
 ```
-scripts   ➔ executable scripts
 .i3       ➔ window manager config
+git       ➔ source control config and aliases
+zsh       ➔ shell
+emacs     ➔ text-editor/ide/shell OMG this is an OS
+tmux      ➔ terminal multiplexer and a lot of things
+bash      ➔ backup bash configs
+fonts     ➔ all the fonts i need 
+scripts   ➔ executable scripts
 compton   ➔ display compositor
 dunst     ➔ notification config and related icons
-git       ➔ source control config and aliases
 gtk       ➔ custom css for modifying gtk apps
 neofetch  ➔ system info script config
 ranger    ➔ file manager config
-zsh       ➔ shell
 ```
 
 # First Look 
@@ -34,3 +38,8 @@ zsh       ➔ shell
 
 # Workflow
 ![Simple i3 Workflow](http://i.imgur.com/6Wwzlll.png "A Workflow Demo")
+
+# Steps
+1. Install Symlinks
+2. Install Programs
+3. Set Configs

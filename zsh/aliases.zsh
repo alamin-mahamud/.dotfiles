@@ -129,3 +129,51 @@ alias nomz='ps aux | less'
 alias nomnom='killall'
 alias cya='reboot'
 alias kthxbai='halt'
+
+#emacs
+alias sem='sudo emacs -nw'
+alias em='emacsclient'
+alias emt='emacsclient -t'
+
+alias zshrc='emacsclient ~/.zshrc'
+alias tm='tmux new-session -s'
+alias ldm='sudo systemctl start lightdm.service'
+alias s='startx'
+alias iy='sudo apt-get install -y'
+
+# django
+alias run_='python manage.py runserver'
+
+# virtualenvs
+VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/work
+source ~/.local/bin/virtualenvwrapper.sh
+
+# pip
+export PIP_REQUIRE_VIRTUALENV=true
+export PIP_DOWNLOAD_CACHE=$HOME/.pip/cache
+gpip() {
+    PIP_REQUIRE_VIRTUALENV="" pip "$@"
+}
+
+# tree
+alias tree='tree -L 1'
+
+# folder shortcuts
+alias dlab_=/home/alamin/work/python/django/Django-Lab
+alias port_='/home/alamin/work/python/django/portfolio/'
+
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+
+# cpp
+alias _cp='/home/alamin/work/Competitive-Programming/'
+alias _cpp='g++ -std=c++11'
+
+# django
+alias run_='python manage.py runserver'
+
+
+# fonts
+source ~/.fonts/*.sh

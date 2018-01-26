@@ -1,0 +1,56 @@
+# ~/.tmuxinator/sysadmin.yml
+
+name: sysadmin
+root: ~/
+
+# Optional tmux socket
+# socket_name: foo
+
+# Runs before everything. Use it to start daemons etc.
+# pre: sudo /etc/rc.d/mysqld start
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+# startup_window: editor
+
+# Specitifes (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
+# startup_pane: 1
+
+# Controls whether the tmux session should be attached to automatically. Defaults to true.
+attach: false
+
+# Runs after everything. Use it to attach to tmux with custom options etc.
+# post: tmux -CC attach -t sysadmin
+
+windows:
+  - status_things:
+      layout: main-horizontal
+      panes:
+        - top
+        - uptime
+        - whoami
+  - io_things:
+      layout: tiled
+      panes:
+        - lsof
+        - iostat -w 10
+        - netstat
+        - vim
+  - more_things:
+      layout: main-vertical
+      panes:
+        - is_my_machine_alive:
+          - ping localhost
+        - run_several_commands:
+          - cd /
+          - cd var
+          - cd log
+          - ls

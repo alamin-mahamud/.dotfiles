@@ -233,9 +233,14 @@ tmux_conf_copy_to_os_clipboard=false
 #set -g history-limit 10000
 
 # start with mouse mode enabled
-#set -g mouse on
+set -g mouse on
 
 # force Vi mode
 #   really you should export VISUAL or EDITOR environment variable, see manual
 #set -g status-keys vi
 #set -g mode-keys vi
+
+# prompt
+unbind-key %
+bind-key % command-prompt
+bind X confirm-before kill-session

@@ -22,35 +22,39 @@ root: ~/
 # startup_window: editor
 
 # Specitifes (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
-# startup_pane: 1
+startup_pane: 1
 
 # Controls whether the tmux session should be attached to automatically. Defaults to true.
-attach: false
+attach: true
 
 # Runs after everything. Use it to attach to tmux with custom options etc.
 # post: tmux -CC attach -t sysadmin
 
 windows:
   - status_things:
-      layout: main-horizontal
+      layout: 807a,191x55,0,0{113x55,0,0[113x27,0,0,67,113x27,0,28,72],77x55,114,0[77x14,114,0,73,77x12,114,15,74,77x12,114,28,75,77x14,114,41,76]}
+      panes: 
+        - htop
+        - 
+        - cmatrix -B -C red
+        - echo "d" | nmon
+        - echo "n" | nmon
+        - echo "m" | nmon
+  - io_things:
+      layout: 3d98,191x55,0,0{100x55,0,0,29,90x55,101,0,34}
       panes:
         - top
-        - uptime
-        - whoami
-  - io_things:
-      layout: tiled
+        - sudo nethogs
+  - file_manager:
       panes:
-        - lsof
-        - iostat -w 10
-        - netstat
-        - vim
+        - ranger
+  - music:
+      panes:
+        - cmus
   - more_things:
-      layout: main-vertical
+      layout: d514,191x55,0,0{115x55,0,0,14,75x55,116,0,19}
       panes:
-        - is_my_machine_alive:
-          - ping localhost
         - run_several_commands:
-          - cd /
-          - cd var
-          - cd log
-          - ls
+          - 
+        - is_my_machine_alive:
+          - ping localhost | lolcat

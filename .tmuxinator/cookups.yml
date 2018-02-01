@@ -10,7 +10,7 @@ root: ~/work/Cookups/Cookups-backend/backend2
 # pre: sudo /etc/rc.d/mysqld start
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
-pre_window: workon cookups && cd ~/work/Cookups/Cookups-backend/backend2
+pre_window: clear && workon cookups && cd ~/work/Cookups/Cookups-backend/backend2 
 
 # Pass command line options to tmux. Useful for specifying a different tmux.conf.
 # tmux_options: -f ~/.tmux.mac.conf
@@ -22,7 +22,7 @@ pre_window: workon cookups && cd ~/work/Cookups/Cookups-backend/backend2
 # startup_window: editor
 
 # Specitifes (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
-# startup_pane: 1
+startup_pane: 1
 
 # Controls whether the tmux session should be attached to automatically. Defaults to true.
 attach: false
@@ -31,13 +31,19 @@ attach: false
 # post: tmux -CC attach -t cookups
 
 windows:
-  - zsh: ls -l
-  - shell: ./manage.py shell
-  - database: ./manage.py dbshell
-  - server: ./manage.py runserver
+  - git:
+      layout: ebbc,136x39,0,0{90x39,0,0,99,45x39,91,0[45x12,91,0,104,45x12,91,13,105,45x13,91,26,106]}
+      panes:
+        - git log --date=local --pretty=format:"%h%x09%s%x09%an%x09%ad" --oneline --graph --decorate
+        - git status --short | lolcat
+        - git branch | lolcat
+        - git pull origin/dev
+  - shell: clear && ./manage.py shell
+  - database: clear && ./manage.py dbshell
+  - server: clear && ./manage.py runserver
   - logs:
       layout: even-horizontal
       panes:
-        - tail -f /opt/local/var/log/nginx/access.log
-        - tail -f /opt/local/var/log/nginx/error.log
-        - sudo python -m smtpd -n -c DebuggingServer localhost:1994
+        - services: redis-server
+        - elasticsearch:  elasticsearch
+        - q: ./manage.py rqworker default

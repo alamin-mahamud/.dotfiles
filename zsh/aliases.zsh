@@ -96,7 +96,6 @@ alias off="deactivate"
 # -------------------------------------------------------------------
 # Oddball stuff
 # -------------------------------------------------------------------
-alias 'sloc=/usr/local/sloccount/bin/sloccount'
 alias 'adventure=emacs -batch -l dunnet' # play adventure in the console
 alias 'ttop=top -ocpu -R -F -s 2 -n30' # fancy top
 alias 'rm=rm -i' # make rm command (potentially) less destructive
@@ -141,11 +140,14 @@ alias ldm='sudo systemctl start lightdm.service'
 alias s='startx'
 alias iy='sudo apt-get install -y'
 
+### Python
+alias py_test='python3 -m unittest -v'
+
 # django
 alias run_='python manage.py runserver'
 
 # virtualenvs
-VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
+export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/work
 source ~/.local/bin/virtualenvwrapper.sh
@@ -171,9 +173,12 @@ alias pbpaste='xclip -selection clipboard -o'
 alias _cp='/home/alamin/work/Competitive-Programming/'
 alias _cpp='g++ -std=c++11'
 
-# django
-alias run_='python manage.py runserver'
-
-
 # fonts
 source ~/.fonts/*.sh
+
+alias _tc='tmuxinator cookups'
+alias _ts='tmuxinator sysadmin'
+alias tc='tmux a -t cookups'
+alias ts='tmux a -t sysadmin'
+alias tc_='tmux kill-session -t cookups'
+alias ts_='tmux kill-session -t sysadmin'

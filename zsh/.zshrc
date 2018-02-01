@@ -27,6 +27,8 @@ source $ZSH_FOLDER/z.sh
 #source $ZSH_FOLDER/om.zsh
 #source $ZSH_FOLDER/zsh_hooks.zsh
 
-tmux a
-clear
+# load all tmux sessions
+_tc
+_ts
+
 neofetch --ascii_distro redhat --ascii_colors distro

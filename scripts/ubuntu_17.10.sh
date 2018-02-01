@@ -12,7 +12,13 @@ sudo apt-get install -y \
 	   zsh  \
 	   terminator \
 	   tmux \
-	   filezilla
+	   filezilla \
+           obs \
+           lolcat
+
+# install tmuxinator
+# first you need to install ruby
+# then gem install tmuxinator
 
 # skypeforlinux \ messengerfordesktop \ spotify
 

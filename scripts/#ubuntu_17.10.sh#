@@ -10,13 +10,29 @@ sudo apt-get install -y \
 	   curl \
     	   git  \
 	   zsh  \
-	   terminator
+	   terminator \
+	   tmux \
+	   filezilla \
+           kazam # kazam is a screen recorder
+
+# install tmuxinator
+# first you need to install ruby
+# then gem install tmuxinator
+
+# skypeforlinux \ messengerfordesktop \ spotify
 
 # python
 sudo apt-get install -y \
 	   python3 \
 	   python3-pip 
 sudo pip3 install virtualenvwrapper
+
+# awesome cli-tools
+sudo apt-get install -y \
+     nmon \
+     cmus \
+     football-cli
+
 
 # i3		
 sudo apt install -y \
@@ -30,7 +46,8 @@ sudo apt install -y \
 	feh \
 	ranger \
 	unclutter \
-	htop
+	htop \
+	arandr
 
 # 8. install i3 gaps
 # install dependencies first

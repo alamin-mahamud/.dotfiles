@@ -183,10 +183,10 @@ bindsym XF86MonBrightnessDown exec --no-startup-id ${HOME}/scripts/backlight.sh 
 bindsym XF86MonBrightnessUp exec --no-startup-id ${HOME}/scripts/backlight.sh -inc 10
 
 # screenshot
-bindsym Print exec --no-startup-id "maim -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/Screenshots/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
-bindsym Shift+Print exec --no-startup-id "maim -s -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/Screenshots/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
+bindsym --release Print exec --no-startup-id "maim -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
+bindsym --release Shift+Print exec --no-startup-id "maim -s -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
 
-bindsym $mod+n exec --no-startup-id thunar
+bindsym $mod+n exec --no-startup-id files
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -381,7 +381,7 @@ assign [class="^Spotify$"] → $ws4
 assign [class="^Thunderbird$"] → $ws5
 assign [class="^Transmission-gtk$"] → $ws6
 assign [class="^vlc$"] → $ws7
-assign [class="^Cheese$"] → $ws7
+assign [class="^obs$"] → $ws7
 assign [class="^Skype$"] → $ws8
 assign [class="^Messenger for Desktop$"] → $ws8
 assign [class="^Nautilus$"] → $ws9
@@ -399,7 +399,7 @@ exec --no-startup-id i3-msg 'exec spotify'
 exec --no-startup-id i3-msg 'exec thunderbird'
 exec --no-startup-id i3-msg 'exec transmission-gtk'
 exec --no-startup-id i3-msg 'exec vlc'
-exec --no-startup-id i3-msg 'exec cheese'
+exec --no-startup-id i3-msg 'exec obs'
 exec --no-startup-id i3-msg 'exec skypeforlinux'
 exec --no-startup-id i3-msg 'exec messengerfordesktop'
 exec --no-startup-id i3-msg 'exec nautilus'
@@ -453,4 +453,39 @@ exec --no-startup-id feh --bg-fill $HOME/.config/wallpapers/282828.png
 #exec --no-startup-id xsetroot -solid "#333333"
 
 # NM
-exec --no-startup-id nm-applet
+exec --no-startup-id nm-applet &
+exec --no-startup-id blueman-applet &
+exec --no-startup-id redshift-gtk &
+
+exec --no-startup-id dunst &
+exec --no-startup-id xedgewarp -b
+
+exec --no-startup-id compton -b
+exec --no-startup-id ibus-daemon --xim
+
+
+# Multi monitor setup
+
+# Home Monitor
+exec_always --no-startup-id xrandr \
+            --output HDMI-0 --off \
+            --output DVI-I-1 --off \
+            --output DVI-I-0 --off \
+            --output DVI-I-3 --mode 1920x1080 --pos 0x0 --rotate normal --primary \
+            --output DVI-I-2 --mode 1920x1080 --pos 1920x0 --rotate normal
+
+# Office Monitor
+
+
+# Assign Workspace default monitors
+workspace $ws1 output HDMI-2
+workspace $ws2 output eDP-1
+workspace $ws3 output HDMI-2
+workspace $ws4 output HDMI-2
+workspace $ws5 output HDMI-2
+workspace $ws6 output HDMI-2
+workspace $ws7 output HDMI-2
+workspace $ws7 output HDMI-2
+workspace $ws8 output eDP-1
+workspace $ws9 output HDMI-2
+workspace $ws10 output HDMI-2

@@ -1,0 +1,19 @@
+1. install i3-gaps
+2. install i3-blocks-gaps [check dependencies]
+3. install powerline fonts
+4. install oh-my-zsh
+
+5. install neofetch
+
+Ubuntu 16.10 and below
+---------------------------------------------------
+#Add PPA
+sudo add-apt-repository ppa:dawidd0811/neofetch
+#Update repositories
+sudo apt update
+#Install the package
+sudo apt install neofetch
+
+6. install fortune
+7. install powerlevel9k
+git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k

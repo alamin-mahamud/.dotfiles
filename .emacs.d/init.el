@@ -8,6 +8,7 @@
 ;;; URL: https://github.com/AlaminMahamud/.emacs.d/init.el
 
 ;;; Code:
+
 (package-initialize)
 
 (require 'ob-tangle)

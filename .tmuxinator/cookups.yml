@@ -37,7 +37,7 @@ windows:
         - git log --date=local --pretty=format:"%h%x09%s%x09%an%x09%ad" --oneline --graph --decorate
         - git status --short | lolcat
         - git branch | lolcat
-        - git pull origin/dev
+        - git pull origin dev
   - shell: clear && ./manage.py shell
   - database: clear && ./manage.py dbshell
   - server: clear && ./manage.py runserver

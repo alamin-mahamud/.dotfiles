@@ -2,6 +2,7 @@
 *
 
 # but not the following files
-!.gitignore
-!.init.el
-!.README.org
+!init.el
+!README.org
+!/snippets
+!/snippets/*

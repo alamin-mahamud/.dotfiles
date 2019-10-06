@@ -71,7 +71,7 @@ function load_britedevenv() {
     # Since 'docker-compose' will now be working across multiple repositories,
     # we'll export a ENV variable that it can read to figure out where all our
     # repos are checked out at.
-    export REPO_DIR="$HOME/Code"
+    export REPO_DIR="$HOME/Work/britecore"
     export BRITEDEVENV_PATH=$REPO_DIR/BriteDevEnv
 
     case "$(uname -s)" in

@@ -127,6 +127,15 @@ function load_pyenv_virtualenv() {
 }
 
 
+function load_gcloud() {
+    # The next line updates PATH for the Google Cloud SDK.
+    if [ -f '/Users/alamin/Work/.source/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/alamin/Work/.source/google-cloud-sdk/path.zsh.inc'; fi
+
+    # The next line enables shell command completion for gcloud.
+    if [ -f '/Users/alamin/Work/.source/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/alamin/Work/.source/google-cloud-sdk/completion.zsh.inc'; fi
+}
+
+
 function main() {
     oh_my_zsh
     set_path
@@ -137,6 +146,8 @@ function main() {
     load_direnv
     load_pyenv
     load_pyenv_virtualenv
+
+    load_gcloud
 
     # TODO: BriteCore
     load_britedevenv

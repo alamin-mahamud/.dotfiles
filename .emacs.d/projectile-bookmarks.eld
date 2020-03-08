@@ -1,1 +1,0 @@
-("~/Dropbox/dotfiles/.emacs.d/" "~/Dropbox/work/Cookups/Cookups-backend/backend2/" "~/Dropbox/dotfiles/" "~/Dropbox/org/books/" "~/Dropbox/work/functional-programming/" "~/Downloads/Linux/emacs-25.3/")

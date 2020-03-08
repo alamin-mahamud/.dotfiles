@@ -1,13 +1,13 @@
 function oh_my_zsh() {
     export ZSH="$HOME/.oh-my-zsh"
-    ZSH_THEME="robbyrussell"
+    ZSH_THEME="robbyrussell-v2"
     plugins=(zsh-autosuggestions)
     source $ZSH/oh-my-zsh.sh
 }
 
 
 function set_path() {
-  export PATH=/usr/local/bin:$PATH
+  export PATH=/usr/local/bin:$HOME/bin/:$HOME/.local/bin:$PATH
 }
 
 
@@ -103,6 +103,12 @@ function load_britedevenv() {
         declare -f "${1}" > /dev/null; return $?
     }
 
+    export GH_USERNAME=alamin-mahamud
+    function bc-ssh {
+        tsh ssh "$GH_USERNAME@$1"
+    }
+
+
 }
 
 
@@ -140,6 +146,7 @@ function main() {
     oh_my_zsh
     set_path
     allow_utf8_local
+    
     remember_my_paths
 
     load_aliases

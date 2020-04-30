@@ -110,9 +110,30 @@ function load_britedevenv() {
 
 }
 
-function bc-ssh() {
-    GITHUB_UNAME='alamin-mahamud'
-    tsh ssh $GITHUB_UNAME@$1
+
+function bc-ssh {
+    if ! [ $1 ]; then
+        echo "Please pass BC site name"
+    else
+        export GH_USERNAME='alamin-mahamud'
+        SERVER_NAME=($(tsh ls | grep "^$1-" | cut -d' ' -f1))
+        echo "Accessing client $1"
+        echo ""
+        tsh ssh "$GH_USERNAME@$SERVER_NAME"
+    fi
+}
+
+
+function bc-consul {
+    if ! [ $1 ]; then
+        echo "Please Pass BC site name"
+    else
+        export GH_USERNAME='alamin-mahamud'
+        SERVER_NAME=($(tsh ls | grep "^$1-" | cut -d' ' -f1))
+        echo "Tunneling $1s in Consul at port 8994"
+        echo ""
+        tsh ssh -L 8500:consul.britecorepro.com:8500 $GH_USERNAME@$SERVER_NAME
+    fi
 }
 
 function load_direnv() {

@@ -1,0 +1,51 @@
+# specify a directory to install
+cask_args appdir: "/Applications"
+
+# install packages
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+tap "homebrew/cask-drivers"
+tap "homebrew/cask-versions"
+tap "homebrew/core"
+tap "homebrew/services"
+
+
+brew 'git'
+brew 'htop'
+brew 'jq'
+brew 'mas'
+brew 'tmux'
+brew 'zsh'
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+
+
+cask 'docker'
+cask 'dropbox'
+cask 'flux'
+cask 'flycut'
+cask 'hazeover'
+cask 'openinterminal'
+
+cask 'qlcolorcode'
+cask 'qlmarkdown' 
+cask 'quicklook-json' 
+cask 'qlimagesize'
+cask 'suspicious-package' 
+cask 'quicklookase'
+cask 'qlvideo'
+
+cask 'sequel-pro'
+cask 'skype'
+cask 'slack'
+cask 'spectacle'
+cask 'spotify'
+cask 'time-out'
+cask 'transmission'
+cask 'vlc'
+cask 'zoomus'
+
+
+# britecore specific
+brew "teleport", args: ["build-from-source"]

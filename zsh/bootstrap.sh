@@ -1,11 +1,11 @@
-DOTFILES_DIR=$HOME/.dotfiles
+DOTFILES_DIR=$HOME/Work/personal/.dotfiles
 ZSH_DIR=$DOTFILES_DIR/zsh
 
 
 function oh_my_zsh() {
     export ZSH="$HOME/.oh-my-zsh"
-    ZSH_THEME="robbyrussell-v2"
-    plugins=(zsh-autosuggestions)
+    ZSH_THEME="robbyrussell"
+    plugins=(git colored-man-pages colorize pip python brew osx zsh-syntax-highlighting zsh-autosuggestions)
     source $ZSH/oh-my-zsh.sh
 }
 
@@ -111,6 +111,31 @@ function load_britedevenv() {
 }
 
 
+function bc-id {
+    if ! [ $1 ]; then
+        echo "Please Pass Instance ID"
+    else
+        export GH_USERNAME='alamin-mahamud'
+        SERVER_NAME=$(tsh ls | grep "$1" | cut -d' ' -f1)
+        echo "Accessing client with instance id : i-$1"
+        echo ""
+        tsh ssh "$GH_USERNAME@$SERVER_NAME"
+    fi
+}
+
+
+function bc-ip {
+    if ! [ $1 ]; then
+        echo "Please Pass Instance's Private IP"
+    else
+        export GH_USERNAME='alamin-mahamud'
+        echo "Accessing client with private IP : $1"
+        echo ""
+        tsh ssh "$GH_USERNAME@$1"
+    fi
+}
+
+
 function bc-ssh {
     if ! [ $1 ]; then
         echo "Please pass BC site name"
@@ -135,6 +160,7 @@ function bc-consul {
         tsh ssh -L 8500:consul.britecorepro.com:8500 $GH_USERNAME@$SERVER_NAME
     fi
 }
+
 
 function load_direnv() {
     eval "$(direnv hook zsh)"
@@ -165,6 +191,7 @@ function load_gcloud() {
     if [ -f '/Users/alamin/Work/.source/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/alamin/Work/.source/google-cloud-sdk/completion.zsh.inc'; fi
 }
 
+
 function main() {
     oh_my_zsh
     set_path
@@ -176,8 +203,8 @@ function main() {
     load_pyenv
     load_pyenv_virtualenv
 
-    load_gcloud
+    #load_gcloud
 
     # TODO: BriteCore
-    load_britedevenv
+    #load_britedevenv
 }

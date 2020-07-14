@@ -1,0 +1,5 @@
+- `mkdir -p ~/Work/personal`
+- `cd ~/Work/personal`
+- `git clone git@github.com:alamin-mahamud/.dotfiles.git`
+- `cd .dotfiles`
+- `source bootstrap.sh`

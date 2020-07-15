@@ -43,6 +43,7 @@ cask 'spectacle'
 cask 'spotify'
 cask 'time-out'
 cask 'transmission'
+cask 'visual-studio-code'
 cask 'vlc'
 cask 'zoomus'
 

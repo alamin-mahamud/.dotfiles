@@ -4,7 +4,7 @@ ZSH_DIR=$DOTFILES_DIR/zsh
 
 function oh_my_zsh() {
     export ZSH="$HOME/.oh-my-zsh"
-    ZSH_THEME="robbyrussell"
+    ZSH_THEME="alamin"
     plugins=(git colored-man-pages colorize pip python brew osx zsh-syntax-highlighting zsh-autosuggestions)
     source $ZSH/oh-my-zsh.sh
 }

@@ -21,6 +21,9 @@
       },
       "homebrew/cask-fonts": {
         "revision": "70b06df1704d77baca7c43e4d5446df1c23d52a3"
+      },
+      "aws/tap": {
+        "revision": "6f0e8cd96755ce2a300df0e3a602b85f4608b7b6"
       }
     },
     "brew": {
@@ -203,6 +206,23 @@
           "args": [
             "build-from-source"
           ]
+        }
+      },
+      "aws-sam-cli": {
+        "version": "0.53.0",
+        "bottle": {
+          "cellar": ":any_skip_relocation",
+          "prefix": "/usr/local",
+          "files": {
+            "sierra": {
+              "url": "https://github.com/awslabs/aws-sam-cli/releases/download/v0.53.0//aws-sam-cli-0.53.0.sierra.bottle.tar.gz",
+              "sha256": "83b61f652611e70e73fb16c4bc5c2f5e1d68975cc211358b99a4002b708b95fe"
+            },
+            "x86_64_linux": {
+              "url": "https://github.com/awslabs/aws-sam-cli/releases/download/v0.53.0//aws-sam-cli-0.53.0.x86_64_linux.bottle.tar.gz",
+              "sha256": "f213f07ca4cb7eb1e0d20fec274928294f4309588850ee45eda15fed265c02c3"
+            }
+          }
         }
       }
     },

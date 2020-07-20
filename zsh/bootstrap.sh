@@ -155,7 +155,7 @@ function bc-consul {
     else
         export GH_USERNAME='alamin-mahamud'
         SERVER_NAME=($(tsh ls | grep "^$1-" | cut -d' ' -f1))
-        echo "Tunneling $1s in Consul at port 8994"
+        echo "Tunneling $1s in Consul at port 8500"
         echo ""
         tsh ssh -L 8500:consul.britecorepro.com:8500 $GH_USERNAME@$SERVER_NAME
     fi

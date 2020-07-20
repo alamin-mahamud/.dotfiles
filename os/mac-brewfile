@@ -9,8 +9,10 @@ tap "homebrew/cask-drivers"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
+tap "aws/tap"
 
 
+brew 'aws-sam-cli'
 brew 'git'
 brew 'htop'
 brew 'jq'
@@ -21,6 +23,7 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
 
+cask 'brave-browser'
 cask 'docker'
 cask 'dropbox'
 cask 'flux'

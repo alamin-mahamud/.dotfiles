@@ -23,7 +23,6 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
 
-cask 'brave-browser'
 cask 'docker'
 cask 'dropbox'
 cask 'flux'
@@ -52,4 +51,5 @@ cask 'zoomus'
 
 
 # britecore specific
+brew 'packer'
 brew "teleport", args: ["build-from-source"]

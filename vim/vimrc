@@ -1,0 +1,10 @@
+" Searching
+set ignorecase " case insensitive searching
+
+" Switch syntax highlightin on
+syntax on
+
+set encoding=utf8
+set relativenumber
+
+set laststatus=2 " show the status line all the time

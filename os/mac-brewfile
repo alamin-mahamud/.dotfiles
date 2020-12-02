@@ -21,6 +21,7 @@ brew 'tmux'
 brew 'zsh'
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
+brew 'reattach-to-user-namespace'
 
 
 cask 'docker'

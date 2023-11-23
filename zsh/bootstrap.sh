@@ -1,11 +1,11 @@
-DOTFILES_DIR=$HOME/Work/personal/.dotfiles
+DOTFILES_DIR=$HOME/Work/.dotfiles
 ZSH_DIR=$DOTFILES_DIR/zsh
 
 
 function oh_my_zsh() {
     export ZSH="$HOME/.oh-my-zsh"
-    ZSH_THEME="alamin"
-    plugins=(git colored-man-pages colorize pip python brew osx zsh-syntax-highlighting zsh-autosuggestions)
+    ZSH_THEME="random"
+    plugins=(git colored-man-pages colorize pip python brew macos zsh-syntax-highlighting zsh-autosuggestions)
     source $ZSH/oh-my-zsh.sh
 }
 
@@ -66,8 +66,14 @@ function load_git_aliases() {
 }
 
 
+function load_c14n_aliases() {
+    alias dc='docker-compose'
+    alias k='kubectl'
+}
+
 function load_aliases() {
   load_git_aliases
+  load_c14n_aliases
 }
 
 

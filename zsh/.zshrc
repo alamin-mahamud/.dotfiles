@@ -1,4 +1,4 @@
-ZSH_DIR=$HOME/Work/personal/.dotfiles/zsh
+ZSH_DIR=$HOME/Work/.dotfiles/zsh
 
 source $ZSH_DIR/bootstrap.sh
 

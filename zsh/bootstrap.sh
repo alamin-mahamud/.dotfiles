@@ -1,6 +1,8 @@
 DOTFILES_DIR=$HOME/Work/.dotfiles
 ZSH_DIR=$DOTFILES_DIR/zsh
 
+export GH_USERNAME=proxyserver2023
+
 
 function oh_my_zsh() {
     export ZSH="$HOME/.oh-my-zsh"
@@ -121,7 +123,6 @@ function bc-id {
     if ! [ $1 ]; then
         echo "Please Pass Instance ID"
     else
-        export GH_USERNAME='proxyserver2023'
         SERVER_NAME=$(tsh ls | grep "$1" | cut -d' ' -f1)
         echo "Accessing client with instance id : i-$1"
         echo ""
@@ -134,7 +135,6 @@ function bc-ip {
     if ! [ $1 ]; then
         echo "Please Pass Instance's Private IP"
     else
-        export GH_USERNAME='proxyserver2023'
         echo "Accessing client with private IP : $1"
         echo ""
         tsh ssh "$GH_USERNAME@$1"
@@ -146,7 +146,6 @@ function bc-ssh {
     if ! [ $1 ]; then
         echo "Please pass BC site name"
     else
-        export GH_USERNAME='proxyserver2023'
         SERVER_NAME=($(tsh ls | grep "^$1-" | cut -d' ' -f1))
         echo "Accessing client $1"
         echo ""
@@ -159,7 +158,6 @@ function bc-consul {
     if ! [ $1 ]; then
         echo "Please Pass BC site name"
     else
-        export GH_USERNAME='proxyserver2023'
         SERVER_NAME=($(tsh ls | grep "^$1-" | cut -d' ' -f1))
         echo "Tunneling $1s in Consul at port 8500"
         echo ""
@@ -204,7 +202,6 @@ function create_tmux_session() {
 	fi
 }
 
-export GH_USERNAME=proxyserver2023
 function tss() {
 if [ $# -eq 0 ]
   then
@@ -233,8 +230,5 @@ function main() {
     load_pyenv_virtualenv
 
     #load_gcloud
-
-    # TODO: BriteCore
-    #load_britedeven
     #create_tmux_session
 }

@@ -1,0 +1,5 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =3
+let g:netrw_dirhist_3='/Users/alamin/.tsh'
+let g:netrw_dirhist_2='/Users/alamin/iCloud Drive (Archive)'
+let g:netrw_dirhist_1='/Users/alamin/Work/personal/nginx/simple-nginx-server/nginx.conf'

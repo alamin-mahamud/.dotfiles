@@ -4,7 +4,7 @@ ZSH_DIR=$DOTFILES_DIR/zsh
 
 function oh_my_zsh() {
     export ZSH="$HOME/.oh-my-zsh"
-    ZSH_THEME="random"
+    ZSH_THEME="af-magic"
     plugins=(git colored-man-pages colorize pip python brew macos zsh-syntax-highlighting zsh-autosuggestions)
     source $ZSH/oh-my-zsh.sh
 }
@@ -121,7 +121,7 @@ function bc-id {
     if ! [ $1 ]; then
         echo "Please Pass Instance ID"
     else
-        export GH_USERNAME='alamin-mahamud'
+        export GH_USERNAME='proxyserver2023'
         SERVER_NAME=$(tsh ls | grep "$1" | cut -d' ' -f1)
         echo "Accessing client with instance id : i-$1"
         echo ""
@@ -134,7 +134,7 @@ function bc-ip {
     if ! [ $1 ]; then
         echo "Please Pass Instance's Private IP"
     else
-        export GH_USERNAME='alamin-mahamud'
+        export GH_USERNAME='proxyserver2023'
         echo "Accessing client with private IP : $1"
         echo ""
         tsh ssh "$GH_USERNAME@$1"
@@ -146,7 +146,7 @@ function bc-ssh {
     if ! [ $1 ]; then
         echo "Please pass BC site name"
     else
-        export GH_USERNAME='alamin-mahamud'
+        export GH_USERNAME='proxyserver2023'
         SERVER_NAME=($(tsh ls | grep "^$1-" | cut -d' ' -f1))
         echo "Accessing client $1"
         echo ""
@@ -159,7 +159,7 @@ function bc-consul {
     if ! [ $1 ]; then
         echo "Please Pass BC site name"
     else
-        export GH_USERNAME='alamin-mahamud'
+        export GH_USERNAME='proxyserver2023'
         SERVER_NAME=($(tsh ls | grep "^$1-" | cut -d' ' -f1))
         echo "Tunneling $1s in Consul at port 8500"
         echo ""
@@ -197,6 +197,29 @@ function load_gcloud() {
     if [ -f '/Users/alamin/Work/.source/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/alamin/Work/.source/google-cloud-sdk/completion.zsh.inc'; fi
 }
 
+function create_tmux_session() {
+	if [ -z "$TMUX" ] && [ ${UID} != 0 ]
+	then
+		tmux new-session -A -s main
+	fi
+}
+
+export GH_USERNAME=proxyserver2023
+function tss() {
+if [ $# -eq 0 ]
+  then
+    echo "Please enter a client name"
+  else
+    options_to_login=(`tsh ls | grep $1 | cut -c 1-43`)
+    echo "Please select an instance"
+    select opt in ${options_to_login[@]}
+    do
+      echo "Accessing" $opt
+      tsh ssh $GH_USERNAME@$opt
+      break
+    done
+  fi
+}
 
 function main() {
     oh_my_zsh
@@ -212,5 +235,6 @@ function main() {
     #load_gcloud
 
     # TODO: BriteCore
-    #load_britedevenv
+    #load_britedeven
+    #create_tmux_session
 }

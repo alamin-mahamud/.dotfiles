@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Exit immediately if a command exits with a non-zero status
-set -e
+# set -e
 
 # Global Variables
-K8S_POD_NETWORK_CIDR="192.168.0.0/16"
+K8S_POD_NETWORK_CIDR="10.244.0.0/16"
 CALICO_MANIFEST_URL="https://docs.projectcalico.org/manifests/calico.yaml"
 
 # Function: Print a message with a timestamp
@@ -25,19 +25,8 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Function: Pre-flight Checks
-pre_flight_checks() {
-    log "Performing pre-flight checks..."
 
-    # Check for necessary commands
-    for cmd in apt curl modprobe kubeadm; do
-        if ! command_exists "$cmd"; then
-            log "Error: $cmd is not installed. Please install it before running the script."
-            exit 1
-        fi
-    done
-
-    # Check system resources
+check_system_resources() {
     CPU_CORES=$(nproc --all)
     MEMORY=$(free -m | awk '/^Mem:/{print $2}')
     DISK_SPACE=$(df / | awk 'NR==2 {print $4}')
@@ -56,7 +45,22 @@ pre_flight_checks() {
         log "Error: At least 20GB of disk space is required. Detected: ${DISK_SPACE}KB"
         exit 1
     fi
+}
 
+check_necessary_cmds() {
+    for cmd in apt curl modprobe; do
+        if ! command_exists "$cmd"; then
+            log "Error: $cmd is not installed. Please install it before running the script."
+            exit 1
+        fi
+    done
+}
+
+# Function: Pre-flight Checks
+pre_flight_checks() {
+    log "Performing pre-flight checks..."
+    check_necessary_cmds
+    check_system_resources
     log "Pre-flight checks passed."
 }
 
@@ -154,25 +158,47 @@ EOF
 # Function: Install Kubernetes Components
 install_kubernetes_components() {
     log "Adding Kubernetes apt repository..."
-    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+    sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+    curl -fsSL https://pkgs.k8s.io/core:/stable/deb/Release.key | sudo apt-key add -
+    echo "deb https://pkgs.k8s.io/core:/stable/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
     log "Installing kubelet, kubeadm, and kubectl..."
-    apt update
-    apt install -y kubelet kubeadm kubectl
+    sudo apt update
+    sudo apt install -y kubelet kubeadm kubectl
 
     log "Holding kubelet, kubeadm, and kubectl at current versions..."
-    apt-mark hold kubelet kubeadm kubectl
+    sudo apt-mark hold kubelet kubeadm kubectl
 }
 
 # Function: Initialize Kubernetes Cluster
 initialize_kubernetes() {
-    log "Initializing Kubernetes single-node cluster..."
+log "Initializing Kubernetes single-node cluster..."
 
-    # Initialize kubeadm with pod network CIDR
-    kubeadm init --pod-network-cidr=$K8S_POD_NETWORK_CIDR --apiserver-advertise-address=$(hostname -I | awk '{print $1}')
+# Initialize kubeadm with pod network CIDR
+# TODO
+kubeadm init  \
+    --pod-network-cidr=$K8S_POD_NETWORK_CIDR \
+    --apiserver-advertise-address=$(hostname -I | awk '{print $1}') \
+    --cri-socket=unix:///var/run/docker/containerd/containerd.sock
 
-    log "Kubernetes control plane initialized."
+
+# └─(18:09:00 on dev ✖ ✹ ✚)──> sudo kubeadm init  \                                                                                                                                                                                                                                                         1 ↵ ──(Tue,Oct08)─┘
+#     --pod-network-cidr=$K8S_POD_NETWORK_CIDR \
+#     --apiserver-advertise-address=$(hostname -I | awk '{print $1}') \
+#     --cri-socket=unix:///var/run/docker/containerd/containerd.sock
+# [init] Using Kubernetes version: v1.31.0
+# [preflight] Running pre-flight checks
+# W1008 18:09:05.098881   87576 checks.go:1080] [preflight] WARNING: Couldn't create the interface used for talking to the container runtime: failed to create new CRI runtime service: validate service connection: validate CRI v1 runtime API for endpoint "unix:///var/run/docker/containerd/containerd.sock": rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial unix /var/run/docker/containerd/containerd.sock: connect: no such file or directory"
+#         [WARNING FileExisting-socat]: socat not found in system path
+# [preflight] Pulling images required for setting up a Kubernetes cluster
+# [preflight] This might take a minute or two, depending on the speed of your internet connection
+# [preflight] You can also perform this action beforehand using 'kubeadm config images pull'
+# error execution phase preflight: [preflight] Some fatal errors occurred:
+# failed to create new CRI runtime service: validate service connection: validate CRI v1 runtime API for endpoint "unix:///var/run/docker/containerd/containerd.sock": rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial unix /var/run/docker/containerd/containerd.sock: connect: no such file or directory"[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+# To see the stack trace of this error execute with --v=5 or higher
+
+
+log "Kubernetes control plane initialized."
 }
 
 # Function: Configure kubectl for Current User

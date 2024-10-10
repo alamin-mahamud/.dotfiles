@@ -1,0 +1,1 @@
+alias bcp='export AWS_PROFILE=bcp_poweruser && aws sso login --profile bcp_poweruser'

@@ -1,7 +1,5 @@
 # i3 config file (v4)
 set $mod Mod4
-font pango:Unifont FontAwesome 8
-floating_modifier $mod
 
 # Include additional configuration files
 include ~/.config/i3/config.d/vars.conf
@@ -11,3 +9,4 @@ include ~/.config/i3/config.d/workspaces.conf
 include ~/.config/i3/config.d/statusbar.conf
 include ~/.config/i3/config.d/monitor.conf
 include ~/.config/i3/config.d/apps.conf
+include ~/.config/i3/config.d/startup.conf

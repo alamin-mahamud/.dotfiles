@@ -16,4 +16,5 @@ function setup_fonts_symlink() {
 function setup_i3_symlink() {
     ln -sf $DOT/i3 $HOME/.config/i3
     ln -sf $DOT/.config/i3lock ~/.config/
+    ln -sf $DOT/.Xresources $HOME/.Xresources
 }

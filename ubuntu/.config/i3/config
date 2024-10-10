@@ -37,12 +37,20 @@ set $darkblack   #1d2021
 set $transparent #282828
 
 # Include additional configuration files
-include ~/.config/i3/config.d/vars.conf
-include ~/.config/i3/config.d/appearance.conf
-include ~/.config/i3/config.d/keybindings.conf
-include ~/.config/i3/config.d/workspaces.conf
-include ~/.config/i3/config.d/statusbar.conf
-include ~/.config/i3/config.d/monitor.conf
-include ~/.config/i3/config.d/apps.conf
-include ~/.config/i3/config.d/float.conf
-include ~/.config/i3/config.d/startup.conf
+set $i3dir ~/.config/i3
+set $i3config ~/.config/i3/config.d
+
+
+include $i3config/system_settings.conf  # Contains all system wide configurations
+include $i3config/theme.conf            # Appearance settings and theme customization
+include $i3config/keybindings.conf      # Keybindings and shortcuts
+include $i3config/workspaces.conf       # Workspace definitions and settings
+include $i3config/statusbar.conf        # Status bar configuration
+include $i3config/monitors.conf         # Monitor and display settings
+include $i3config/applications.conf     # Application-specific settings
+include $i3config/floating_windows.conf # Floating window rules
+include $i3config/autostart.conf        # Startup applications and commands
+
+include $i3config/resize.conf           # Window resizing and positioning
+include $i3config/power_management.conf # Power management settings
+# include $i3config/gaps.conf             # Gaps and spacing settings

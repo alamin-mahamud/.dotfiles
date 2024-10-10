@@ -1,0 +1,58 @@
+
+
+set $mode_apps 'G E'
+bindsym $mod+x mode "$mode_apps"
+mode "$mode_apps" {
+     bindsym g mode "default", exec --no-startup-id google-chrome
+ 
+     bindsym Return mode "default"
+     bindsym Escape mode "default"
+}
+
+# flash
+bindsym $mod+grave	exec --no-startup-id ~/scripts/flash_win.sh
+
+#Makes the mouse invisible after a brief period
+exec --no-startup-id unclutter -idle 1
+
+
+# use scratchpad
+#bindsym $mod+p [instance="^scratchpad$"] scratchpad show
+#exec_always flock -w1 ~/.config/i3/scratchpad/lockfile ~/.i3/scratchpad/perpetual_terminal.sh
+#for_window [instance="^scratchpad$"] move scratchpad
+
+#manage toggle mouse
+exec --no-startup-id xinput --disable 12
+bindsym $mod+Mod1+m exec xinput --disable 12
+bindsym $mod+Shift+m exec xinput --enable 12
+
+
+
+# nautilus
+bindsym $mod+n exec --no-startup-id nautilus
+
+# Max Sound
+bindsym Mod1+F12 exec pactl set-sink-mute 0 0 && pactl set-sink-volume 0 150%
+
+# WallPaper Looper
+# Set background
+exec --no-startup-id feh --bg-fill $HOME/.config/wallpapers/282828.png
+#exec --no-startup-id feh --bg-fill -D 1 -z ~/home/alamin/.config/wallpapers/
+#exec_always --no-startup-id nitrogen --restore
+#exec_always --no-startup-id $HOME/scripts/wall.sh
+#exec --no-startup-id ~/.i3/bin/wallpaper.sh
+#exec --no-startup-id xsetroot -solid "#333333"
+
+# NM
+exec --no-startup-id nm-applet &
+exec --no-startup-id blueman-applet &
+exec --no-startup-id redshift-gtk &
+
+exec --no-startup-id dunst &
+exec --no-startup-id xedgewarp -b &
+
+exec --no-startup-id compton -b &
+exec --no-startup-id ibus-daemon &
+bindsym $mod+Shift+i exec ibus restart
+
+

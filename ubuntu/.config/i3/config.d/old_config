@@ -1,13 +1,5 @@
 
 
-set $mode_apps 'G E'
-bindsym $mod+x mode "$mode_apps"
-mode "$mode_apps" {
-     bindsym g mode "default", exec --no-startup-id google-chrome
- 
-     bindsym Return mode "default"
-     bindsym Escape mode "default"
-}
 
 # flash
 bindsym $mod+grave	exec --no-startup-id ~/scripts/flash_win.sh
@@ -36,7 +28,7 @@ bindsym Mod1+F12 exec pactl set-sink-mute 0 0 && pactl set-sink-volume 0 150%
 
 # WallPaper Looper
 # Set background
-exec --no-startup-id feh --bg-fill $HOME/.config/wallpapers/282828.png
+
 #exec --no-startup-id feh --bg-fill -D 1 -z ~/home/alamin/.config/wallpapers/
 #exec_always --no-startup-id nitrogen --restore
 #exec_always --no-startup-id $HOME/scripts/wall.sh

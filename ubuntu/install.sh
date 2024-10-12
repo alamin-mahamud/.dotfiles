@@ -46,16 +46,15 @@ function setup_python() {
 # Function to install i3 and related tools
 function setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
-    sudo apt install -y i3                      \ # i3 window manager
-                        i3status                \ # i3 status bar
-                        i3lock                  \ # i3 lock page
-                        rofi                    \ # application launcher
-                        terminator              \ # terminal
-                        maim                    \ # screenshot tool
-                        picom                   \ # compositor
-                        slop                    \ # selection tool
-                        thunar                  \ # File Manager
-                        ;
+    sudo apt install -y i3                      \
+                        i3status                \
+                        i3lock                  \
+                        rofi                    \
+                        terminator              \
+                        maim                    \
+                        picom                   \
+                        slop                    \
+                        thunar
 }
 
 # Main script execution

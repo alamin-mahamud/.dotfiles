@@ -79,6 +79,8 @@ function setup_i3() {
                         picom                   \
                         slop                    \
                         thunar
+    echo "🔗 Setting up i3 symlinks..."
+    setup_i3_symlink
 }
 
 # Main script execution

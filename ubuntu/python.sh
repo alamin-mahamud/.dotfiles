@@ -101,8 +101,11 @@ function install_pipenv() {
         echo "📥 Installing pipenv..."
         pipx install pipenv
         if [ "$CONFIGURE_SHELL" == true ]; then
-            if ! grep -q 'export PIPENV_PYTHON="$HOME/.pyenv/shims/python"' ~/.zshrc; then
-                echo 'export PIPENV_PYTHON="$HOME/.pyenv/shims/python"' >> ~/.zshrc
+            pipenv_query='export PIPENV_PYTHON="$HOME/.pyenv/shims/python"'
+            python_zsh_conf_query='source $ZSH_FOLDER/python.zsh'
+            if ! grep -q $pipenv_query ~/.zshrc || ! grep -q $python_zsh_conf_query ~/.zshrc; then
+            if ! grep -q  ~/.zshrc; then
+                echo $pipenv_query >> ~/.zshrc
                 source ~/.zshrc
             fi
         fi

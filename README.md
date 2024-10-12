@@ -1,3 +1,19 @@
+## Dotfile Installation
+
+### Ubuntu
+
+Constants
+
+- DOTFILE_LOCATION
+
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install -y curl git
+```
+
+clone `.dotfiles` in $DOTFILE_LOCATION
+
 ## Python Workflow:
 
 Here’s how you can use this setup with best practices in mind:
@@ -19,12 +35,12 @@ pyenv local 3.11.0
 Navigate to your project directory and start using `pipenv` to manage dependencies and virtual environments.
 
 ```bash
-# This will use the version of Python managed by pyenv and 
+# This will use the version of Python managed by pyenv and
 # create a virtual environment specific to your project.
 pipenv install --python $(pyenv which python)
 
 # install a package for that specific venv
-pipenv install requests 
+pipenv install requests
 
 # Activate venv by running
 pipenv shell

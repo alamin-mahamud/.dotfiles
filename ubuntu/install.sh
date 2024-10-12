@@ -78,6 +78,7 @@ function setup_i3() {
                         maim                    \
                         picom                   \
                         slop                    \
+                        feh                     \
                         thunar
     echo "🔗 Setting up i3 symlinks..."
     setup_i3_symlink

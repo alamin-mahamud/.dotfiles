@@ -5,7 +5,7 @@ PYTHON_VERSION="${1:-$DEFAULT_PYTHON_VERSION}"
 CONFIGURE_SHELL=$([ "$2" == "configure" ] && echo true || echo false)
 
 function update_and_upgrade() {
-    echo "🔄 Updating and upgrading"
+    echo "🔄 Updating and upgrading the system..."
     sudo apt-get update -y
     sudo apt-get upgrade -y
 }
@@ -24,14 +24,19 @@ function install_python_deps() {
 
 function configure_pyenv() {
     echo "🔧 Configuring pyenv..."
-    {
-        echo 'export PYENV_ROOT="$HOME/.pyenv"'
-        echo 'export PATH="$PYENV_ROOT/bin:$PATH"'
-        echo 'eval "$(pyenv init --path)"'
-        echo 'eval "$(pyenv init -)"'
-    } >>~/.zshrc
-    source ~/.zshrc
+    if ! grep -q 'export PYENV_ROOT="$HOME/.pyenv"' ~/.zshrc; then
+        {
+            echo 'export PYENV_ROOT="$HOME/.pyenv"'
+            echo 'export PATH="$PYENV_ROOT/bin:$PATH"'
+            echo 'eval "$(pyenv init --path)"'
+            echo 'eval "$(pyenv init -)"'
+        } >>~/.zshrc
+        source ~/.zshrc
+    else
+        echo "🔧 pyenv is already configured in ~/.zshrc."
+    fi
 }
+
 
 function install_pyenv() {
     if ! command_exists pyenv; then
@@ -45,10 +50,12 @@ function install_pyenv() {
         echo "✅ pyenv installed successfully."
     else
         echo "✅ pyenv is already installed."
+        echo "🔧 Re-sourcing ~/.zshrc...(In order to reload pyenv)"
+        source ~/.zshrc
     fi
 }
 
-function install_python_version(){
+function install_python_version() {
     echo "📥 Installing Python $PYTHON_VERSION..."
 
     if pyenv versions | grep -q "$PYTHON_VERSION"; then
@@ -67,21 +74,21 @@ function install_pip() {
         python get-pip.py --user
         rm get-pip.py
     fi
-        python -m pip install --upgrade pip
+    python -m pip install --upgrade pip
 }
 
 function install_pipx() {
-
     if ! command_exists pipx; then
         echo "📥 Installing pipx..."
         python -m pip install --user pipx
         python -m pipx ensurepath
 
         if [ "$CONFIGURE_SHELL" == true ]; then
-            echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
-            source ~/.zshrc
+            if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' ~/.zshrc; then
+                echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+                source ~/.zshrc
+            fi
         fi
-
     else
         echo "✅ pipx is already installed."
     fi
@@ -92,13 +99,14 @@ function install_pipenv() {
         echo "📥 Installing pipenv..."
         pipx install pipenv
         if [ "$CONFIGURE_SHELL" == true ]; then
-            echo 'export PIPENV_PYTHON="$HOME/.pyenv/shims/python"' >> ~/.zshrc
-            source ~/.zshrc
+            if ! grep -q 'export PIPENV_PYTHON="$HOME/.pyenv/shims/python"' ~/.zshrc; then
+                echo 'export PIPENV_PYTHON="$HOME/.pyenv/shims/python"' >> ~/.zshrc
+                source ~/.zshrc
+            fi
         fi
     else
         echo "✅ pipenv is already installed."
     fi
-
 }
 
 function display_installation_summary() {

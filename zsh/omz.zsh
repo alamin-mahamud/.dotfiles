@@ -1,5 +1,5 @@
 export ZSH=$HOME/.oh-my-zsh
-export ZSH_THEME="jonathan"
+export ZSH_THEME="af-magic"
 
 export plugins=(
   git

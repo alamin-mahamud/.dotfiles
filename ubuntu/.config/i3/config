@@ -1,6 +1,6 @@
 # i3 config file (v4)
 
-set $mod Mod1
+set $mod Mod4
 
 # Workspace
 set $ws1  "1:  "

@@ -6,6 +6,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Source other scripts using the determined directory
 source "$SCRIPT_DIR/symlinks.sh"
 
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 # Function to update and upgrade the system
 function update_and_upgrade() {
     echo "🔄 Updating and upgrading the system..."
@@ -15,24 +20,43 @@ function update_and_upgrade() {
 
 # Function to install curl
 function setup_curl() {
-    echo "🌐 Installing curl..."
-    sudo apt install -y curl
+    if ! command_exists curl; then
+        echo "🌐 Installing curl..."
+        sudo apt install -y curl
+    else
+        echo "🌐 curl is already installed."
+    fi
 }
 
 # Function to install git and set up symlinks
 function setup_git() {
-    echo "🔧 Installing git..."
-    sudo apt install -y git
+    if ! command_exists git; then
+        echo "🔧 Installing git..."
+        sudo apt install -y git
+    else
+        echo "🔧 git is already installed."
+    fi
     echo "🔗 Setting up git symlinks..."
     setup_git_symlink
 }
 
 # Function to install zsh and oh-my-zsh, and set up symlinks
 function setup_zsh() {
-    echo "🐚 Installing zsh and oh-my-zsh..."
-    sudo apt install -y zsh
-    sudo chsh -s $(which zsh) $USER
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    if ! command_exists zsh; then
+        echo "🐚 Installing zsh..."
+        sudo apt install -y zsh
+        sudo chsh -s $(which zsh) $USER
+    else
+        echo "🐚 zsh is already installed."
+    fi
+
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+        echo "🐚 Installing oh-my-zsh..."
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    else
+        echo "🐚 oh-my-zsh is already installed."
+    fi
+
     echo "🔗 Setting up zsh symlinks..."
     setup_zsh_symlink
 }

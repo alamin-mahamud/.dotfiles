@@ -24,7 +24,9 @@ function install_python_deps() {
 
 function configure_pyenv() {
     echo "🔧 Configuring pyenv..."
-    if ! grep -q 'export PYENV_ROOT="$HOME/.pyenv"' ~/.zshrc; then
+    pyenv_query='export PYENV_ROOT="$HOME/.pyenv"'
+    python_zsh_conf_query='source $ZSH_FOLDER/python.zsh'
+    if ! grep -q $pyenv_query ~/.zshrc || ! grep -q $python_zsh_conf_query ~/.zshrc; then
         {
             echo 'export PYENV_ROOT="$HOME/.pyenv"'
             echo 'export PATH="$PYENV_ROOT/bin:$PATH"'

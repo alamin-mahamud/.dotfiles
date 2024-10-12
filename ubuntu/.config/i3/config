@@ -41,7 +41,6 @@ set $transparent #282828
 set $i3dir ~/.config/i3
 set $i3config ~/.config/i3/config.d
 
-
 include $i3config/system_settings.conf  # Contains all system wide configurations
 include $i3config/theme.conf            # Appearance settings and theme customization
 include $i3config/keybindings.conf      # Keybindings and shortcuts
@@ -54,4 +53,4 @@ include $i3config/autostart.conf        # Startup applications and commands
 
 include $i3config/resize.conf           # Window resizing and positioning
 include $i3config/power_management.conf # Power management settings
-# include $i3config/gaps.conf             # Gaps and spacing settings
+# include $i3config/gaps.conf           # Gaps and spacing settings

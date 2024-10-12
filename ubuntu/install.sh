@@ -74,7 +74,7 @@ function setup_i3() {
                         i3status                \
                         i3lock                  \
                         rofi                    \
-                        terminator              \
+                        alacritty               \
                         maim                    \
                         picom                   \
                         slop                    \

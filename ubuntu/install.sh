@@ -84,6 +84,16 @@ function setup_i3() {
     setup_i3_symlink
 }
 
+function setup_fonts() {
+    echo "🔠 Installing fonts..."
+    sudo apt install -y fonts-firacode fonts-font-awesome
+    echo "🔗 Setting up fonts symlinks..."
+    sudo mkdir -p /usr/local/share/fonts
+    sudo cp -r $SCRIPT_DIR/.fonts/* /usr/local/share/fonts
+    echo "🔗 Updating font cache..."
+    sudo fc-cache -f -v
+}
+
 # Main script execution
 echo "🚀 Starting system setup..."
 
@@ -93,5 +103,6 @@ setup_git
 setup_zsh
 setup_python
 setup_i3
+setup_fonts
 
 echo "✅ System setup completed successfully."

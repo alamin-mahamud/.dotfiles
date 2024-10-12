@@ -4,7 +4,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Source other scripts using the determined directory
-source "$SCRIPT_DIR/ubuntu/symlinks.sh"
+source "$SCRIPT_DIR/symlinks.sh"
 
 # Function to update and upgrade the system
 function update_and_upgrade() {

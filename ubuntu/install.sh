@@ -18,6 +18,26 @@ function update_and_upgrade() {
     sudo apt-get upgrade -y
 }
 
+# Function to configure sudoers for package managers
+function configure_sudoers() {
+    echo "🔧 Configuring sudoers for package managers..."
+
+    if command -v xbps-install >/dev/null 2>&1; then
+        sudo sh -c 'echo "$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/xbps-install" >> /etc/sudoers'
+        echo "✅ Added xbps-install to sudoers."
+    fi
+
+    if command -v pacman >/dev/null 2>&1; then
+        sudo sh -c 'echo "$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/pacman" >> /etc/sudoers'
+        echo "✅ Added pacman to sudoers."
+    fi
+
+    if command -v apt >/dev/null 2>&1; then
+        sudo sh -c 'echo "$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get" >> /etc/sudoers'
+        echo "✅ Added apt to sudoers."
+    fi
+}
+
 # Function to install curl
 function setup_curl() {
     if ! command_exists curl; then
@@ -137,12 +157,17 @@ function setup_fonts() {
     version='3.2.1'
 
     for font in "${fonts[@]}"; do
-        zip_file="${font}.zip"
-        download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${version}/${zip_file}"
-        echo "Downloading $download_url"
-        wget "$download_url"
-        unzip "$zip_file" -d "$fonts_dir"
-        rm "$zip_file"
+        if fc-list | grep -qi "$font"; then
+            echo "Font $font already exists, skipping download."
+        else
+            zip_file="${font}.zip"
+            download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${version}/${zip_file}"
+            echo "Downloading $download_url"
+            wget "$download_url"
+            unzip "$zip_file" -d "$fonts_dir"
+            rm "$zip_file"
+            echo "Font $font installed successfully."
+        fi
     done
 
     find "$fonts_dir" -name '*Windows Compatible*' -delete
@@ -155,6 +180,7 @@ function setup_fonts() {
 echo "🚀 Starting system setup..."
 
 update_and_upgrade
+configure_sudoers
 setup_curl
 setup_git
 setup_zsh

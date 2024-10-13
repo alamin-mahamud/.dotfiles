@@ -43,9 +43,9 @@ function setup_python() {
 echo "🚀 Starting setup for macOS..."
 
 check_homebrew
-# install_packages
-# setup_zsh
-# setup_zsh_symlink
+install_packages
+setup_zsh
+setup_zsh_symlink
 setup_python
 
 echo "✅ Setup completed successfully."

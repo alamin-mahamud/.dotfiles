@@ -4,4 +4,6 @@
 mode=$(i3-msg -t get_binding_state | jq -r '.name')
 
 # Output the mode
-echo "$mode"
+if [ "$mode" != "default" ]; then
+  echo "$mode"
+fi

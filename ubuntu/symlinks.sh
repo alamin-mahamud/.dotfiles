@@ -20,19 +20,35 @@ function setup_git_symlink() {
 
 # Function to create symlinks for i3 configuration
 function setup_i3_symlink() {
-    echo "🔗 Creating symlinks for i3 configuration..."
-    mkdir -p $HOME/.config
-    ln -sf $DOT_UBUNTU/.config/i3 $HOME/.config/i3
-    ln -sf $DOT_UBUNTU/.config/i3lock $HOME/.config/i3lock
-    ln -sf $DOT_UBUNTU/.config/picom.conf $HOME/.config/picom.conf
-    ln -sf $DOT_UBUNTU/.config/dunst $HOME/.config/dunst
-    ln -sf $DOT_UBUNTU/.config/rofi $HOME/.config/rofi
-    ln -sf $DOT_UBUNTU/.config/alacritty $HOME/.config/alacritty
-    ln -sf $DOT_UBUNTU/.config/kitty $HOME/.config/kitty
-    ln -sf $DOT_UBUNTU/.config/polybar $HOME/.config/polybar
 
-    echo "🔗 Configuring alacritty color theme ..."
-    git clone https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin
+    # Define the base directories
+    SOURCE_DIR="$DOT_UBUNTU/.config"
+    DEST_DIR="$HOME/.config"
+
+    items=(
+        "i3"
+        "picom.conf"
+        "dunst"
+        "rofi"
+        "alacritty"
+        "kitty"
+        "polybar"
+    )
+
+    echo "🔗 Creating symlinks for i3 configuration..."
+    mkdir -p $DEST_DIR
+
+    # Loop through the items and create symlinks
+    for item in "${items[@]}"; do
+        ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
+        if [ "$item" == "polybar" ]; then
+            chmod +x $DEST_DIR/$item/*.sh
+        fi
+        if [ "$item" == "rofi" ]; then
+            chmod +x $DEST_DIR/$item/bin/*.sh
+        fi
+    done
+
 
     echo "✅ Symlinks for i3 configuration created."
 }
@@ -42,6 +58,9 @@ function setup_util_scripts() {
     echo "🔗 Creating symlinks for utility scripts..."
     mkdir -p $HOME/.local/bin
     ln -sf $DOT_UBUNTU/scripts/* $HOME/.local/bin/
+
+    echo "🔗 Setting up permissions for utility scripts..."
+    chmod +x $HOME/.local/bin/*
     echo "✅ Symlinks for utility scripts created."
 }
 

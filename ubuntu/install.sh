@@ -70,19 +70,26 @@ function setup_python() {
 # Function to install i3 and related tools
 function setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
-    sudo apt install -y i3                      \
-                        i3status                \
-                        polybar                 \
-                        i3lock                  \
-                        rofi                    \
-                        dunst                   \
-                        kitty                   \
-                        alacritty               \
-                        maim                    \
-                        picom                   \
-                        slop                    \
-                        feh                     \
-                        thunar
+    sudo apt install -y i3 i3status i3lock                                      \
+                        polybar                                                 \
+                        rofi                                                    \
+                        dunst                                                   \
+                        kitty                                                   \
+                        alacritty                                               \
+                        maim                                                    \
+                        picom                                                   \
+                        feh                                                     \
+                        thunar                                                  \
+                        alsa alsa-utils volumeicon-alsa                                         \
+                        brightnessctl                                           \
+                        bluetoothctl                                            \
+                        network-manager-gnome                                   \
+                        xclip                                                   \
+                        pulseaudio pulseaudio-utils pulseaudio-module-bluetooth \
+                        xbacklight                                              \
+                        x11-utils                                               \
+                        xfce4-power-manager
+
     echo "🔗 Setting up i3 symlinks..."
 
     setup_i3_symlink
@@ -90,6 +97,7 @@ function setup_i3() {
 
 function setup_fonts() {
     # TODO: Install Maple Mono Nerd Font
+
 
     declare -a fonts=(
         FiraCode

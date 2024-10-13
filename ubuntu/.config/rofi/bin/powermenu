@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 rofi_command="rofi -theme $HOME/.config/rofi/config/powermenu.rasi"
 
 uptime=$(uptime -p | sed -e 's/up //g')
@@ -18,45 +18,29 @@ else
 	# Buttons
 	layout=`cat $HOME/.config/rofi/config/powermenu.rasi | grep BUTTON | cut -d'=' -f2 | tr -d '[:blank:],*/'`
 	if [[ "$layout" == "TRUE" ]]; then
-  # Section 1
-
 		shutdown=""
 		reboot=""
 		lock=""
 		suspend=""
 		logout=""
-  # Section 2
-#		shutdown="󰐥"
-#		reboot="󰜉"
-#		lock="󰍁"
-#		suspend="󰒲"
-#		logout="󰍃 "
-
 
 	else
-  # Section 1
 		shutdown=" Shutdown"
 		reboot=" Restart"
 		lock=" Lock"
 		suspend=" Sleep"
 		logout=" Logout"
-  # Section 2
-#		shutdown="󰐥Shutdown"
-#		reboot="󰜉 Restart"
-#		lock="󰍁 Lock"
-#		suspend="󰒲Sleep"
-#		logout="󰍃 Logout"
 	fi
 	ddir="$HOME/.config/rofi/config"
 fi
 
 # Ask for confirmation
 rdialog () {
-rofi -dmenu\
-    -i\
-    -no-fixed-num-lines\
-    -p "Are You Sure? : "\
-    -theme "$ddir/confirm.rasi"
+	rofi -dmenu\
+			-i\
+			-no-fixed-num-lines\
+			-p "Are You Sure? : "\
+			-theme "$ddir/confirm.rasi"
 }
 
 # Display Help

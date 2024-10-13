@@ -11,7 +11,7 @@ verify='#ABE9B3'
 greet="Welcome, Back $USER"
 wrong_pass="Incorrect, Try Again"
 font="Maple Mono, Fira Code, Unifont, monospace"
-background="$HOME/.config/i3.png"
+background="$HOME/Pictures/.lock.png"
 
 i3lock \
   --nofork \

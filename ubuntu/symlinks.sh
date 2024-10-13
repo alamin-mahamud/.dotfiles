@@ -40,7 +40,7 @@ function setup_i3_symlink() {
 
     # Loop through the items and create symlinks
     for item in "${items[@]}"; do
-        ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
+        ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/"
         if [ "$item" == "polybar" ]; then
             chmod +x $DEST_DIR/$item/*.sh
         fi
@@ -66,6 +66,14 @@ function setup_util_scripts() {
     echo "🔗 Setting up permissions for utility scripts..."
     chmod +x $HOME/.local/bin/*
     echo "✅ Symlinks for utility scripts created."
+}
+
+function setup_wallpapers() {
+    echo "🔗 Creating symlinks for wallpapers..."
+    mkdir -p $HOME/Pictures/Wallpapers
+    ln -sf $DOT_UBUNTU/Wallpapers/* $HOME/Pictures/Wallpapers/
+    ln -sf $DOT_UBUNTU/.lock.png $HOME/Pictures/.lock.png
+    echo "✅ Symlinks for wallpapers created."
 }
 
 main() {

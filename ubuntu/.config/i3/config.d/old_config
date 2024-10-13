@@ -1,9 +1,4 @@
 
-
-
-# flash
-bindsym $mod+grave	exec --no-startup-id ~/scripts/flash_win.sh
-
 #Makes the mouse invisible after a brief period
 exec --no-startup-id unclutter -idle 1
 
@@ -20,27 +15,15 @@ bindsym $mod+Shift+m exec xinput --enable 12
 
 
 
-# nautilus
-bindsym $mod+n exec --no-startup-id nautilus
-
 # Max Sound
 bindsym Mod1+F12 exec pactl set-sink-mute 0 0 && pactl set-sink-volume 0 150%
 
-# WallPaper Looper
-# Set background
-
-#exec --no-startup-id feh --bg-fill -D 1 -z ~/home/alamin/.config/wallpapers/
-#exec_always --no-startup-id nitrogen --restore
-#exec_always --no-startup-id $HOME/scripts/wall.sh
-#exec --no-startup-id ~/.i3/bin/wallpaper.sh
-#exec --no-startup-id xsetroot -solid "#333333"
 
 # NM
 exec --no-startup-id nm-applet &
 exec --no-startup-id blueman-applet &
 exec --no-startup-id redshift-gtk &
 
-exec --no-startup-id dunst &
 exec --no-startup-id xedgewarp -b &
 
 exec --no-startup-id compton -b &

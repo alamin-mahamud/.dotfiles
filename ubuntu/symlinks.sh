@@ -25,7 +25,10 @@ function setup_i3_symlink() {
     ln -sf $DOT_UBUNTU/.config/i3 $HOME/.config/i3
     ln -sf $DOT_UBUNTU/.config/i3lock $HOME/.config/i3lock
     ln -sf $DOT_UBUNTU/.config/picom.conf $HOME/.config/picom.conf
-    ln -sf $DOT_UBUNTU/.config/.Xresources $HOME/.Xresources
+    ln -sf $DOT_UBUNTU/.config/dunst $HOME/.config/dunst
+    ln -sf $DOT_UBUNTU/.config/rofi $HOME/.config/rofi
+    ln -sf $DOT_UBUNTU/.config/alacritty $HOME/.config/alacritty
+    ln -sf $DOT_UBUNTU/.config/kitty $HOME/.config/kitty
     echo "✅ Symlinks for i3 configuration created."
 }
 

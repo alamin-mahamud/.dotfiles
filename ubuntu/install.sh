@@ -67,6 +67,20 @@ function setup_python() {
     source "$SCRIPT_DIR/python.sh"
 }
 
+function setup_alacritty() {
+    echo "🔗 Configuring alacritty ..."
+    mkdir -p $HOME/.config/alacritty
+    cp $SCRIPT_DIR/.config/alacritty/alacritty.yml $HOME/.config/alacritty/alacritty.yml
+
+    echo "🔗 Configuring alacritty color theme ..."
+    git clone https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin
+}
+
+function setup_kitty(){
+    echo "🔗 Configuring kitty ..."
+    cp $SCRIPT_DIR/.config/kitty $HOME/.config/kitty
+}
+
 # Function to install i3 and related tools
 function setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
@@ -74,6 +88,7 @@ function setup_i3() {
                         i3status                \
                         i3lock                  \
                         rofi                    \
+                        kitty                    \
                         alacritty               \
                         maim                    \
                         picom                   \
@@ -83,12 +98,14 @@ function setup_i3() {
     echo "🔗 Setting up i3 symlinks..."
     setup_i3_symlink
 
-    echo "🔗 Configuring alacritty ..."
-    mkdir -p $HOME/.config/alacritty
-    cp $SCRIPT_DIR/.config/alacritty/alacritty.yml $HOME/.config/alacritty/alacritty.yml
+    setup_alacritty
+    setup_kitty
 
-    echo "🔗 Configuring alacritty color theme ..."
-    git clone https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin
+    echo "🔗 Configuring dunst ..."
+    cp $SCRIPT_DIR/.config/dunst $HOME/.config/dunst
+
+    echo "🔗 Configuring rofi ..."
+    cp $SCRIPT_DIR/.config/rofi $HOME/.config/rofi
 
 }
 

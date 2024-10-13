@@ -8,15 +8,15 @@ import:
 window:
   padding:
     x: 5
-    y: 5
+    'y': 5
   decorations: full
 
 # Font configuration
 font:
   normal:
-    family: "Maple Mono, Fira Code, JetBrains Mono"
+    family: Maple Mono, Fira Code, JetBrains Mono
     style: Regular
-  size: 12.0
+  size: 12
 
 # Cursor settings
 cursor:

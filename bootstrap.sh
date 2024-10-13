@@ -8,8 +8,26 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 detect_os() {
     case "$OSTYPE" in
         linux-gnu*)
-            echo "🐧 Detected Linux OS."
-            source "$SCRIPT_DIR/ubuntu/install.sh"
+            if [ -f /etc/os-release ]; then
+                . /etc/os-release
+                case "$ID" in
+                    ubuntu)
+                        echo "🐧 Detected Ubuntu OS."
+                        source "$SCRIPT_DIR/ubuntu/install.sh"
+                        ;;
+                    arch)
+                        echo "🐧 Detected Arch Linux OS."
+                        source "$SCRIPT_DIR/arch/install.sh"
+                        ;;
+                    *)
+                        echo "❌ Unsupported Linux distribution: $ID"
+                        exit 1
+                        ;;
+                esac
+            else
+                echo "❌ Unable to detect Linux distribution."
+                exit 1
+            fi
             ;;
         darwin*)
             echo "🍏 Detected macOS."

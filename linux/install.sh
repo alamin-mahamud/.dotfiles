@@ -1,5 +1,8 @@
 #!/bin/bash
 
+ARCH="arch"
+UBUNTU="ubuntu"
+
 # Determine the directory of the current script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -11,11 +14,29 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+# Function to detect the operating system
+detect_os() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        OS=$ID
+    else
+        echo "❌ Unable to detect operating system."
+        exit 1
+    fi
+}
+
 # Function to update and upgrade the system
 function update_and_upgrade() {
     echo "🔄 Updating and upgrading the system..."
-    sudo apt-get update -y
-    sudo apt-get upgrade -y
+    if [ "$OS" == $UBUNTU ]; then
+        sudo apt-get update -y
+        sudo apt-get upgrade -y
+    elif [ "$OS" == $ARCH ]; then
+        sudo pacman -Syu --noconfirm
+    else
+        echo "❌ Unsupported operating system: $OS"
+        exit 1
+    fi
 }
 
 # Function to configure sudoers for package managers
@@ -42,7 +63,11 @@ function configure_sudoers() {
 function setup_curl() {
     if ! command_exists curl; then
         echo "🌐 Installing curl..."
-        sudo apt install -y curl
+        if [ "$OS" == $UBUNTU ]; then
+            sudo apt install -y curl
+        elif [ "$OS" == $ARCH ]; then
+            sudo pacman -S --noconfirm curl
+        fi
     else
         echo "🌐 curl is already installed."
     fi
@@ -52,7 +77,11 @@ function setup_curl() {
 function setup_git() {
     if ! command_exists git; then
         echo "🔧 Installing git..."
-        sudo apt install -y git
+        if [ "$OS" == $UBUNTU ]; then
+            sudo apt install -y git
+        elif [ "$OS" == $ARCH ]; then
+            sudo pacman -S --noconfirm git
+        fi
     else
         echo "🔧 git is already installed."
     fi
@@ -64,7 +93,11 @@ function setup_git() {
 function setup_zsh() {
     if ! command_exists zsh; then
         echo "🐚 Installing zsh..."
-        sudo apt install -y zsh
+        if [ "$OS" == $UBUNTU ]; then
+            sudo apt install -y zsh
+        elif [ "$OS" == $ARCH ]; then
+            sudo pacman -S --noconfirm zsh
+        fi
         sudo chsh -s $(which zsh) $USER
     else
         echo "🐚 zsh is already installed."
@@ -89,12 +122,20 @@ function setup_python() {
 
 function setup_i3_lock_color() {
     echo "🔧 Installing dependencies for i3lock-color..."
-    sudo apt install -y autoconf automake pkg-config libpam0g-dev libcairo2-dev \
-                        libxcb1-dev libxcb-composite0-dev libxcb-xinerama0-dev \
-                        libxcb-randr0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev \
-                        libxcb-image0-dev libxcb-util0-dev libxcb-xrm-dev \
-                        libxcb-cursor-dev libxkbcommon-dev libxkbcommon-x11-dev \
-                        libjpeg-dev
+    if [ "$OS" == $UBUNTU ]; then
+        sudo apt install -y autoconf automake pkg-config libpam0g-dev libcairo2-dev \
+                            libxcb1-dev libxcb-composite0-dev libxcb-xinerama0-dev \
+                            libxcb-randr0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev \
+                            libxcb-image0-dev libxcb-util0-dev libxcb-xrm-dev \
+                            libxcb-cursor-dev libxkbcommon-dev libxkbcommon-x11-dev \
+                            libjpeg-dev
+    elif [ "$OS" == $ARCH ]; then
+        sudo pacman -S --noconfirm autoconf automake pkg-config pam-devel cairo \
+                            xcb-util xcb-util-image xcb-util-keysyms xcb-util-renderutil \
+                            xcb-util-wm xcb-util-xrm xcb-util-cursor xcb-util-xinerama \
+                            libev xcb-util-xrandr xcb-util-xkb xkbcommon xkbcommon-x11 \
+                            libjpeg-turbo
+    fi
 
     echo "🔧 Cloning and installing i3lock-color..."
     git clone https://github.com/Raymo111/i3lock-color.git /tmp/i3lock-color
@@ -107,25 +148,33 @@ function setup_i3_lock_color() {
 # Function to install i3 and related tools
 function setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
-    sudo apt install -y i3 i3status                                             \
-                        polybar                                                 \
-                        rofi                                                    \
-                        dunst                                                   \
-                        kitty                                                   \
-                        alacritty                                               \
-                        maim                                                    \
-                        picom                                                   \
-                        feh                                                     \
-                        thunar                                                  \
-                        alsa alsa-utils volumeicon-alsa                                         \
-                        brightnessctl                                           \
-                        bluetoothctl                                            \
-                        network-manager-gnome                                   \
-                        xclip                                                   \
-                        pulseaudio pulseaudio-utils pulseaudio-module-bluetooth \
-                        xbacklight                                              \
-                        x11-utils                                               \
-                        xfce4-power-manager
+    if [ "$OS" == $UBUNTU ]; then
+        sudo apt install -y i3 i3status                                             \
+                            polybar                                                 \
+                            rofi                                                    \
+                            dunst                                                   \
+                            kitty                                                   \
+                            alacritty                                               \
+                            maim                                                    \
+                            picom                                                   \
+                            feh                                                     \
+                            thunar                                                  \
+                            alsa alsa-utils volumeicon-alsa                                         \
+                            brightnessctl                                           \
+                            bluetoothctl                                            \
+                            network-manager-gnome                                   \
+                            xclip                                                   \
+                            pulseaudio pulseaudio-utils pulseaudio-module-bluetooth \
+                            xbacklight                                              \
+                            x11-utils                                               \
+                            xfce4-power-manager
+    elif [ "$OS" == $ARCH ]; then
+        sudo pacman -S --noconfirm i3-wm i3status i3lock \
+                            polybar rofi dunst kitty alacritty maim picom feh thunar \
+                            alsa-utils volumeicon brightnessctl bluez-utils network-manager-applet \
+                            xclip pulseaudio pulseaudio-alsa pulseaudio-bluetooth xorg-xbacklight \
+                            xorg-xprop xfce4-power-manager
+    fi
 
     echo "🔗 Setting up i3 symlinks..."
 
@@ -135,7 +184,6 @@ function setup_i3() {
 
 function setup_fonts() {
     # TODO: Install Maple Mono Nerd Font
-
 
     declare -a fonts=(
         FiraCode
@@ -179,6 +227,7 @@ function setup_fonts() {
 # Main script execution
 echo "🚀 Starting system setup..."
 
+detect_os
 update_and_upgrade
 configure_sudoers
 setup_curl

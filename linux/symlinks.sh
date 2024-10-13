@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DOT=$HOME/Work/.dotfiles
-DOT_UBUNTU=$DOT/ubuntu
+DOT_LINUX=$DOT/linux
 
 # Function to create symlinks for Zsh configuration
 setup_zsh_symlink() {
@@ -21,7 +21,7 @@ setup_git_symlink() {
 # Function to create symlinks for i3 configuration
 setup_i3_symlink() {
     # Define the base directories
-    SOURCE_DIR="$DOT_UBUNTU/.config"
+    SOURCE_DIR="$DOT_LINUX/.config"
     DEST_DIR="$HOME/.config"
 
     items=(
@@ -55,10 +55,10 @@ setup_i3_symlink() {
 setup_util_scripts() {
     echo "🔗 Creating symlinks for utility scripts..."
     mkdir -p "$HOME/.local/bin"
-    ln -sf "$DOT_UBUNTU/scripts"/* "$HOME/.local/bin/"
+    ln -sf "$DOT_LINUX/scripts"/* "$HOME/.local/bin/"
 
     echo "🔗 Copy rofi-bluetooth script to /usr/local/bin"
-    sudo cp "$DOT_UBUNTU/rofi-bluetooth" /usr/local/bin/
+    sudo cp "$DOT_LINUX/rofi-bluetooth" /usr/local/bin/
     sudo chmod +x /usr/local/bin/rofi-bluetooth
 
     echo "🔗 Setting up permissions for utility scripts..."
@@ -70,8 +70,8 @@ setup_util_scripts() {
 setup_wallpapers() {
     echo "🔗 Creating symlinks for wallpapers..."
     mkdir -p "$HOME/Pictures/Wallpapers"
-    ln -sf "$DOT_UBUNTU/Wallpapers"/* "$HOME/Pictures/Wallpapers/"
-    ln -sf "$DOT_UBUNTU/.lock.png" "$HOME/Pictures/.lock.png"
+    ln -sf "$DOT_LINUX/Wallpapers"/* "$HOME/Pictures/Wallpapers/"
+    ln -sf "$DOT_LINUX/.lock.png" "$HOME/Pictures/.lock.png"
     echo "✅ Symlinks for wallpapers created."
 }
 

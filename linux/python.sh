@@ -1,13 +1,33 @@
 #!/bin/bash
 
+ARCH="arch"
+UBUNTU="ubuntu"
+
 DEFAULT_PYTHON_VERSION="3.12.7"
 PYTHON_VERSION="${1:-$DEFAULT_PYTHON_VERSION}"
 CONFIGURE_SHELL=$([ "$2" == "configure" ] && echo true || echo false)
 
+function detect_os() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        OS=$ID
+    else
+        echo "❌ Unable to detect operating system."
+        exit 1
+    fi
+}
+
 function update_and_upgrade() {
     echo "🔄 Updating and upgrading the system..."
-    sudo apt-get update -y
-    sudo apt-get upgrade -y
+    if [ "$OS" == $UBUNTU ]; then
+        sudo apt-get update -y
+        sudo apt-get upgrade -y
+    elif [ "$OS" == $ARCH ]; then
+        sudo pacman -Syu --noconfirm
+    else
+        echo "❌ Unsupported operating system: $OS"
+        exit 1
+    fi
 }
 
 function command_exists() {
@@ -16,17 +36,25 @@ function command_exists() {
 
 function install_python_deps() {
     echo "📦 Installing dependencies for pyenv..."
-    sudo apt install -y make build-essential libssl-dev zlib1g-dev \
-        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
-        libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
-        liblzma-dev openssl git
+    if [ "$OS" == $UBUNTU ]; then
+        sudo apt install -y make build-essential libssl-dev zlib1g-dev \
+            libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+            libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
+            liblzma-dev openssl git
+    elif [ "$OS" == $ARCH ]; then
+        sudo pacman -S --noconfirm base-devel openssl zlib bzip2 readline sqlite wget curl llvm \
+            ncurses xz tk libffi lzma git
+    else
+        echo "❌ Unsupported operating system: $OS"
+        exit 1
+    fi
 }
 
 function configure_pyenv() {
     echo "🔧 Configuring pyenv..."
     pyenv_query='export PYENV_ROOT="$HOME/.pyenv"'
     python_zsh_conf_query='source $ZSH_FOLDER/python.zsh'
-    if ! grep -q $pyenv_query ~/.zshrc || ! grep -q $python_zsh_conf_query ~/.zshrc; then
+    if ! grep -q "$pyenv_query" ~/.zshrc || ! grep -q "$python_zsh_conf_query" ~/.zshrc; then
         {
             echo 'export PYENV_ROOT="$HOME/.pyenv"'
             echo 'export PATH="$PYENV_ROOT/bin:$PATH"'
@@ -38,7 +66,6 @@ function configure_pyenv() {
         echo "🔧 pyenv is already configured in ~/.zshrc."
     fi
 }
-
 
 function install_pyenv() {
     if ! command_exists pyenv; then
@@ -103,9 +130,8 @@ function install_pipenv() {
         if [ "$CONFIGURE_SHELL" == true ]; then
             pipenv_query='export PIPENV_PYTHON="$HOME/.pyenv/shims/python"'
             python_zsh_conf_query='source $ZSH_FOLDER/python.zsh'
-            if ! grep -q $pipenv_query ~/.zshrc || ! grep -q $python_zsh_conf_query ~/.zshrc; then
-            if ! grep -q  ~/.zshrc; then
-                echo $pipenv_query >> ~/.zshrc
+            if ! grep -q "$pipenv_query" ~/.zshrc || ! grep -q "$python_zsh_conf_query" ~/.zshrc; then
+                echo "$pipenv_query" >> ~/.zshrc
                 source ~/.zshrc
             fi
         fi
@@ -122,6 +148,7 @@ function display_installation_summary() {
     echo "📦 pipenv Version: $(pipenv --version)"
 }
 
+detect_os
 update_and_upgrade
 install_python_deps
 install_pyenv

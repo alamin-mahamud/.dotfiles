@@ -29,6 +29,7 @@ function setup_i3_symlink() {
     ln -sf $DOT_UBUNTU/.config/rofi $HOME/.config/rofi
     ln -sf $DOT_UBUNTU/.config/alacritty $HOME/.config/alacritty
     ln -sf $DOT_UBUNTU/.config/kitty $HOME/.config/kitty
+    ln -sf $DOT_UBUNTU/.config/polybar $HOME/.config/polybar
 
     echo "🔗 Configuring alacritty color theme ..."
     git clone https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin

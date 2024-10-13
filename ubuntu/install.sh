@@ -72,9 +72,10 @@ function setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
     sudo apt install -y i3                      \
                         i3status                \
+                        polybar                 \
                         i3lock                  \
                         rofi                    \
-                        kitty                    \
+                        kitty                   \
                         alacritty               \
                         maim                    \
                         picom                   \

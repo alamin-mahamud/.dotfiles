@@ -14,7 +14,7 @@ window:
 # Font configuration
 font:
   normal:
-    family: "Maple Mono"
+    family: "Maple Mono, Fira Code, JetBrains Mono"
     style: Regular
   size: 12.0
 

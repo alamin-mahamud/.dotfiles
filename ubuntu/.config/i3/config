@@ -14,28 +14,34 @@ set $ws8  "8:  "
 set $ws9  "9:  "
 set $ws10 "10:  "
 
-# Color
-set_from_resource $black       color0  #000000
-set_from_resource $darkred     color1  #000000
-set_from_resource $darkgreen   color2  #000000
-set_from_resource $darkyellow  color3  #000000
-set_from_resource $darkblue    color4  #000000
-set_from_resource $darkmagenta color5  #000000
-set_from_resource $darkcyan    color6  #000000
-set_from_resource $darkwhite   color7  #000000
-set_from_resource $darkgrey    color8  #000000
-set_from_resource $red         color9  #000000
-set_from_resource $green       color10 #000000
-set_from_resource $yellow      color11 #000000
-set_from_resource $blue        color12 #000000
-set_from_resource $magenta     color13 #000000
-set_from_resource $cyan        color14 #000000
-set_from_resource $white       color15 #000000
+# Color scheme - catppuccino frappe
+set $rosewater #f2d5cf
+set $flamingo #eebebe
+set $pink #f4b8e4
+set $mauve #ca9ee6
+set $red #e78284
+set $maroon #ea999c
+set $peach #ef9f76
+set $yellow #e5c890
+set $green #a6d189
+set $teal #81c8be
+set $sky #99d1db
+set $sapphire #85c1dc
+set $blue #8caaee
+set $lavender #babbf1
+set $text #c6d0f5
+set $subtext1 #b5bfe2
+set $subtext0 #a5adce
+set $overlay2 #949cbb
+set $overlay1 #838ba7
+set $overlay0 #737994
+set $surface2 #626880
+set $surface1 #51576d
+set $surface0 #414559
+set $base #303446
+set $mantle #292c3c
+set $crust #232634
 
-# Use custom colors for black
-set $black       #282828
-set $darkblack   #1d2021
-set $transparent #282828
 
 # Include additional configuration files
 set $i3dir ~/.config/i3

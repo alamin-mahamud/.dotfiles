@@ -59,6 +59,10 @@ function setup_util_scripts() {
     mkdir -p $HOME/.local/bin
     ln -sf $DOT_UBUNTU/scripts/* $HOME/.local/bin/
 
+    echo "🔗 Copy rofi-bluetooth script to /usr/local/bin"
+    sudo cp $DOT_UBUNTU/rofi-bluetooth /usr/local/bin/
+    sudo chmod +x /usr/local/bin/rofi-bluetooth
+
     echo "🔗 Setting up permissions for utility scripts..."
     chmod +x $HOME/.local/bin/*
     echo "✅ Symlinks for utility scripts created."

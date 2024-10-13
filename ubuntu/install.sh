@@ -75,6 +75,7 @@ function setup_i3() {
                         polybar                 \
                         i3lock                  \
                         rofi                    \
+                        dunst                   \
                         kitty                   \
                         alacritty               \
                         maim                    \

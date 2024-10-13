@@ -45,7 +45,7 @@ function setup_i3_symlink() {
             chmod +x $DEST_DIR/$item/*.sh
         fi
         if [ "$item" == "rofi" ]; then
-            chmod +x $DEST_DIR/$item/bin/*.sh
+            chmod +x $DEST_DIR/$item/bin/*
         fi
     done
 

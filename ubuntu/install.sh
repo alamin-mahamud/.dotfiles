@@ -86,14 +86,41 @@ function setup_i3() {
     echo "🔗 Setting up i3 symlinks..."
 
     setup_i3_symlink
-
 }
 
 function setup_fonts() {
     # TODO: Install Maple Mono Nerd Font
+
+    declare -a fonts=(
+        FiraCode
+        FiraMono
+        Hack
+        JetBrainsMono
+        Iosevka
+    )
+
+    fonts_dir="${HOME}/.local/share/fonts"
+    if [[ ! -d "$fonts_dir" ]]; then
+        mkdir -p "$fonts_dir"
+    fi
+
     echo "🔗 Setting up fonts symlinks..."
-    sudo mkdir -p /usr/local/share/fonts
-    sudo cp -r $SCRIPT_DIR/.fonts/* /usr/local/share/fonts/
+    cp -r $SCRIPT_DIR/.fonts/* $fonts_dir
+
+    echo "🔗 Downloading Nerd Fonts..."
+    version='3.2.1'
+
+    for font in "${fonts[@]}"; do
+        zip_file="${font}.zip"
+        download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${version}/${zip_file}"
+        echo "Downloading $download_url"
+        wget "$download_url"
+        unzip "$zip_file" -d "$fonts_dir"
+        rm "$zip_file"
+    done
+
+    find "$fonts_dir" -name '*Windows Compatible*' -delete
+
     echo "🔗 Updating font cache..."
     sudo fc-cache -f -v
 }

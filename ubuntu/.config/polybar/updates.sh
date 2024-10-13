@@ -8,6 +8,6 @@ for a in $(ls /bin); do
   esac
 done
 
-if [[ "$b" -ne "0" ]]; then
+if [ "$b" -ne "0" ]; then
   printf "";
 fi

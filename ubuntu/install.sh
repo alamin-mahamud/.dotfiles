@@ -90,8 +90,7 @@ function setup_i3() {
 }
 
 function setup_fonts() {
-    echo "🔠 Installing fonts..."
-    sudo apt install -y fonts-firacode fonts-font-awesome
+    # TODO: Install Maple Mono Nerd Font
     echo "🔗 Setting up fonts symlinks..."
     sudo mkdir -p /usr/local/share/fonts
     sudo cp -r $SCRIPT_DIR/.fonts/* /usr/local/share/fonts/

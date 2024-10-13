@@ -8,13 +8,13 @@ import:
 window:
   padding:
     x: 5
-    'y': 5
+    "y": 5
   decorations: full
 
 # Font configuration
 font:
   normal:
-    family: Maple Mono, Fira Code, JetBrains Mono
+    family: Maple Mono, JetBrains Mono, Fira Code
     style: Regular
   size: 12
 

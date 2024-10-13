@@ -53,4 +53,4 @@ i3lock \
   --wrong-color=$wrong \
   -i $background \
   --time-pos="175:668" \
-  --keylayout 1 \
+  --keylayout 1

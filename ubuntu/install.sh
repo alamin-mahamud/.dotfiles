@@ -67,10 +67,27 @@ function setup_python() {
     source "$SCRIPT_DIR/python.sh"
 }
 
+function setup_i3_lock_color() {
+    echo "🔧 Installing dependencies for i3lock-color..."
+    sudo apt install -y autoconf automake pkg-config libpam0g-dev libcairo2-dev \
+                        libxcb1-dev libxcb-composite0-dev libxcb-xinerama0-dev \
+                        libxcb-randr0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev \
+                        libxcb-image0-dev libxcb-util0-dev libxcb-xrm-dev \
+                        libxcb-cursor-dev libxkbcommon-dev libxkbcommon-x11-dev \
+                        libjpeg-dev
+
+    echo "🔧 Cloning and installing i3lock-color..."
+    git clone https://github.com/Raymo111/i3lock-color.git /tmp/i3lock-color
+    cd /tmp/i3lock-color
+    ./install-i3lock-color.sh
+
+    echo "✅ i3lock-color installed successfully."
+}
+
 # Function to install i3 and related tools
 function setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
-    sudo apt install -y i3 i3status i3lock                                      \
+    sudo apt install -y i3 i3status                                             \
                         polybar                                                 \
                         rofi                                                    \
                         dunst                                                   \
@@ -92,6 +109,7 @@ function setup_i3() {
 
     echo "🔗 Setting up i3 symlinks..."
 
+    setup_i3_lock_color
     setup_i3_symlink
 }
 

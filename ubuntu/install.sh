@@ -82,6 +82,14 @@ function setup_i3() {
                         thunar
     echo "🔗 Setting up i3 symlinks..."
     setup_i3_symlink
+
+    echo "🔗 Configuring alacritty ..."
+    mkdir -p $HOME/.config/alacritty
+    cp $SCRIPT_DIR/.config/alacritty/alacritty.yml $HOME/.config/alacritty/alacritty.yml
+
+    echo "🔗 Configuring alacritty color theme ..."
+    git clone https://github.com/catppuccin/alacritty.git ~/.config/alacritty/catppuccin
+
 }
 
 function setup_fonts() {
@@ -89,7 +97,7 @@ function setup_fonts() {
     sudo apt install -y fonts-firacode fonts-font-awesome
     echo "🔗 Setting up fonts symlinks..."
     sudo mkdir -p /usr/local/share/fonts
-    sudo cp -r $SCRIPT_DIR/.fonts/* /usr/local/share/fonts
+    sudo cp -r $SCRIPT_DIR/.fonts/* /usr/local/share/fonts/
     echo "🔗 Updating font cache..."
     sudo fc-cache -f -v
 }

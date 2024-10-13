@@ -1,0 +1,34 @@
+# Alacritty Configuration File
+
+# Import Catppuccin theme
+import:
+  - ~/.config/alacritty/catppuccin/catppuccin-frappe.yml
+
+# Window settings
+window:
+  padding:
+    x: 5
+    y: 5
+  decorations: full
+
+# Font configuration
+font:
+  normal:
+    family: "Maple Mono"
+    style: Regular
+  size: 12.0
+
+# Cursor settings
+cursor:
+  style: Block
+
+# Scrolling settings
+scrolling:
+  history: 10000
+  multiplier: 3
+
+# Mouse bindings
+mouse:
+  url:
+    launcher: xdg-open
+    modifiers: None

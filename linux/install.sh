@@ -91,7 +91,6 @@ setup_curl() {
         esac
     else
         echo "🌐 curl is already installed."
-    }
 }
 
 # Function to install git and set up symlinks

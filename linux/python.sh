@@ -50,20 +50,43 @@ function install_python_deps() {
     fi
 }
 
-function configure_pyenv() {
-    echo "🔧 Configuring pyenv..."
+function configure_pyenv_in_shells() {
+    echo "🔧 Configuring pyenv in shell configuration files..."
+
     pyenv_query='export PYENV_ROOT="$HOME/.pyenv"'
     python_zsh_conf_query='source $ZSH_FOLDER/python.zsh'
+
+    # Configuration for .bashrc
+    if ! grep -q "$pyenv_query" ~/.bashrc; then
+        {
+            echo 'export PYENV_ROOT="$HOME/.pyenv"'
+            echo 'export PATH="$PYENV_ROOT/bin:$PATH"'
+            echo 'eval "$(pyenv init --path)"'
+            echo 'eval "$(pyenv init -)"'
+        } >> ~/.bashrc
+        echo "🔧 pyenv configured in ~/.bashrc."
+    else
+        echo "🔧 pyenv is already configured in ~/.bashrc."
+    fi
+
+    # Configuration for .zshrc
     if ! grep -q "$pyenv_query" ~/.zshrc || ! grep -q "$python_zsh_conf_query" ~/.zshrc; then
         {
             echo 'export PYENV_ROOT="$HOME/.pyenv"'
             echo 'export PATH="$PYENV_ROOT/bin:$PATH"'
             echo 'eval "$(pyenv init --path)"'
             echo 'eval "$(pyenv init -)"'
-        } >>~/.zshrc
-        source ~/.zshrc
+        } >> ~/.zshrc
+        echo "🔧 pyenv configured in ~/.zshrc."
     else
         echo "🔧 pyenv is already configured in ~/.zshrc."
+    fi
+
+    # Source the appropriate shell configuration file
+    if [ "$SHELL" == "/bin/bash" ]; then
+        source ~/.bashrc
+    elif [ "$SHELL" == "/bin/zsh" ]; then
+        source ~/.zshrc
     fi
 }
 
@@ -72,16 +95,12 @@ function install_pyenv() {
         echo "📥 Installing pyenv..."
         curl https://pyenv.run | bash
 
-        if [ "$CONFIGURE_SHELL" == true ]; then
-            configure_pyenv
-        fi
-
         echo "✅ pyenv installed successfully."
     else
         echo "✅ pyenv is already installed."
-        echo "🔧 Re-sourcing ~/.zshrc...(In order to reload pyenv)"
-        source ~/.zshrc
     fi
+
+    configure_pyenv_in_shells
 }
 
 function install_python_version() {

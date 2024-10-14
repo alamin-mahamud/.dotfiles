@@ -26,62 +26,86 @@ detect_os() {
 }
 
 # Function to update and upgrade the system
-function update_and_upgrade() {
+update_and_upgrade() {
     echo "🔄 Updating and upgrading the system..."
-    if [ "$OS" == $UBUNTU ]; then
-        sudo apt-get update -y
-        sudo apt-get upgrade -y
-    elif [ "$OS" == $ARCH ]; then
-        sudo pacman -Syu --noconfirm
-    else
-        echo "❌ Unsupported operating system: $OS"
-        exit 1
-    fi
+    case "$OS" in
+        $UBUNTU)
+            sudo apt-get update -y
+            sudo apt-get upgrade -y
+            ;;
+        $ARCH)
+            sudo pacman -Syu --noconfirm
+            ;;
+        *)
+            echo "❌ Unsupported operating system: $OS"
+            exit 1
+            ;;
+    esac
 }
 
 # Function to configure sudoers for package managers
-function configure_sudoers() {
+configure_sudoers() {
     echo "🔧 Configuring sudoers for package managers..."
+    local sudoers_file="/etc/sudoers"
 
-    if command -v xbps-install >/dev/null 2>&1; then
-        sudo sh -c 'echo "$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/xbps-install" >> /etc/sudoers'
+    if command_exists xbps-install; then
+        sudo sh -c "echo '$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/xbps-install' >> $sudoers_file"
         echo "✅ Added xbps-install to sudoers."
     fi
 
-    if command -v pacman >/dev/null 2>&1; then
-        sudo sh -c 'echo "$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/pacman" >> /etc/sudoers'
+    if command_exists pacman; then
+        sudo sh -c "echo '$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/pacman' >> $sudoers_file"
         echo "✅ Added pacman to sudoers."
     fi
 
-    if command -v apt >/dev/null 2>&1; then
-        sudo sh -c 'echo "$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get" >> /etc/sudoers'
+    if command_exists apt; then
+        sudo sh -c "echo '$(whoami) ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get' >> $sudoers_file"
         echo "✅ Added apt to sudoers."
     fi
 }
 
+# Function to install build-essential
+setup_build_essential() {
+    echo "🔧 Installing build-essential..."
+    case "$OS" in
+        $UBUNTU)
+            sudo apt install -y build-essential
+            ;;
+        $ARCH)
+            sudo pacman -S --noconfirm base-devel
+            ;;
+    esac
+}
+
 # Function to install curl
-function setup_curl() {
+setup_curl() {
     if ! command_exists curl; then
         echo "🌐 Installing curl..."
-        if [ "$OS" == $UBUNTU ]; then
-            sudo apt install -y curl
-        elif [ "$OS" == $ARCH ]; then
-            sudo pacman -S --noconfirm curl
-        fi
+        case "$OS" in
+            $UBUNTU)
+                sudo apt install -y curl
+                ;;
+            $ARCH)
+                sudo pacman -S --noconfirm curl
+                ;;
+        esac
     else
         echo "🌐 curl is already installed."
-    fi
+    }
 }
 
 # Function to install git and set up symlinks
-function setup_git() {
+setup_git() {
     if ! command_exists git; then
         echo "🔧 Installing git..."
-        if [ "$OS" == $UBUNTU ]; then
-            sudo apt install -y git
-        elif [ "$OS" == $ARCH ]; then
-            sudo pacman -S --noconfirm git
-        fi
+        case "$OS" in
+            $UBUNTU)
+                sudo apt install -y git
+                ;;
+            $ARCH)
+                sudo pacman -S --noconfirm git
+                ;;
+        esac
     else
         echo "🔧 git is already installed."
     fi
@@ -90,15 +114,18 @@ function setup_git() {
 }
 
 # Function to install zsh and oh-my-zsh, and set up symlinks
-function setup_zsh() {
+setup_zsh() {
     if ! command_exists zsh; then
         echo "🐚 Installing zsh..."
-        if [ "$OS" == $UBUNTU ]; then
-            sudo apt install -y zsh
-        elif [ "$OS" == $ARCH ]; then
-            sudo pacman -S --noconfirm zsh
-        fi
-        sudo chsh -s $(which zsh) $USER
+        case "$OS" in
+            $UBUNTU)
+                sudo apt install -y zsh
+                ;;
+            $ARCH)
+                sudo pacman -S --noconfirm zsh
+                ;;
+        esac
+        sudo chsh -s "$(which zsh)" "$USER"
     else
         echo "🐚 zsh is already installed."
     fi
@@ -115,27 +142,31 @@ function setup_zsh() {
 }
 
 # Function to install Python and relevant tools
-function setup_python() {
+setup_python() {
     echo "🐍 Installing Python and relevant tools..."
     source "$SCRIPT_DIR/python.sh"
 }
 
-function setup_i3_lock_color() {
+# Function to install dependencies for i3lock-color
+setup_i3_lock_color() {
     echo "🔧 Installing dependencies for i3lock-color..."
-    if [ "$OS" == $UBUNTU ]; then
-        sudo apt install -y autoconf automake pkg-config libpam0g-dev libcairo2-dev \
-                            libxcb1-dev libxcb-composite0-dev libxcb-xinerama0-dev \
-                            libxcb-randr0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev \
-                            libxcb-image0-dev libxcb-util0-dev libxcb-xrm-dev \
-                            libxcb-cursor-dev libxkbcommon-dev libxkbcommon-x11-dev \
-                            libjpeg-dev
-    elif [ "$OS" == $ARCH ]; then
-        sudo pacman -S --noconfirm autoconf automake pkg-config pam-devel cairo \
-                            xcb-util xcb-util-image xcb-util-keysyms xcb-util-renderutil \
-                            xcb-util-wm xcb-util-xrm xcb-util-cursor xcb-util-xinerama \
-                            libev xcb-util-xrandr xcb-util-xkb xkbcommon xkbcommon-x11 \
-                            libjpeg-turbo
-    fi
+    case "$OS" in
+        $UBUNTU)
+            sudo apt install -y autoconf automake pkg-config libpam0g-dev libcairo2-dev \
+                                libxcb1-dev libxcb-composite0-dev libxcb-xinerama0-dev \
+                                libxcb-randr0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev \
+                                libxcb-image0-dev libxcb-util0-dev libxcb-xrm-dev \
+                                libxcb-cursor-dev libxkbcommon-dev libxkbcommon-x11-dev \
+                                libjpeg-dev
+            ;;
+        $ARCH)
+            sudo pacman -S --noconfirm autoconf automake pkg-config pam-devel cairo \
+                                xcb-util xcb-util-image xcb-util-keysyms xcb-util-renderutil \
+                                xcb-util-wm xcb-util-xrm xcb-util-cursor xcb-util-xinerama \
+                                libev xcb-util-xrandr xcb-util-xkb xkbcommon xkbcommon-x11 \
+                                libjpeg-turbo
+            ;;
+    esac
 
     echo "🔧 Cloning and installing i3lock-color..."
     git clone https://github.com/Raymo111/i3lock-color.git /tmp/i3lock-color
@@ -146,45 +177,30 @@ function setup_i3_lock_color() {
 }
 
 # Function to install i3 and related tools
-function setup_i3() {
+setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
-    if [ "$OS" == $UBUNTU ]; then
-        sudo apt install -y i3 i3status                                             \
-                            polybar                                                 \
-                            rofi                                                    \
-                            dunst                                                   \
-                            kitty                                                   \
-                            alacritty                                               \
-                            maim                                                    \
-                            picom                                                   \
-                            feh                                                     \
-                            thunar                                                  \
-                            alsa alsa-utils volumeicon-alsa                                         \
-                            brightnessctl                                           \
-                            bluetoothctl                                            \
-                            network-manager-gnome                                   \
-                            xclip                                                   \
-                            pulseaudio pulseaudio-utils pulseaudio-module-bluetooth \
-                            xbacklight                                              \
-                            x11-utils                                               \
-                            xfce4-power-manager
-    elif [ "$OS" == $ARCH ]; then
-        sudo pacman -S --noconfirm i3-wm i3status i3lock \
-                            polybar rofi dunst kitty alacritty maim picom feh thunar \
-                            alsa-utils volumeicon brightnessctl bluez-utils network-manager-applet \
-                            xclip pulseaudio pulseaudio-alsa pulseaudio-bluetooth xorg-xbacklight \
-                            xorg-xprop xfce4-power-manager
-    fi
+    case "$OS" in
+        $UBUNTU)
+            sudo apt install -y i3 i3status polybar rofi dunst kitty alacritty maim picom feh thunar \
+                                alsa alsa-utils volumeicon-alsa brightnessctl bluetoothctl \
+                                network-manager-gnome xclip pulseaudio pulseaudio-utils \
+                                pulseaudio-module-bluetooth xbacklight x11-utils xfce4-power-manager
+            ;;
+        $ARCH)
+            sudo pacman -S --noconfirm i3-wm i3status i3lock polybar rofi dunst kitty alacritty maim picom feh thunar \
+                                alsa-utils volumeicon brightnessctl bluez-utils network-manager-applet \
+                                xclip pulseaudio pulseaudio-alsa pulseaudio-bluetooth xorg-xbacklight \
+                                xorg-xprop xfce4-power-manager
+            ;;
+    esac
 
     echo "🔗 Setting up i3 symlinks..."
-
     setup_i3_lock_color
     setup_i3_symlink
 }
 
-function setup_fonts() {
-    # TODO: Install Maple Mono Nerd Font
-
+# Function to install fonts
+setup_fonts() {
     declare -a fonts=(
         FiraCode
         FiraMono
@@ -194,12 +210,10 @@ function setup_fonts() {
     )
 
     fonts_dir="${HOME}/.local/share/fonts"
-    if [[ ! -d "$fonts_dir" ]]; then
-        mkdir -p "$fonts_dir"
-    fi
+    mkdir -p "$fonts_dir"
 
     echo "🔗 Setting up fonts symlinks..."
-    cp -r $SCRIPT_DIR/.fonts/* $fonts_dir
+    cp -r "$SCRIPT_DIR/.fonts/"* "$fonts_dir"
 
     echo "🔗 Downloading Nerd Fonts..."
     version='3.2.1'
@@ -230,6 +244,7 @@ echo "🚀 Starting system setup..."
 detect_os
 update_and_upgrade
 configure_sudoers
+setup_build_essential
 setup_curl
 setup_git
 setup_zsh

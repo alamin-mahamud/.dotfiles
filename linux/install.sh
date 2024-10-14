@@ -125,7 +125,6 @@ setup_zsh() {
                 sudo pacman -S --noconfirm zsh
                 ;;
         esac
-        sudo chsh -s "$(which zsh)" "$USER"
     else
         echo "🐚 zsh is already installed."
     fi
@@ -168,12 +167,13 @@ setup_i3_lock_color() {
             ;;
     esac
 
+    current_dir=$(pwd)
     echo "🔧 Cloning and installing i3lock-color..."
     git clone https://github.com/Raymo111/i3lock-color.git /tmp/i3lock-color
     cd /tmp/i3lock-color
     ./install-i3lock-color.sh
-
     echo "✅ i3lock-color installed successfully."
+    cd "$current_dir"
 }
 
 # Function to install i3 and related tools
@@ -238,6 +238,14 @@ setup_fonts() {
     sudo fc-cache -f -v
 }
 
+
+# Function to change the default shell to zsh
+change_default_shell_to_zsh() {
+    echo "🔄 Changing the default shell to zsh..."
+    sudo chsh -s "$(which zsh)" "$USER"
+}
+
+
 # Main script execution
 echo "🚀 Starting system setup..."
 
@@ -251,5 +259,6 @@ setup_zsh
 setup_python
 setup_i3
 setup_fonts
+change_default_shell_to_zsh
 
 echo "✅ System setup completed successfully."

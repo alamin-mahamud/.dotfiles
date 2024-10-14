@@ -28,3 +28,38 @@ function myip() {
   ifconfig en1 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "en1 (IPv4): " $2 " " $3 " " $4 " " $5 " " $6}'
   ifconfig en1 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en1 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
 }
+
+
+# -------------------------------------------------------------------
+# sre#10m
+# -------------------------------------------------------------------
+
+function tss() {
+  if [ -z "$GH_USER" ]; then
+    echo "❌ GH_USER environment variable is not set."
+    return 1
+  fi
+
+  if [ $# -eq 0 ]; then
+    echo "❌ Please enter a client name."
+    return 1
+  fi
+
+  options_to_login=($(tsh ls | grep "$1" | awk '{print $1}'))
+
+  if [ ${#options_to_login[@]} -eq 0 ]; then
+    echo "❌ No instances found for client name: $1"
+    return 1
+  fi
+
+  echo "Please select an instance:"
+  select opt in "${options_to_login[@]}"; do
+    if [ -n "$opt" ]; then
+      echo "Accessing $opt"
+      tsh ssh "$GH_USER@$opt"
+      break
+    else
+      echo "❌ Invalid selection. Please try again."
+    fi
+  done
+}

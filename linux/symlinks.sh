@@ -62,7 +62,7 @@ setup_util_scripts() {
     sudo chmod +x /usr/local/bin/rofi-bluetooth
 
     echo "🔗 Setting up permissions for utility scripts..."
-    chmod +x "$HOME/.local/bin"/*
+    chmod +x "$HOME/.local/bin/*"
     echo "✅ Symlinks for utility scripts created."
 }
 
@@ -75,6 +75,14 @@ setup_wallpapers() {
     echo "✅ Symlinks for wallpapers created."
 }
 
+# Function to create and configure .xinitrc for i3
+setup_xinitrc() {
+    echo "🔧 Creating and configuring .xinitrc for i3..."
+    ln -sf "$DOT_LINUX/.config/.xinitrc" "$HOME/.xinitrc"
+    chmod +x "$HOME/.xinitrc"
+    echo "✅ .xinitrc configured successfully."
+}
+
 main() {
     # Main script execution
     echo "🚀 Starting symlink setup..."
@@ -84,6 +92,7 @@ main() {
     setup_i3_symlink
     setup_util_scripts
     setup_wallpapers
+    setup_xinitrc
 
     echo "✅ Symlink setup completed successfully."
 }

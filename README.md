@@ -1,3 +1,7 @@
+## TODO
+
+- Start i3 when arch login
+
 ## OS Installation
 
 ### Arch Linux Installation

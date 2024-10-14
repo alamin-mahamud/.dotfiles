@@ -181,22 +181,119 @@ setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
     case "$OS" in
         $UBUNTU)
-            sudo apt install -y i3 i3status polybar rofi dunst kitty alacritty maim picom feh thunar \
-                                alsa alsa-utils volumeicon-alsa brightnessctl bluetoothctl \
-                                network-manager-gnome xclip pulseaudio pulseaudio-utils \
-                                pulseaudio-module-bluetooth xbacklight x11-utils xfce4-power-manager
+            sudo apt install -y \
+                # i3 window manager and status bar
+                i3 i3status \
+
+                # Additional UI components
+                # bar, launcher, notifications
+                polybar rofi dunst \
+
+                # Terminal emulators
+                kitty alacritty \
+
+                # Screenshot and compositor
+                maim picom \
+
+                # Background and file manager
+                feh thunar \
+
+                # Audio and volume control
+                alsa alsa-utils volumeicon-alsa \
+
+                # Brightness and Bluetooth control
+                brightnessctl bluetoothctl \
+
+                # Network manager
+                network-manager-gnome \
+
+                # Clipboard manager
+                xclip \
+
+                # Audio server and modules
+                pulseaudio pulseaudio-utils pulseaudio-module-bluetooth \
+
+                # Backlight control
+                xbacklight \
+
+                # X11 utilities
+                x11-utils \
+
+                # Power manager
+                xfce4-power-manager \
             ;;
         $ARCH)
-            sudo pacman -S --noconfirm i3-wm i3status i3lock polybar rofi dunst kitty alacritty maim picom feh thunar \
-                                alsa-utils volumeicon brightnessctl bluez-utils network-manager-applet \
-                                xclip pulseaudio pulseaudio-alsa pulseaudio-bluetooth xorg-xbacklight \
-                                xorg-xprop xfce4-power-manager
+            sudo pacman -S --noconfirm \
+                # i3 window manager and status bar
+                i3-wm i3status i3lock \
+
+                # Additional UI components
+                polybar rofi dunst \
+
+                # Terminal emulators
+                kitty alacritty \
+
+                # Screenshot and compositor
+                maim picom \
+
+                # Background and file manager
+                feh thunar \
+
+                # Audio and volume control
+                alsa-utils volumeicon \
+
+                # Brightness and Bluetooth control
+                brightnessctl bluez-utils \
+
+                # Network manager
+                network-manager-applet \
+
+                # Clipboard manager
+                xclip \
+
+                # Audio server and modules
+                pulseaudio pulseaudio-alsa pulseaudio-bluetooth \
+
+                # Backlight control
+                xorg-xbacklight \
+
+                # Xorg utilities
+                xorg-server xorg-xinit xorg-xauth xorg-xprop \
+
+                # Power manager
+                xfce4-power-manager                          \
+
+                # Additional utilities
+                jq
             ;;
     esac
 
     echo "🔗 Setting up i3 symlinks..."
     setup_i3_lock_color
     setup_i3_symlink
+}
+
+# Function to ensure paru is installed
+setup_paru() {
+    if ! command -v paru &> /dev/null; then
+        echo "🌐 Installing paru..."
+        sudo pacman -S --needed base-devel
+        git clone https://aur.archlinux.org/paru.git /tmp/paru
+        cd /tmp/paru
+        makepkg -si
+        cd -
+        rm -rf /tmp/paru
+        echo "✅ paru installed."
+    else
+        echo "✅ paru is already installed."
+    fi
+}
+
+# Function to install ttf-maple using paru
+install_ttf_maple() {
+    echo "🌐 Installing ttf-maple..."
+    paru -S --noconfirm ttf-maple
+    echo "✅ ttf-maple installed."
 }
 
 # Function to install fonts
@@ -208,6 +305,13 @@ setup_fonts() {
         JetBrainsMono
         Iosevka
     )
+
+    # install maple fonts
+    echo "🔧 Installing Maple fonts..."
+    case "$OS" in
+        $UBUNTU) echo "❌ Maple fonts are not available for Ubuntu." ;;
+        $ARCH) install_ttf_maple ;;
+    esac
 
     fonts_dir="${HOME}/.local/share/fonts"
     mkdir -p "$fonts_dir"

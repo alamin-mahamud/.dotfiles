@@ -1,22 +1,18 @@
 #!/bin/bash
 
-ARCH="arch"
-UBUNTU="ubuntu"
-
 dots="$HOME/Work/.dotfiles"
 config="$HOME/.config"
 bin="$HOME/.local/bin"
-screenshots = "$HOME/Pictures/Screenshots"
-fonts_dir="${HOME}/.local/share/fonts"
+screenshots="$HOME/Pictures/Screenshots"
+fonts="${HOME}/.local/share/fonts"
 
-dir="$dots $config $bin $fonts_dir $screenshots"
+dir="$dots $config $bin $fonts $screenshots"
 
 # Determine the directory of the current script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$SCRIPT_DIR/utils.sh"
 source "$SCRIPT_DIR/symlinks.sh"
-
 source "$SCRIPT_DIR/i3.sh"
 source "$SCRIPT_DIR/hyprland.sh"
 
@@ -135,9 +131,6 @@ setup_fonts() {
         $ARCH) sudo paru -S --noconfirm ttf-maple ;;
     esac
 
-    echo "🔗 Setting up fonts symlinks..."
-    cp -r "$SCRIPT_DIR/.fonts/"* "$fonts_dir"
-
     echo "🔗 Downloading Nerd Fonts..."
     version='3.2.1'
 
@@ -149,13 +142,13 @@ setup_fonts() {
             download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${version}/${zip_file}"
             echo "Downloading $download_url"
             wget "$download_url"
-            unzip "$zip_file" -d "$fonts_dir"
+            unzip "$zip_file" -d "$fonts"
             rm "$zip_file"
             echo "Font $font installed successfully."
         fi
     done
 
-    find "$fonts_dir" -name '*Windows Compatible*' -delete
+    find "$fonts" -name '*Windows Compatible*' -delete
 
     echo "🔗 Updating font cache..."
     sudo fc-cache -f -v
@@ -176,41 +169,58 @@ create_dirs() {
 }
 
 # Main script execution
-echo "🚀 Starting system setup..."
+main () {
+    echo "${YELLOW} 🚀 Starting system setup..."
 
-detect_os
-update_and_upgrade
-create_dirs
-configure_sudoers
-setup_build_essential
-setup_python
-setup_fonts
+    read -n1 -rep "${ACT} Would you like to install the packages? (y/n)" inst
+    echo
 
+    case "$inst" in
+        [Nn])
+            echo "${YELLOW} No packages installed. Goodbye! \n"
+            exit 1
+            ;;
+        [Yy])
+            echo "${ACT} Installing packages..."
+            detect_os
+            update_and_upgrade
+            create_dirs
+            configure_sudoers
+            setup_build_essential
+            setup_python
+            setup_fonts
 
-# Prompt the user for their choice
-echo "Which window manager would you like to install?"
-echo "1) i3"
-echo "2) hyperland"
-read -p "Enter the number of your choice: " choice
+            # Prompt the user for their choice
+            echo "Which window manager would you like to install?"
+            echo "1) i3"
+            echo "2) hyperland"
+            read -p "Enter the number of your choice: " choice
 
-# Install based on user choice
-case $choice in
-    1)
-        echo "Installing i3..."
-        setup_i3
-        ;;
-    2)
-        echo "Installing hyperland..."
-        setup_hyprland
-        ;;
-    *)
-        echo "Invalid choice. Exiting."
-        exit 1
-        ;;
-esac
+            # Install based on user choice
+            case $choice in
+                1)
+                    echo "${YELLOW} Installing i3..."
+                    setup_i3
+                    ;;
+                2)
+                    echo "${YELLOW} Installing hyperland..."
+                    setup_hyprland
+                    ;;
+                *)
+                    echo "${RED} Invalid choice. Exiting."
+                    exit 1
+                    ;;
+            esac
 
+            setup_zsh
+            change_default_shell_to_zsh
 
-setup_zsh
-change_default_shell_to_zsh
+            echo "${GREEN} System setup completed"
+            ;;
+        *)
+            echo "${RED} Invalid input. Exiting."
+            exit 1
+            ;;
+    esac
+}
 
-echo "✅ System setup completed successfully."

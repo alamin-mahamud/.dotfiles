@@ -124,5 +124,5 @@ setup_i3() {
 
     echo "🔗 Setting up i3 symlinks..."
     setup_i3_lock_color
-    setup_i3_symlink
+    setup_config i3
 }

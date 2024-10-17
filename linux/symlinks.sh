@@ -18,62 +18,66 @@ setup_git_symlink() {
     echo "✅ Symlinks for Git configuration created."
 }
 
-# Function to create symlinks for i3 configuration
-setup_i3_symlink() {
+# Function to create symlinks for .config dir
+setup_config() {
     # Define the base directories
     SOURCE_DIR="$DOT_LINUX/.config"
     DEST_DIR="$HOME/.config"
 
-    items=(
+    # Define common items
+    common_items=(
+        "alacritty"
+        "kitty"
+    )
+
+    # Define items for i3
+    i3_items=(
         "i3"
         "picom.conf"
         "dunst"
         "rofi"
-        "alacritty"
-        "kitty"
         "polybar"
     )
 
-    echo "🔗 Creating symlinks for i3 configuration..."
+    # Define items for hyprland
+    hyprland_items=(
+        "hypr"
+        "waybar"
+        "swaylock"
+        "wofi"
+    )
+
+    echo "${CAT} 🔗 Creating symlinks for .config dir..."
     mkdir -p "$DEST_DIR"
 
-    # Loop through the items and create symlinks
-    for item in "${items[@]}"; do
-        ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/"
-        if [ "$item" == "polybar" ]; then
-            chmod +x "$DEST_DIR/$item"/*.sh
-        fi
-        if [ "$item" == "rofi" ]; then
-            chmod +x "$DEST_DIR/$item/bin"/*
-        fi
+    # Create symlinks for common items
+    for item in "${common_items[@]}"; do
+        ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
     done
+    echo "${GREEN} ✅ Symlinks for common configuration created."
 
-    echo "✅ Symlinks for i3 configuration created."
+    # Check the user's choice and create symlinks accordingly
+    if [ "$1" == "i3" ]; then
+        for item in "${i3_items[@]}"; do
+            ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
+        done
+        echo "${GREEN} ✅ Symlinks for i3 configuration created."
+    elif [ "$1" == "hyprland" ]; then
+        for item in "${hyprland_items[@]}"; do
+            ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
+        done
+        echo "${GREEN} ✅ Symlinks for hyprland configuration created."
+    else
+        echo "${RED} ❌ Invalid window manager choice. No symlinks created."
+    fi
 }
 
-# Function to create symlinks for utility scripts
-setup_util_scripts() {
-    echo "🔗 Creating symlinks for utility scripts..."
-    mkdir -p "$HOME/.local/bin"
-    ln -sf "$DOT_LINUX/scripts"/* "$HOME/.local/bin/"
-
-    echo "🔗 Copy rofi-bluetooth script to /usr/local/bin"
-    sudo cp "$DOT_LINUX/rofi-bluetooth" /usr/local/bin/
-    sudo chmod +x /usr/local/bin/rofi-bluetooth
-
-    echo "🔗 Setting up permissions for utility scripts..."
+setup_local(){
+    mkdir -p "$HOME/.local/{bin,share}"
+    ln -sf "$DOT_LINUX/.local/" "$HOME/.local/"
     chmod +x "$HOME/.local/bin/*"
-    echo "✅ Symlinks for utility scripts created."
 }
 
-# Function to create symlinks for wallpapers
-setup_wallpapers() {
-    echo "🔗 Creating symlinks for wallpapers..."
-    mkdir -p "$HOME/Pictures/Wallpapers"
-    ln -sf "$DOT_LINUX/Wallpapers"/* "$HOME/Pictures/Wallpapers/"
-    ln -sf "$DOT_LINUX/.lock.png" "$HOME/Pictures/.lock.png"
-    echo "✅ Symlinks for wallpapers created."
-}
 
 # Function to create and configure .xinitrc for i3
 setup_xinitrc() {
@@ -89,9 +93,8 @@ main() {
 
     setup_zsh_symlink
     setup_git_symlink
-    setup_i3_symlink
-    setup_util_scripts
-    setup_wallpapers
+    setup_config
+    setup_local
     setup_xinitrc
 
     echo "✅ Symlink setup completed successfully."

@@ -3,6 +3,23 @@
 ARCH="arch"
 UBUNTU="ubuntu"
 
+# Define console output variables
+GREEN="$(tput setaf 2)[✅ OK]$(tput sgr0)"
+RED="$(tput setaf 1)[❌ ERROR]$(tput sgr0)"
+YELLOW="$(tput setaf 3)[💡 NOTE]$(tput sgr0)"
+ACT="$(tput setaf 6)[🔧 ACTION]$(tput sgr0)"
+LOG="/tmp/install.log"
+
+
+
+print_error() {
+    printf " %s%s\n" "$RED" "$1" "$NC" >&2
+}
+
+# Function to print success messages
+print_success() {
+    printf "%s%s%s\n" "$GREEN" "$1" "$NC"
+}
 
 # Function to check if a command exists
 command_exists() {
@@ -15,7 +32,7 @@ detect_os() {
         . /etc/os-release
         OS=$ID
     else
-        echo "❌ Unable to detect operating system."
+        echo "${RED} Unable to detect operating system."
         exit 1
     fi
 }
@@ -23,7 +40,7 @@ detect_os() {
 
 # Function to update and upgrade the system
 update_and_upgrade() {
-    echo "🔄 Updating and upgrading the system..."
+    echo "${YELLOW}🔄 Updating and upgrading the system..."
     case "$OS" in
         $UBUNTU)
             sudo apt-get update -y
@@ -37,7 +54,7 @@ update_and_upgrade() {
             fi
             ;;
         *)
-            echo "❌ Unsupported operating system: $OS"
+            echo "${RED}Unsupported operating system: $OS"
             exit 1
             ;;
     esac

@@ -13,6 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$SCRIPT_DIR/utils.sh"
 source "$SCRIPT_DIR/symlinks.sh"
+source "$SCRIPT_DIR/python.sh"
 source "$SCRIPT_DIR/i3.sh"
 source "$SCRIPT_DIR/hyprland.sh"
 

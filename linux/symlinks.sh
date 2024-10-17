@@ -62,11 +62,13 @@ setup_config() {
             ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
         done
         echo "${GREEN} ✅ Symlinks for i3 configuration created."
+
     elif [ "$1" == "hyprland" ]; then
         for item in "${hyprland_items[@]}"; do
             ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
         done
         echo "${GREEN} ✅ Symlinks for hyprland configuration created."
+
     else
         echo "${RED} ❌ Invalid window manager choice. No symlinks created."
     fi

@@ -33,93 +33,12 @@ setup_i3_lock_color() {
 # Function to install i3 and related tools
 setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
+
+    i3_items="i3 i3status polybar rofi dunst kitty alacritty maim picom feh thunar alsa-utils volumeicon brightnessctl bluez bluez-utils network-manager-applet xclip pulseaudio pulseaudio-alsa pulseaudio-bluetooth xorg-xbacklight xorg-xprop xfce4-power-manager"
+
     case "$OS" in
-        $UBUNTU)
-            sudo apt install -y \
-                # i3 window manager and status bar
-                i3 i3status \
-
-                # Additional UI components
-                # bar, launcher, notifications
-                polybar rofi dunst \
-
-                # Terminal emulators
-                kitty alacritty \
-
-                # Screenshot and compositor
-                maim picom \
-
-                # Background and file manager
-                feh thunar \
-
-                # Audio and volume control
-                alsa alsa-utils volumeicon-alsa \
-
-                # Brightness and Bluetooth control
-                brightnessctl bluetoothctl \
-
-                # Network manager
-                network-manager-gnome \
-
-                # Clipboard manager
-                xclip \
-
-                # Audio server and modules
-                pulseaudio pulseaudio-utils pulseaudio-module-bluetooth \
-
-                # Backlight control
-                xbacklight \
-
-                # X11 utilities
-                x11-utils \
-
-                # Power manager
-                xfce4-power-manager \
-            ;;
-        $ARCH)
-            sudo pacman -S --noconfirm \
-                # i3 window manager and status bar
-                i3-wm i3status i3lock \
-
-                # Additional UI components
-                polybar rofi dunst \
-
-                # Terminal emulators
-                kitty alacritty \
-
-                # Screenshot and compositor
-                maim picom \
-
-                # Background and file manager
-                feh thunar \
-
-                # Audio and volume control
-                alsa-utils volumeicon \
-
-                # Brightness and Bluetooth control
-                brightnessctl bluez-utils \
-
-                # Network manager
-                network-manager-applet \
-
-                # Clipboard manager
-                xclip \
-
-                # Audio server and modules
-                pulseaudio pulseaudio-alsa pulseaudio-bluetooth \
-
-                # Backlight control
-                xorg-xbacklight \
-
-                # Xorg utilities
-                xorg-server xorg-xinit xorg-xauth xorg-xprop \
-
-                # Power manager
-                xfce4-power-manager                          \
-
-                # Additional utilities
-                jq
-            ;;
+        $UBUNTU) sudo apt install -y $i3_items ;;
+        $ARCH) sudo paru -S --noconfirm $i3_items ;;
     esac
 
     echo "🔗 Setting up i3 symlinks..."

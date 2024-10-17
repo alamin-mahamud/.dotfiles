@@ -135,6 +135,15 @@ setup_fonts() {
         $ARCH) paru -S --noconfirm ttf-maple ;;
     esac
 
+    # Ensure unzip is installed
+    if ! command_exists unzip; then
+        echo "🔧 Installing unzip..."
+        case "$OS" in
+            $UBUNTU) sudo apt install -y unzip ;;
+            $ARCH) sudo pacman -S --noconfirm unzip ;;
+        esac
+    fi
+
     echo "🔗 Downloading Nerd Fonts..."
     version='3.2.1'
 

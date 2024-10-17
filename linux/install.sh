@@ -122,8 +122,6 @@ setup_python() {
 setup_fonts() {
     declare -a fonts=(
         FiraCode
-        FiraMono
-        Hack
         JetBrainsMono
         Iosevka
     )

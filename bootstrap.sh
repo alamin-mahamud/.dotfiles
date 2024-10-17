@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Define log file
+LOG_FILE="/tmp/bootstrap.log"
+
+# Redirect stdout and stderr to the log file and the terminal
+exec > >(tee -a "$LOG_FILE") 2>&1
+
 # Determine the directory of the current script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

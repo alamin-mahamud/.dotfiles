@@ -6,7 +6,7 @@ setup_hyprland() {
 
     # Update package list and install dependencies
     sudo pacman -Syu --noconfirm
-    sudo paru -S --noconfirm hyprland waybar swaylock wofi alacritty kitty
+    paru -S --noconfirm hyprland waybar swaylock wofi alacritty kitty
 
     if [ $? -eq 0 ]; then
         echo "$GREEN hyprland and its dependencies installed successfully."

@@ -13,7 +13,7 @@ setup_i3_lock_color() {
                                 libjpeg-dev
             ;;
         $ARCH)
-            sudo pacman -S --noconfirm autoconf automake pkg-config pam-devel cairo \
+            paru -S --noconfirm autoconf automake pkg-config pam-devel cairo \
                                 xcb-util xcb-util-image xcb-util-keysyms xcb-util-renderutil \
                                 xcb-util-wm xcb-util-xrm xcb-util-cursor xcb-util-xinerama \
                                 libev xcb-util-xrandr xcb-util-xkb xkbcommon xkbcommon-x11 \
@@ -38,7 +38,7 @@ setup_i3() {
 
     case "$OS" in
         $UBUNTU) sudo apt install -y $i3_items ;;
-        $ARCH) sudo paru -S --noconfirm $i3_items ;;
+        $ARCH) paru -S --noconfirm $i3_items ;;
     esac
 
     echo "🔗 Setting up i3 symlinks..."

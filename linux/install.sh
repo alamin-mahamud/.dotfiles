@@ -17,6 +17,11 @@ source "$SCRIPT_DIR/python.sh"
 source "$SCRIPT_DIR/i3.sh"
 source "$SCRIPT_DIR/hyprland.sh"
 
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" &> /dev/null
+}
+
 # Function to configure sudoers for package managers
 configure_sudoers() {
     echo "🔧 Configuring sudoers for package managers..."
@@ -45,7 +50,7 @@ configure_sudoers() {
 
 # Function to ensure paru is installed
 setup_paru() {
-    if ! command -v paru &> /dev/null; then
+    if ! command_exists paru; then
         echo "🌐 Installing paru..."
         git clone https://aur.archlinux.org/paru.git /tmp/paru
         cd /tmp/paru
@@ -81,7 +86,7 @@ setup_zsh() {
                 sudo apt install -y zsh
                 ;;
             $ARCH)
-                sudo paru -S --noconfirm zsh
+                paru -S --noconfirm zsh
                 ;;
         esac
     else
@@ -111,9 +116,7 @@ setup_python() {
     install_pipx
     install_pipenv
     display_installation_summary
-
 }
-
 
 # Function to install fonts
 setup_fonts() {
@@ -128,8 +131,8 @@ setup_fonts() {
     # install maple fonts
     echo "🔧 Installing Maple fonts..."
     case "$OS" in
-        $UBUNTU) sudo apt install y- ttf-maple ;;
-        $ARCH) sudo paru -S --noconfirm ttf-maple ;;
+        $UBUNTU) sudo apt install -y ttf-maple ;;
+        $ARCH) paru -S --noconfirm ttf-maple ;;
     esac
 
     echo "🔗 Downloading Nerd Fonts..."
@@ -155,13 +158,11 @@ setup_fonts() {
     sudo fc-cache -f -v
 }
 
-
 # Function to change the default shell to zsh
 change_default_shell_to_zsh() {
     echo "🔄 Changing the default shell to zsh..."
     sudo chsh -s "$(which zsh)" "$USER"
 }
-
 
 create_dirs() {
     for a in $dir; do
@@ -169,20 +170,43 @@ create_dirs() {
     done
 }
 
+# Function to detect the operating system
+detect_os() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        OS=$ID
+    else
+        OS=$(uname -s)
+    fi
+}
+
+# Function to update and upgrade the system
+update_and_upgrade() {
+    echo "🔄 Updating and upgrading the system..."
+    case "$OS" in
+        ubuntu)
+            sudo apt update && sudo apt upgrade -y
+            ;;
+        arch)
+            sudo pacman -Syu --noconfirm
+            ;;
+    esac
+}
+
 # Main script execution
 main () {
-    echo "${YELLOW} 🚀 Starting system setup..."
+    echo "🚀 Starting system setup..."
 
-    read -n1 -rep "${ACT} Would you like to install the packages? (y/n)" inst
+    read -n1 -rep "🔧 Would you like to install the packages? (y/n)" inst
     echo
 
     case "$inst" in
         [Nn])
-            echo "${YELLOW} No packages installed. Goodbye! \n"
+            echo "💡 No packages installed. Goodbye! \n"
             exit 1
             ;;
         [Yy])
-            echo "${ACT} Installing packages..."
+            echo "🔧 Installing packages..."
             detect_os
             update_and_upgrade
             create_dirs
@@ -194,21 +218,21 @@ main () {
             # Prompt the user for their choice
             echo "Which window manager would you like to install?"
             echo "1) i3"
-            echo "2) hyperland"
+            echo "2) hyprland"
             read -p "Enter the number of your choice: " choice
 
             # Install based on user choice
             case $choice in
                 1)
-                    echo "${YELLOW} Installing i3..."
+                    echo "🔧 Installing i3..."
                     setup_i3
                     ;;
                 2)
-                    echo "${YELLOW} Installing hyperland..."
+                    echo "🔧 Installing hyprland..."
                     setup_hyprland
                     ;;
                 *)
-                    echo "${RED} Invalid choice. Exiting."
+                    echo "❌ Invalid choice. Exiting."
                     exit 1
                     ;;
             esac
@@ -216,10 +240,10 @@ main () {
             setup_zsh
             change_default_shell_to_zsh
 
-            echo "${GREEN} System setup completed"
+            echo "✅ System setup completed"
             ;;
         *)
-            echo "${RED} Invalid input. Exiting."
+            echo "❌ Invalid input. Exiting."
             exit 1
             ;;
     esac

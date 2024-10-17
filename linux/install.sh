@@ -225,3 +225,4 @@ main () {
     esac
 }
 
+main

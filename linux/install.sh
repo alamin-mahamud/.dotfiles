@@ -149,11 +149,12 @@ setup_fonts() {
         if fc-list | grep -qi "$font"; then
             echo "Font $font already exists, skipping download."
         else
+            # Download and unzip the font
             zip_file="${font}.zip"
             download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${version}/${zip_file}"
             echo "Downloading $download_url"
             wget "$download_url"
-            unzip "$zip_file" -d "$fonts"
+            unzip -o "$zip_file" -d "$fonts"
             rm "$zip_file"
             echo "Font $font installed successfully."
         fi

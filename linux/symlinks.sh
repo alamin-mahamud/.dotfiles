@@ -25,46 +25,32 @@ setup_config() {
     DEST_DIR="$HOME/.config"
 
     # Define common items
-    common_items=(
-        "alacritty"
-        "kitty"
-    )
+    common_items="alacritty kitty"
 
     # Define items for i3
-    i3_items=(
-        "i3"
-        "picom.conf"
-        "dunst"
-        "rofi"
-        "polybar"
-    )
+    i3_items="i3 picom.conf dunst rofi polybar"
 
     # Define items for hyprland
-    hyprland_items=(
-        "hypr"
-        "waybar"
-        "swaylock"
-        "wofi"
-    )
+    hyprland_items="hypr waybar swaylock wofi"
 
     echo "${CAT} 🔗 Creating symlinks for .config dir..."
     mkdir -p "$DEST_DIR"
 
     # Create symlinks for common items
-    for item in "${common_items[@]}"; do
+    for item in $common_items; do
         ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
     done
     echo "${GREEN} ✅ Symlinks for common configuration created."
 
     # Check the user's choice and create symlinks accordingly
-    if [ "$1" == "i3" ]; then
-        for item in "${i3_items[@]}"; do
+    if [ "$1" = "i3" ]; then
+        for item in $i3_items; do
             ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
         done
         echo "${GREEN} ✅ Symlinks for i3 configuration created."
 
-    elif [ "$1" == "hyprland" ]; then
-        for item in "${hyprland_items[@]}"; do
+    elif [ "$1" = "hyprland" ]; then
+        for item in $hyprland_items; do
             ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
         done
         echo "${GREEN} ✅ Symlinks for hyprland configuration created."

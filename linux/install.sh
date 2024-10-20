@@ -204,7 +204,8 @@ update_and_upgrade() {
 main () {
     echo "🚀 Starting system setup..."
 
-    read -n1 -rep "🔧 Would you like to install the packages? (y/n)" inst
+    echo "🔧 Would you like to install the packages? (y/n)"
+    read inst
     echo
 
     case "$inst" in
@@ -226,7 +227,8 @@ main () {
             echo "Which window manager would you like to install?"
             echo "1) i3"
             echo "2) hyprland"
-            read -p "Enter the number of your choice: " choice
+            echo "Enter the number of your choice: " 
+            read choice
 
             # Install based on user choice
             case $choice in

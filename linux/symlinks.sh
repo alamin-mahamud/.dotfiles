@@ -75,9 +75,10 @@ setup_config() {
 }
 
 setup_local(){
-    mkdir -p "$HOME/.local/{bin,share}"
-    ln -sf "$DOT_LINUX/.local/" "$HOME/.local/"
-    chmod +x "$HOME/.local/bin/*"
+    echo "🔗 Creating symlinks for .local dir..."
+    mkdir -p "$HOME/.local"
+    ln -sf "$DOT_LINUX/.local/bin/" "$HOME/.local/"
+    ln -sf "$DOT_LINUX/.local/share/" "$HOME/.local/"
 }
 
 

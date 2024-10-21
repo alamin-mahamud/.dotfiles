@@ -33,7 +33,11 @@ setup_i3_lock_color() {
 # Function to install i3 and related tools
 setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
-    ubuntu_items="i3 i3status i3lock rofi dunst kitty alacritty maim picom feh thunar alsa-utils volumeicon-alsa brightnessctl bluez xclip pulseaudio xfce4-power-manager"
+    ubuntu_items="i3 i3status i3lock rofi dunst kitty alacritty
+                  maim picom feh thunar thunderbird
+                  bluez blueman network-manager-applet redshift-gtk ibus
+                  alsa-utils volumeicon-alsa
+                  brightnessctl xclip pulseaudio xfce4-power-manager"
     arch_items="i3 i3status polybar rofi dunst kitty alacritty maim picom feh thunar alsa-utils volumeicon brightnessctl bluez bluez-utils network-manager-applet xclip pulseaudio pulseaudio-alsa pulseaudio-bluetooth xorg-xbacklight xorg-xprop xfce4-power-manager"
 
     case "$OS" in

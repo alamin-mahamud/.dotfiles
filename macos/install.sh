@@ -16,8 +16,9 @@ check_homebrew() {
 # Function to install packages using Homebrew
 install_packages() {
     echo "📦 Installing packages..."
-    brew install zsh
-    # Add other packages you need here
+    brew install zsh zsh-autosuggestions zsh-syntax-highlighting
+    echo "Install the zsh-autosuggestions and zsh-syntax-highlighting plugins manually."
+    echo "https://gist.github.com/n1snt/454b879b8f0b7995740ae04c5fb5b7df"
 }
 
 # Function to set up Zsh as the default shell

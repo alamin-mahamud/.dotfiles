@@ -1,0 +1,7 @@
+#!/bin/bash
+rofi \
+	-show window \
+	-scroll-method 0 \
+	-terminal kitty \
+	-kb-cancel Escape \
+	-theme "$HOME"/.config/rofi/config/default.rasi

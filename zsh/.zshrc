@@ -8,4 +8,3 @@ source $ZSH_FOLDER/history.zsh
 source $ZSH_FOLDER/z.sh
 source $ZSH_FOLDER/python.zsh
 source $ZSH_FOLDER/omz.zsh
-

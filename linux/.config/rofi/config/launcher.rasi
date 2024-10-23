@@ -132,7 +132,7 @@ element alternate.active {
 
 element selected {
     background-color:               @BGA;
-    text-color:                     @SEL;
+    text-color:                     @BG;
     border:                  	    0px 0px 0px 0px;
     border-radius:                  10px;
     border-color:                   @BDR;

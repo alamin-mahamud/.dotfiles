@@ -14,16 +14,3 @@ bindsym $mod+Mod1+m exec xinput --disable 12
 bindsym $mod+Shift+m exec xinput --enable 12
 
 
-
-# NM
-exec --no-startup-id nm-applet &
-exec --no-startup-id blueman-applet &
-exec --no-startup-id redshift-gtk &
-
-exec --no-startup-id xedgewarp -b &
-
-exec --no-startup-id compton -b &
-exec --no-startup-id ibus-daemon &
-bindsym $mod+Shift+i exec ibus restart
-
-

@@ -83,12 +83,15 @@ setup_zsh() {
         echo "🐚 Installing zsh..."
         case "$OS" in
             $UBUNTU)
-                sudo apt install -y zsh
+                sudo apt install -y zsh zsh-autosuggestions zsh-syntax-highlighting
                 ;;
             $ARCH)
-                paru -S --noconfirm zsh
+                paru -S --noconfirm zsh zsh-autosuggestions zsh-syntax-highlighting
                 ;;
         esac
+
+        echo "Install the zsh-autosuggestions and zsh-syntax-highlighting plugins manually."
+        echo "https://gist.github.com/n1snt/454b879b8f0b7995740ae04c5fb5b7df"
     else
         echo "🐚 zsh is already installed."
     fi
@@ -116,6 +119,28 @@ setup_python() {
     install_pipx
     install_pipenv
     display_installation_summary
+}
+
+setup_go() {
+    echo "-----------------------------------------"
+    echo "🐹 Installing Go and relevant tools..."
+    echo "-----------------------------------------"
+
+    # Provide the necessary commands to install Go and relevant tools
+    case "$OS" in
+        $UBUNTU)
+            echo "🔧 Installing Go..."
+            ;;
+        $ARCH)
+            echo "🔧 Installing Go..."
+            ;;
+    esac
+}
+
+setup_grub_theme() {
+grub_theme_dir=/usr/share/grub/themes
+sudo mkdir -p $grub_theme_dir
+sudo cp -r $dots/linux/grub/themes/* $grub_theme_dir/
 }
 
 # Function to install fonts
@@ -222,13 +247,14 @@ main () {
             configure_sudoers
             setup_build_essential
             setup_python
+            setup_go
             setup_fonts
 
             # Prompt the user for their choice
             echo "Which window manager would you like to install?"
             echo "1) i3"
             echo "2) hyprland"
-            echo "Enter the number of your choice: " 
+            echo "Enter the number of your choice: "
             read choice
 
             # Install based on user choice

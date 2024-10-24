@@ -2,10 +2,10 @@
   monitor = 0
   follow = mouse
   shrink = no
-  padding = 20
-  horizontal_padding = 20
+  padding = 10
+  horizontal_padding = 10
 
-  width = 275
+  width = 500
   height = 100
   offset = 10x50
   origin = top-right
@@ -16,7 +16,7 @@
   separator_color = "#161320"
 
   sort = no
-  font = Maple Mono 10
+  font = Maple Mono 8
   markup = full
   format = "<b>%s</b>\n%b"
   alignment = left
@@ -28,12 +28,12 @@
   show_indicators = yes
 
   icon_position = left
-  max_icon_size= 60
+  max_icon_size= 30
   sticky_history = no
   history_length = 6
   title = Dunst
   class = Dunst
-  corner_radius = 20
+  corner_radius = 10
 
   mouse_left_click = close_current
   mouse_middle_click = do_action
@@ -49,10 +49,13 @@
   background = "#1E1E2E"
   frame_color = "#B5E8E0"
   foreground = "#D9E0EE"
-  timeout = 10
+  timeout = 5
 
 [urgency_critical]
   background = "#1E1E2E"
   frame_color = "#F88D96"
   foreground = "#D9E0EE"
-  timeout = 20
+  timeout = 10
+
+[script]
+    exec = ~/.config/dunst/notification_click.sh

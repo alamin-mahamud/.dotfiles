@@ -33,22 +33,26 @@ setup_i3_lock_color() {
 # Function to install i3 and related tools
 setup_i3() {
     echo "🖥️ Installing i3 and related tools..."
-    ubuntu_items="i3 i3status i3lock rofi dunst kitty
+    ubuntu_items="i3 i3status i3lock i3blocks rofi dunst kitty
                   zoom maim picom feh thunar thunderbird
                   bluez blueman network-manager-applet redshift-gtk ibus
-                  alsa-utils volumeicon-alsa
-                  brightnessctl xclip pulseaudio xfce4-power-manager"
-    arch_items="i3 i3status polybar rofi dunst kitty
-                maim picom feh thunar
+                  alsa-utils volumeicon-alsa clipman xclip playerctl
+                  brightnessctl pulseaudio xfce4-power-manager"
+    arch_items="i3 i3status i3blocks polybar rofi dunst kitty
+                maim picom feh thunar playerctl
                 alsa-utils volumeicon brightnessctl bluez bluez-utils network-manager-applet
                 xclip pulseaudio pulseaudio-alsa pulseaudio-bluetooth xorg-xbacklight xorg-xprop xfce4-power-manager"
 
     case "$OS" in
-        $UBUNTU) sudo apt install -y $ubuntu_items ;;
+        $UBUNTU)
+            sudo apt install -y $ubuntu_items
+            sudo snap install telegram-desktop
+            ;;
         $ARCH) paru -S --noconfirm $arch_items ;;
     esac
 
     echo "🔗 Setting up i3 symlinks..."
     setup_i3_lock_color
-    setup_config i3
+    setup_config i3]
+
 }

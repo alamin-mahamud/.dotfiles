@@ -13,7 +13,7 @@ set $ws6 "6:  Terminal"
 set $ws7 "7:  Code"
 set $ws8 "8:  Spotify"
 set $ws9 "9:  Files"
-set $ws0 "10:  Zoom"
+set $ws0 "10:  Zoom"
 
 # Color scheme - catppuccino frappe
 set $rosewater #f2d5cf

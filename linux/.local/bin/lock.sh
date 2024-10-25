@@ -10,8 +10,8 @@ verify='#ABE9B3'
 
 greet="Welcome, Back $USER"
 wrong_pass="Incorrect, Try Again"
-font="Maple Mono, Fira Code, Unifont, monospace"
-background="$HOME/.local/share/lock.png"
+font="Fira Code, Maple Mono, Unifont, monospace"
+background="$HOME/.local/share/lock.jpg"
 
 i3lock \
   --nofork \
@@ -26,12 +26,14 @@ i3lock \
   --bar-color=$ring \
   --bar-periodic-step 50 \
   --bar-step 50 \
+  \
   --line-color=$ring \
   --ringver-color=$verify \
   --ringwrong-color=$wrong \
   --bshl-color=$clear \
   --keyhl-color=$verify \
   --redraw-thread \
+  \
   --clock \
   --time-color=$text \
   --time-str="%I:%M %p" \
@@ -43,6 +45,7 @@ i3lock \
   --date-color=$text \
   --date-font="$font" \
   --date-size=18 \
+  \
   --verif-font="$font" \
   --verif-size=24 \
   --verif-text="$greet" \
@@ -51,6 +54,9 @@ i3lock \
   --wrong-size=24 \
   --wrong-text="$wrong_pass" \
   --wrong-color=$wrong \
+  \
   -i $background \
-  --time-pos="175:668" \
+  --scale \
   --keylayout 1
+
+#   --time-pos="175:668" \

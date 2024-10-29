@@ -8,6 +8,8 @@ DIR="$HOME/.config/dunst"
 
 function get_volume {
       amixer -D pulse get Master | grep '%' | head -n 1 | awk -F'[' '{print $2}' | awk -F'%' '{print $1}'
+      # pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( $(pactl list sinks | grep -c '^[[:space:]]Volume:') / 2 + 1 )) | tail -n 1 | awk '{print $5}'
+
 }
 
 function is_mute {
@@ -43,6 +45,9 @@ function send_notification {
 }
 
 case $1 in
+  get)
+    get_volume
+    ;;
   up)
     # Unmute
 	  amixer -D pulse set Master on > /dev/null

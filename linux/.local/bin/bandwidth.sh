@@ -10,12 +10,12 @@ sleep 1
 RX2=$(cat /sys/class/net/$INTERFACE/statistics/rx_bytes)
 TX2=$(cat /sys/class/net/$INTERFACE/statistics/tx_bytes)
 
-# Calculate the speeds
+# Calculate the speeds in bytes per second
 RXBPS=$((RX2 - RX1))
 TXBPS=$((TX2 - TX1))
 
-# Convert to human-readable format
-RXKBPS=$(echo "scale=2; $RXBPS / 1024" | bc)
-TXKBPS=$(echo "scale=2; $TXBPS / 1024" | bc)
+# Convert to megabits per second (Mbps) and round to 1 decimal place
+RXMBPS=$(echo "scale=1; $RXBPS * 8 / 1024 / 1024" | bc)
+TXMBPS=$(echo "scale=1; $TXBPS * 8 / 1024 / 1024" | bc)
 
-echo " D: ${RXKBPS}KB/s U: ${TXKBPS}KB/s"
+echo "↓: ${RXMBPS} Mbps ↑: ${TXMBPS} Mbps"

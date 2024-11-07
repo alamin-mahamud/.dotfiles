@@ -138,9 +138,16 @@ setup_go() {
 }
 
 setup_grub_theme() {
-grub_theme_dir=/usr/share/grub/themes
-sudo mkdir -p $grub_theme_dir
-sudo cp -r $dots/linux/grub/themes/* $grub_theme_dir/
+    grub_theme_dir=/usr/share/grub/themes
+    sudo mkdir -p $grub_theme_dir
+    sudo cp -r $dots/linux/grub/themes/* $grub_theme_dir/
+}
+
+setup_tmux() {
+    sudo apt install -y tmux
+    # Theme
+    mkdir -p ~/.config/tmux/plugins/catppuccin
+    git clone -b v2.1.0 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
 }
 
 # Function to install fonts
@@ -248,6 +255,7 @@ main () {
             setup_build_essential
             setup_python
             setup_go
+            setup_tmux
             setup_fonts
 
             # Prompt the user for their choice

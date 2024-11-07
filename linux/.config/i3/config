@@ -3,17 +3,16 @@ set $mod Mod4
 
 # Workspace
 
-set $ws1 "1:  Office"
-set $ws2 "2:  Home"
-set $ws3 "3:  Email"
-set $ws4 "4:  Chat"
-set $ws5 "5:  Monitor"
-
-set $ws6 "6:  Terminal"
-set $ws7 "7:  Code"
-set $ws8 "8:  Spotify"
-set $ws9 "9:  Files"
-set $ws0 "10:  Zoom"
+set $ws1 "1: "
+set $ws2 "2: "
+set $ws3 "3: "
+set $ws4 "4: "
+set $ws5 "5: "
+set $ws6 "6: "
+set $ws7 "7: "
+set $ws8 "8: "
+set $ws9 "9: "
+set $ws0 "10: "
 
 # Color scheme - catppuccino frappe
 set $rosewater #f2d5cf
@@ -60,4 +59,4 @@ include $i3config/workspaces.conf       # Workspace definitions and settings
 
 include $i3config/resize.conf           # Window resizing and positioning
 include $i3config/power_management.conf # Power management settings
-# include $i3config/gaps.conf           # Gaps and spacing settings
+include $i3config/gaps.conf           # Gaps and spacing settings

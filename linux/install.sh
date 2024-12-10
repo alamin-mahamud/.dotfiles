@@ -233,6 +233,24 @@ update_and_upgrade() {
     esac
 }
 
+setup_docker() {
+    # Add Docker's official GPG key:
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update    
+
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+}
+
 # Main script execution
 main () {
     echo "🚀 Starting system setup..."
@@ -253,6 +271,7 @@ main () {
             create_dirs
             configure_sudoers
             setup_build_essential
+            setup_docker
             setup_python
             setup_go
             setup_tmux
@@ -260,18 +279,24 @@ main () {
 
             # Prompt the user for their choice
             echo "Which window manager would you like to install?"
-            echo "1) i3"
-            echo "2) hyprland"
+            echo "1) ubuntu_basic"
+            echo "2) i3"
+            echo "3) hyprland"
             echo "Enter the number of your choice: "
             read choice
 
             # Install based on user choice
             case $choice in
                 1)
+                    echo "🔧 Installing ubuntu basic setup..."
+                    sudo apt install -y kitty
+                    setup_config
+                    ;;
+                2)
                     echo "🔧 Installing i3..."
                     setup_i3
                     ;;
-                2)
+                3)
                     echo "🔧 Installing hyprland..."
                     setup_hyprland
                     ;;
@@ -281,6 +306,7 @@ main () {
                     ;;
             esac
 
+            setup_grub_theme
             setup_zsh
             change_default_shell_to_zsh
 
@@ -293,4 +319,4 @@ main () {
     esac
 }
 
-main
+#main

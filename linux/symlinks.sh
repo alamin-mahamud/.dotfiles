@@ -43,7 +43,13 @@ setup_config() {
     echo "${GREEN} ✅ Symlinks for common configuration created."
 
     # Check the user's choice and create symlinks accordingly
-    if [ "$1" = "i3" ]; then
+    if [ "$1" = "ubuntu_basic" ]; then
+        for item in $ubuntu_basic_items; do
+            ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
+        done
+        echo "${GREEN} ✅ Symlinks for Ubuntu basic configuration created."
+
+    elif [ "$1" = "i3" ]; then
         for item in $i3_items; do
             ln -sf "$SOURCE_DIR/$item" "$DEST_DIR/$item"
         done

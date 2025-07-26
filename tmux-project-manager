@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+
+# Tmux Project Manager for DevOps
+# Manages multiple project sessions with standardized layouts
+
+PROJECTS_DIR="$HOME/Work"
+SESSIONS_CONFIG="$HOME/.tmux-projects.conf"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+usage() {
+    echo "Usage: $0 [COMMAND] [PROJECT_NAME]"
+    echo ""
+    echo "Commands:"
+    echo "  create <name>     Create a new project session"
+    echo "  list              List all active sessions"
+    echo "  attach <name>     Attach to existing session"
+    echo "  kill <name>       Kill a project session"
+    echo "  killall           Kill all sessions"
+    echo "  layout <name>     Setup standard DevOps layout"
+    echo "  help              Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  $0 create my-app"
+    echo "  $0 attach my-app"
+    echo "  $0 layout my-app"
+}
+
+create_session() {
+    local project_name="$1"
+    local project_path="$PROJECTS_DIR/$project_name"
+    
+    if ! tmux has-session -t "$project_name" 2>/dev/null; then
+        echo -e "${GREEN}Creating session: $project_name${NC}"
+        
+        # Create base session
+        tmux new-session -d -s "$project_name" -c "$project_path" -n "editor"
+        
+        # Create standard windows
+        tmux new-window -t "$project_name" -n "terminal" -c "$project_path"
+        tmux new-window -t "$project_name" -n "logs" -c "$project_path"
+        tmux new-window -t "$project_name" -n "monitoring" -c "$project_path"
+        tmux new-window -t "$project_name" -n "deployment" -c "$project_path"
+        
+        # Setup editor window
+        tmux send-keys -t "$project_name:editor" "clear" C-m
+        
+        # Setup terminal window with splits
+        tmux split-window -t "$project_name:terminal" -h -c "$project_path"
+        tmux split-window -t "$project_name:terminal.1" -v -c "$project_path"
+        tmux select-pane -t "$project_name:terminal.0"
+        
+        # Setup monitoring window
+        tmux send-keys -t "$project_name:monitoring" "htop" C-m
+        tmux split-window -t "$project_name:monitoring" -h -c "$project_path"
+        tmux send-keys -t "$project_name:monitoring.1" "watch -n 5 'docker ps'" C-m
+        
+        # Focus on editor window
+        tmux select-window -t "$project_name:editor"
+        
+        echo -e "${GREEN}Session '$project_name' created successfully${NC}"
+    else
+        echo -e "${YELLOW}Session '$project_name' already exists${NC}"
+    fi
+}
+
+list_sessions() {
+    echo -e "${BLUE}Active tmux sessions:${NC}"
+    tmux list-sessions 2>/dev/null || echo "No active sessions"
+}
+
+attach_session() {
+    local project_name="$1"
+    
+    if tmux has-session -t "$project_name" 2>/dev/null; then
+        if [[ -z $TMUX ]]; then
+            tmux attach-session -t "$project_name"
+        else
+            tmux switch-client -t "$project_name"
+        fi
+    else
+        echo -e "${RED}Session '$project_name' does not exist${NC}"
+        echo "Available sessions:"
+        list_sessions
+    fi
+}
+
+kill_session() {
+    local project_name="$1"
+    
+    if tmux has-session -t "$project_name" 2>/dev/null; then
+        tmux kill-session -t "$project_name"
+        echo -e "${GREEN}Session '$project_name' killed${NC}"
+    else
+        echo -e "${RED}Session '$project_name' does not exist${NC}"
+    fi
+}
+
+kill_all_sessions() {
+    echo -e "${YELLOW}Killing all tmux sessions...${NC}"
+    tmux kill-server 2>/dev/null || echo "No sessions to kill"
+    echo -e "${GREEN}All sessions killed${NC}"
+}
+
+setup_devops_layout() {
+    local project_name="$1"
+    local project_path="$PROJECTS_DIR/$project_name"
+    
+    if ! tmux has-session -t "$project_name" 2>/dev/null; then
+        echo -e "${RED}Session '$project_name' does not exist. Creating it first...${NC}"
+        create_session "$project_name"
+    fi
+    
+    echo -e "${GREEN}Setting up DevOps layout for: $project_name${NC}"
+    
+    # Setup logs window with common log monitoring
+    tmux send-keys -t "$project_name:logs" "clear" C-m
+    tmux split-window -t "$project_name:logs" -h -c "$project_path"
+    tmux send-keys -t "$project_name:logs.0" "tail -f *.log 2>/dev/null || echo 'No log files found'" C-m
+    tmux send-keys -t "$project_name:logs.1" "journalctl -f 2>/dev/null || tail -f /var/log/syslog 2>/dev/null || echo 'No system logs accessible'" C-m
+    
+    # Setup deployment window
+    tmux send-keys -t "$project_name:deployment" "clear" C-m
+    tmux split-window -t "$project_name:deployment" -v -c "$project_path"
+    tmux send-keys -t "$project_name:deployment.0" "# Deployment commands here" C-m
+    tmux send-keys -t "$project_name:deployment.1" "# Build/CI commands here" C-m
+    
+    echo -e "${GREEN}DevOps layout configured for '$project_name'${NC}"
+}
+
+# Main script logic
+case "$1" in
+    create)
+        if [[ -z "$2" ]]; then
+            echo -e "${RED}Error: Project name required${NC}"
+            usage
+            exit 1
+        fi
+        create_session "$2"
+        ;;
+    list)
+        list_sessions
+        ;;
+    attach)
+        if [[ -z "$2" ]]; then
+            echo -e "${RED}Error: Project name required${NC}"
+            usage
+            exit 1
+        fi
+        attach_session "$2"
+        ;;
+    kill)
+        if [[ -z "$2" ]]; then
+            echo -e "${RED}Error: Project name required${NC}"
+            usage
+            exit 1
+        fi
+        kill_session "$2"
+        ;;
+    killall)
+        kill_all_sessions
+        ;;
+    layout)
+        if [[ -z "$2" ]]; then
+            echo -e "${RED}Error: Project name required${NC}"
+            usage
+            exit 1
+        fi
+        setup_devops_layout "$2"
+        ;;
+    help|--help|-h)
+        usage
+        ;;
+    *)
+        echo -e "${RED}Error: Unknown command '$1'${NC}"
+        usage
+        exit 1
+        ;;
+esac

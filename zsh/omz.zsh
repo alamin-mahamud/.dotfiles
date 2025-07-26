@@ -1,4 +1,4 @@
-export ZSH=$HOME/.oh-my-zsh
+ZSH=$HOME/.oh-my-zsh
 export ZSH_THEME="af-magic"
 
 export plugins=(

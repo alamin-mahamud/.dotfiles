@@ -12,3 +12,13 @@ source $ZSH_FOLDER/omz.zsh
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Tmux aliases
+alias tm='tmux'
+alias tma='tmux attach-session -t'
+alias tmn='tmux new-session -s'
+alias tml='tmux list-sessions'
+alias tmk='tmux kill-session -t'
+alias tmks='tmux kill-server'
+alias tms='tmux-sessionizer'
+alias tmp='tmux-project-manager'

@@ -1,244 +1,286 @@
-## TODO
+# Dotfiles
 
-- Start i3 when arch login
+A comprehensive, modular dotfiles repository for automated development environment setup across Ubuntu Desktop, Ubuntu Server, and macOS.
 
-## OS Installation
+## Features
 
-### Arch Linux Installation
+- **Multi-platform support**: Ubuntu Desktop, Ubuntu Server, macOS
+- **Modular installation**: Choose only what you need
+- **Automated setup**: One-command installation with interactive menu
+- **Environment detection**: Automatically detects OS and environment type
+- **Backup functionality**: Safely backs up existing configurations
+- **Standalone server script**: Minimal setup for production servers
+- **Development tools**: Modern toolchain for multiple languages
+- **Shell configuration**: Zsh with Oh My Zsh, tmux, and productivity tools
 
-This script automates the installation of Arch Linux on a system. It partitions the disk, installs essential packages, configures the system, and sets up a new user.
+## Quick Start
 
-#### Prerequisites
+### Prerequisites
 
-- A fresh Arch Linux system
+- Git
+- Curl
 - Internet connection
-- The script assumes the disk to be `/dev/sda` and the RAM size to be `2GiB`. Adjust these values as needed.
+- sudo/admin privileges (for package installation)
 
-#### Script Overview
+### Installation
 
-The script performs the following steps:
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/dotfiles.git ~/Work/.dotfiles
+cd ~/Work/.dotfiles
+```
 
-- Set up variables: Define hostname, username, password, and disk.
-- Update system clock: Ensure the system clock is accurate.
-- Partition the disk: Create EFI, swap, and root partitions.
-- Format the partitions: Format the created partitions.
-- Mount the file systems: Mount the partitions.
-- Install essential packages: Install base system packages.
-- Generate fstab: Generate the file system table.
-- Chroot into the new system: Configure the new system.
-- Set up the system: Configure timezone, localization, network, and users.
-- Install and configure bootloader: Install GRUB bootloader.
-- Enable necessary services: Enable essential services.
-- Reboot the system: Unmount partitions and reboot.
+2. Make the bootstrap script executable:
+```bash
+chmod +x ./bootstrap.sh
+```
 
-#### Script
+3. Run the bootstrap script:
+```bash
+./bootstrap.sh
+```
+
+The script will:
+- Detect your operating system and environment
+- Present an interactive menu with installation options
+- Guide you through the setup process
+
+### Standalone Ubuntu Server Installation
+
+For Ubuntu servers, use the standalone script for a minimal setup:
 
 ```bash
-#!/bin/bash
-
-# Exit on error
-set -e
-
-# Set up variables
-HOSTNAME="archlinux"
-USERNAME="user"
-PASSWORD="password"
-DISK="/dev/sda"
-RAM_SIZE=$(free -m | awk '/^Mem:/{print $2}') # Get RAM size in MiB
-
-# Update system clock
-timedatectl set-ntp true
-
-# Calculate the total disk size in MiB
-DISK_SIZE=$(parted $DISK unit MiB print | grep "Disk $DISK" | awk '{print $3}' | sed 's/MiB//')
-
-# Calculate partition sizes
-EFI_SIZE=$((DISK_SIZE / 100)) # 1% of DISK_SIZE
-[ $EFI_SIZE -lt 1024 ] && EFI_SIZE=1024 # Minimum 1GB
-
-SWAP_SIZE=$((RAM_SIZE <= 4096 ? RAM_SIZE : 4096)) # Minimum 4GB or RAM_SIZE
-[ $SWAP_SIZE -lt $EFI_SIZE ] && SWAP_SIZE=$EFI_SIZE # Ensure SWAP_SIZE is at least 1% of DISK_SIZE
-
-ROOT_SIZE=$((DISK_SIZE - EFI_SIZE - SWAP_SIZE)) # Remaining amount
-
-# Check if the system is booted in UEFI mode
-if [ -d /sys/firmware/efi ]; then
-    echo "UEFI mode detected. Partitioning for UEFI."
-
-    # Partition the disk for UEFI
-    parted -s $DISK mklabel gpt
-    parted -s $DISK mkpart primary fat32 1MiB ${EFI_SIZE}MiB
-    parted -s $DISK set 1 esp on
-    parted -s $DISK mkpart primary linux-swap ${EFI_SIZE}MiB $((${EFI_SIZE} + ${SWAP_SIZE}))MiB
-    parted -s $DISK mkpart primary ext4 $((${EFI_SIZE} + ${SWAP_SIZE}))MiB 100%
-
-    # Format the partitions
-    mkfs.fat -F32 ${DISK}1
-    mkswap ${DISK}2
-    mkfs.ext4 ${DISK}3
-
-    # Mount the file systems
-    mount ${DISK}3 /mnt
-    mkdir /mnt/boot
-    mount ${DISK}1 /mnt/boot
-    swapon ${DISK}2
-
-else
-    echo "BIOS mode detected. Partitioning for BIOS."
-
-    # Partition the disk for BIOS
-    parted -s $DISK mklabel msdos
-    parted -s $DISK mkpart primary ext4 1MiB 100%
-    parted -s $DISK set 1 boot on
-
-    # Format the partitions
-    mkfs.ext4 ${DISK}1
-
-    # Mount the file systems
-    mount ${DISK}1 /mnt
-fi
-
-# Install essential packages
-pacstrap /mnt base linux linux-firmware
-
-# Generate fstab
-genfstab -U /mnt >> /mnt/etc/fstab
-
-# Chroot into the new system
-arch-chroot /mnt /bin/bash <<EOF
-
-# Set the time zone
-ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
-hwclock --systohc
-
-# Localization
-echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
-locale-gen
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
-
-# Network configuration
-echo $HOSTNAME > /etc/hostname
-cat <<EOT > /etc/hosts
-127.0.0.1   localhost
-::1         localhost
-127.0.1.1   $HOSTNAME.localdomain $HOSTNAME
-EOT
-
-# Set root password
-echo "root:$PASSWORD" | chpasswd
-
-# Create a new user
-useradd -m -G wheel -s /bin/bash $USERNAME
-echo "$USERNAME:$PASSWORD" | chpasswd
-
-# Allow wheel group to use sudo
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
-
-# Install and configure bootloader
-if [ -d /sys/firmware/efi ]; then
-    pacman -S --noconfirm grub efibootmgr
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-else
-    pacman -S --noconfirm grub
-    grub-install --target=i386-pc $DISK
-fi
-grub-mkconfig -o /boot/grub/grub.cfg
-
-# Enable necessary services
-systemctl enable NetworkManager
-
-EOF
-
-# Unmount and reboot
-umount -R /mnt
-swapoff -a
-echo "Installation complete. Rebooting in 5 seconds..."
-sleep 5
-reboot
+wget https://raw.githubusercontent.com/yourusername/dotfiles/main/ubuntu-server-setup.sh
+chmod +x ubuntu-server-setup.sh
+./ubuntu-server-setup.sh
 ```
 
-#### Usage
+This script includes:
+- Essential system packages
+- Security hardening (UFW, fail2ban)
+- Development tools (Git, Python, Node.js)
+- Shell enhancements (Zsh, tmux)
+- Optional Docker installation
+- System maintenance automation
 
-- Save the script to a file, e.g., `arch_os_install.sh`.
-- Make the script executable: `chmod +x ./arch_os_install.sh`.
+## Installation Options
 
-#### Run the script:
+### 1. Full Installation (Desktop)
+Includes everything needed for a complete development workstation:
+- Window manager configurations (i3/Hyprland)
+- GUI applications (Kitty, Rofi, etc.)
+- All development tools
+- Shell and terminal enhancements
+- Fonts and themes
+
+### 2. Server Installation
+Minimal setup optimized for servers:
+- Core utilities and monitoring tools
+- Security configurations
+- Shell enhancements
+- Development basics
+- No GUI components
+
+### 3. Development Tools Only
+Just the development environment:
+- Programming languages (Python, Node.js, Rust, Go)
+- Version managers (pyenv, nvm)
+- Docker and container tools
+- Cloud CLI tools (AWS, kubectl, Terraform)
+- Code editors (Neovim, VS Code)
+
+### 4. Shell Configuration Only
+Terminal and shell setup:
+- Zsh with Oh My Zsh
+- Powerlevel10k theme
+- Tmux with plugins
+- Modern CLI tools (fzf, ripgrep, bat)
+- Nerd Fonts
+
+## Directory Structure
+
+```
+.dotfiles/
+├── bootstrap.sh          # Main entry point with OS detection
+├── ubuntu-server-setup.sh # Standalone server installation
+├── scripts/              # Modular installation scripts
+│   ├── install-dev-tools.sh
+│   ├── install-shell.sh
+│   └── custom-install.sh
+├── configs/              # Shared configuration files
+├── linux/                # Linux-specific configurations
+│   ├── install.sh        # Main Linux setup
+│   ├── .config/          # Application configs
+│   └── .local/           # User scripts
+├── macos/                # macOS-specific configurations
+│   └── install.sh        # Homebrew-based setup
+├── zsh/                  # Zsh configuration modules
+│   ├── .zshrc           # Main config
+│   ├── aliases.zsh      # Shell aliases
+│   ├── exports.zsh      # Environment variables
+│   └── functions.zsh    # Shell functions
+└── git/                  # Git configuration
+    └── .gitconfig       # Global git config
+```
+
+## Configuration Details
+
+### Shell Environment
+
+The setup includes a modular Zsh configuration with:
+- **Oh My Zsh**: Framework for managing Zsh configuration
+- **Plugins**: autosuggestions, syntax-highlighting, completions
+- **Theme**: Powerlevel10k for a beautiful, informative prompt
+- **Aliases**: Productivity shortcuts for common commands
+- **Functions**: Custom shell functions for workflow optimization
+
+### Development Environment
+
+#### Python
+- **pyenv**: Python version management
+- **pipenv**: Virtual environment and dependency management
+- **pipx**: Global Python application installation
+- **Tools**: black, flake8, mypy, poetry
+
+#### Node.js
+- **nvm** or **system Node.js**: Version management
+- **Package managers**: npm, yarn, pnpm
+- **Global tools**: TypeScript, ESLint, Prettier
+
+#### Other Languages
+- **Rust**: Via rustup with cargo tools
+- **Go**: Latest stable version
+- **Docker**: Container development
+- **Cloud tools**: AWS CLI, kubectl, Terraform
+
+### Terminal & Editor
+
+- **Tmux**: Terminal multiplexer with custom configuration
+- **Neovim**: Modern Vim with LSP support
+- **VS Code**: Optional GUI editor
+- **Kitty**: GPU-accelerated terminal (Linux desktop)
+- **Modern CLI tools**: ripgrep, fd, bat, exa, fzf
+
+## Python Workflow
+
+Here's how to use the Python setup effectively:
+
+### Install & Manage Python Versions with pyenv
 
 ```bash
-./arch_os_install.sh
-```
-
-Notes
-Adjust the HOSTNAME, USERNAME, PASSWORD, and DISK variables as needed.
-Ensure the Region/City in the timezone configuration is set correctly for your location.
-The script assumes a RAM size of 2GiB for the swap partition calculation. Adjust this value if your system has a different amount of RAM.
-
-## Dotfile Installation
-
-### Linux
-
-Constants
-
-- DOTFILE_LOCATION
-
-```
-sudo apt update
-sudo apt upgrade
-sudo apt install -y curl git
-```
-
-clone `.dotfiles` in $DOTFILE_LOCATION
-
-## Python Workflow:
-
-Here’s how you can use this setup with best practices in mind:
-
-### Install & Manage Python Versions with `pyenv`:
-
-Use `pyenv` to install & manage the desired Python version for your project.
-
-```bash
+# Install a specific Python version
 pyenv install 3.11.0
 pyenv global 3.11.0
 
-# setting a python version for only a specific project
+# Set version for a specific project
+cd my-project
 pyenv local 3.11.0
 ```
 
-### Project dependencies with `pipenv`:
-
-Navigate to your project directory and start using `pipenv` to manage dependencies and virtual environments.
+### Project Dependencies with pipenv
 
 ```bash
-# This will use the version of Python managed by pyenv and
-# create a virtual environment specific to your project.
+# Create virtual environment with pyenv's Python
 pipenv install --python $(pyenv which python)
 
-# install a package for that specific venv
-pipenv install requests
+# Install project dependencies
+pipenv install requests pandas
 
-# Activate venv by running
+# Install dev dependencies
+pipenv install --dev pytest black flake8
+
+# Activate the virtual environment
 pipenv shell
 
-# lock the exact versions of all installed packages
+# Lock dependencies
 pipenv lock
 ```
 
-### Install & manage global python tools with pipx
+### Global Tools with pipx
 
 ```bash
-# install tools
+# Install tools globally
 pipx install black
 pipx install httpie
+pipx install youtube-dl
 
-# list all tools installed by pipx
+# List installed tools
 pipx list
 
-# Once installed with pipx, you can use the tools as if they were installed globally
-black myfile.py
-http httpbin.org/get
-
-# upgrade / uninstall tools
+# Upgrade tools
 pipx upgrade black
-pipx uninstall httpie
 ```
+
+## Customization
+
+### Adding Your Own Configurations
+
+1. Fork this repository
+2. Update personal information in:
+   - `git/.gitconfig` (name, email)
+   - `zsh/exports.zsh` (environment variables)
+3. Add your custom scripts to `scripts/`
+4. Commit and push your changes
+
+### Extending the Setup
+
+To add new tools or configurations:
+
+1. Create a new script in `scripts/`
+2. Add it to the appropriate installation menu
+3. Update the documentation
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Permission denied errors**
+   - Ensure you're not running as root
+   - Check file permissions on scripts
+
+2. **Package installation failures**
+   - Update package lists: `sudo apt update`
+   - Check internet connection
+   - Review log files in `/tmp/`
+
+3. **Shell not changing**
+   - Log out and back in
+   - Verify shell is in `/etc/shells`
+
+### Logs
+
+Installation logs are saved to:
+- Bootstrap: `/tmp/dotfiles-bootstrap-[timestamp].log`
+- Server setup: `/tmp/ubuntu-server-setup.log`
+
+## Security Considerations
+
+The server setup includes several security enhancements:
+- UFW firewall configuration
+- fail2ban for intrusion prevention
+- SSH hardening options
+- Automated security updates
+- Minimal package installation
+
+## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## Acknowledgments
+
+- Oh My Zsh community
+- Tmux Plugin Manager developers
+- Nerd Fonts project
+- All the open source tool maintainers
+
+---
+
+For more detailed information about specific configurations, check the `docs/` directory or the inline documentation in each script.

@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Linux Installation Script
+# This script now delegates to the enhanced installation script
+
+# Determine the directory of the current script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Run the enhanced installation script
+if [[ -f "$SCRIPT_DIR/install-enhanced.sh" ]]; then
+    exec "$SCRIPT_DIR/install-enhanced.sh" "$@"
+else
+    echo "Error: Enhanced installation script not found!"
+    echo "Please ensure install-enhanced.sh exists in the same directory."
+    exit 1
+fi
+
+# Legacy configuration (kept for reference)
 dots="$HOME/Work/.dotfiles"
 config="$HOME/.config"
 bin="$HOME/.local/bin"

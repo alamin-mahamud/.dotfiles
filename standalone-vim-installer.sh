@@ -3,7 +3,7 @@
 # Standalone Vim Installer and Configuration Script
 # Perfect for DevOps engineers working on remote servers
 # This creates a practical vim setup with helpful comments for beginners
-# Usage: curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/refs/heads/master/standalone-tmux-installer.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/refs/heads/master/standalone-vim-installer.sh | bash
 #   or: ./vim-installer.sh
 
 set -e

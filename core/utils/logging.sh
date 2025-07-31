@@ -1,21 +1,25 @@
 #!/bin/bash
 # core/utils/logging.sh - Centralized logging functionality
 
+# Guard against multiple sourcing
+[[ -n "${DOTFILES_LOGGING_LOADED:-}" ]] && return 0
+DOTFILES_LOGGING_LOADED=1
+
 # Color codes
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly BLUE='\033[0;34m'
-readonly PURPLE='\033[0;35m'
-readonly CYAN='\033[0;36m'
-readonly NC='\033[0m'
+declare -r RED='\033[0;31m'
+declare -r GREEN='\033[0;32m'
+declare -r YELLOW='\033[1;33m'
+declare -r BLUE='\033[0;34m'
+declare -r PURPLE='\033[0;35m'
+declare -r CYAN='\033[0;36m'
+declare -r NC='\033[0m'
 
 # Log levels
-readonly LOG_DEBUG=0
-readonly LOG_INFO=1
-readonly LOG_WARN=2
-readonly LOG_ERROR=3
-readonly LOG_FATAL=4
+declare -r LOG_DEBUG=0
+declare -r LOG_INFO=1
+declare -r LOG_WARN=2
+declare -r LOG_ERROR=3
+declare -r LOG_FATAL=4
 
 # Current log level (can be overridden)
 LOG_LEVEL=${LOG_LEVEL:-$LOG_INFO}

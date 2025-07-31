@@ -1,0 +1,216 @@
+# DevOps Workstation Profile
+# Complete toolkit for infrastructure engineers and DevOps professionals
+# Includes cloud tools, container orchestration, IaC, and productivity enhancements
+
+profile:
+  name: "devops-workstation"
+  version: "1.0.0"
+  description: "Complete DevOps workstation with cloud tools, Kubernetes, and productivity suite"
+  author: "Dotfiles Project"
+  environment: "desktop"
+  target_os: ["linux", "macos"]
+  target_distributions: ["ubuntu", "debian", "fedora", "centos", "rhel", "arch", "macos"]
+
+# Comprehensive component set for DevOps work
+components:
+  # Core system functionality
+  core:
+    - "system_updates"
+    - "essential_packages"
+    - "user_management"
+    - "timezone_config"
+    - "locale_config"
+  
+  # Security (lighter for workstation)
+  security:
+    - "ssh_hardening"
+    - "firewall_basic"
+  
+  # Productivity tools
+  productivity:
+    - "shell_advanced"
+    - "tmux_enhanced"
+    - "editor_neovim"
+    - "git_advanced"
+  
+  # Cloud provider tools
+  cloud:
+    - "aws_cli"
+    - "gcp_cli"
+    - "azure_cli"
+  
+  # Infrastructure as Code
+  infra:
+    - "terraform"
+    - "ansible" 
+    - "packer"
+  
+  # Container and Kubernetes
+  devops:
+    - "docker_enhanced"
+    - "kubernetes_tools"
+    - "helm"
+    - "monitoring_tools"
+
+# Configuration variables
+configuration:
+  # System settings
+  timezone: "America/New_York"
+  locale: "en_US.UTF-8"
+  
+  # User preferences
+  shell: "zsh"
+  editor: "nvim"
+  theme: "dark"
+  
+  # Development settings
+  git_name: ""  # User should set this
+  git_email: ""  # User should set this
+  
+  # Cloud settings
+  aws_default_region: "us-east-1"
+  gcp_default_region: "us-central1"
+  azure_default_location: "eastus"
+  
+  # Container settings
+  docker_buildkit: true
+  
+  # Kubernetes settings
+  kubectl_namespace: "default"
+  
+  # Security settings (relaxed for workstation)
+  firewall_enable: false  # Desktop firewall often disabled
+  ssh_server_enable: false  # Usually not needed on workstation
+
+# Post-installation scripts
+post_install:
+  - "echo 'DevOps workstation profile installation completed'"
+  - "echo 'Please configure Git user settings:'"
+  - "echo '  git config --global user.name \"Your Name\"'"
+  - "echo '  git config --global user.email \"your.email@example.com\"'"
+  - "echo 'Available tools:'"
+  - "command -v aws && echo '  AWS CLI: aws --version'"
+  - "command -v gcloud && echo '  Google Cloud SDK: gcloud version'"
+  - "command -v az && echo '  Azure CLI: az version'"
+  - "command -v kubectl && echo '  Kubernetes: kubectl version --client'"
+  - "command -v terraform && echo '  Terraform: terraform version'"
+  - "command -v ansible && echo '  Ansible: ansible --version'"
+  - "command -v docker && echo '  Docker: docker version'"
+
+# Validation checks
+validation:
+  required_commands:
+    - "git"
+    - "curl"
+    - "wget"
+    - "ssh"
+    - "zsh"
+    - "tmux"
+    - "nvim"
+    - "docker"
+    - "kubectl"
+    - "terraform"
+    - "ansible"
+  
+  cloud_tools:
+    - "aws"
+    - "gcloud"
+    - "az"
+  
+  development_tools:
+    - "jq"
+    - "yq"
+    - "helm"
+    - "k9s"
+
+# Environment-specific overrides
+overrides:
+  macos:
+    components:
+      security:
+        - "ssh_hardening"  # No fail2ban or advanced firewall on macOS
+    configuration:
+      firewall_enable: false  # macOS firewall managed separately
+  
+  linux_desktop:
+    configuration:
+      firewall_enable: false  # Desktop firewall often disabled
+  
+  linux_server:
+    components:
+      security:
+        - "ssh_hardening"
+        - "firewall_basic"
+        - "fail2ban"  # Add fail2ban for server deployment
+    configuration:
+      firewall_enable: true
+      ssh_server_enable: true
+
+# Documentation
+documentation:
+  description: |
+    This profile transforms your workstation into a complete DevOps toolkit.
+    It includes tools for multi-cloud management, container orchestration,
+    infrastructure as code, and advanced shell productivity.
+    
+    Major tool categories:
+    - Cloud providers: AWS CLI, Google Cloud SDK, Azure CLI
+    - Container tools: Docker, Kubernetes, Helm
+    - Infrastructure: Terraform, Ansible, Packer
+    - Productivity: Advanced Zsh, tmux, Neovim
+    - Monitoring: K9s, htop, and various CLI tools
+    
+    The configuration is optimized for:
+    - Multi-cloud environments
+    - Kubernetes-native workflows
+    - Infrastructure as Code practices
+    - High productivity terminal usage
+    
+  usage: |
+    Ideal for:
+    - DevOps engineers
+    - Site reliability engineers
+    - Platform engineers
+    - Cloud architects
+    - Infrastructure developers
+    
+    After installation, you'll have:
+    - Authenticated cloud CLIs (you'll need to set up auth)
+    - Kubernetes cluster management tools
+    - Infrastructure automation tools
+    - Advanced shell with productivity plugins
+    - Container development environment
+    
+  getting_started: |
+    1. Set up Git configuration:
+       git config --global user.name "Your Name"
+       git config --global user.email "your.email@example.com"
+    
+    2. Configure cloud authentication:
+       aws configure  # AWS
+       gcloud auth login  # Google Cloud
+       az login  # Azure
+    
+    3. Set up Kubernetes access:
+       kubectl config get-contexts
+       kubectl config use-context <your-context>
+    
+    4. Verify tools:
+       aws sts get-caller-identity
+       gcloud projects list
+       kubectl get nodes
+       terraform version
+    
+  tips: |
+    Productivity tips:
+    - Use 'k' as kubectl alias
+    - Use 'tf' as terraform alias
+    - Use tmux-sessionizer for project management
+    - Use fzf for fuzzy finding
+    - Use zsh autocompletion for all tools
+    
+    Security notes:
+    - SSH keys are generated automatically
+    - Cloud credentials are stored securely
+    - Use different profiles for different cloud accounts
+    - Enable MFA on all cloud accounts

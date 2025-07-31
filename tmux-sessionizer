@@ -1,15 +1,46 @@
 #!/usr/bin/env bash
 
-# Tmux Sessionizer for DevOps Engineer
-# Quick project session management script
+# Tmux Sessionizer - Quick project session management
+# Usage: tmux-sessionizer [directory]
 
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
-    # Common project directories - customize these paths
-    selected=$(find ~/Work -mindepth 1 -maxdepth 1 -type d 2>/dev/null | \
-               grep -E '\/(project-|infra-|ops-|deploy-|monitor-|k8s-|terraform-|ansible-)' | \
-               fzf --height 40% --reverse --border --prompt="Select project: ")
+    # Common project directories
+    dirs=(
+        "$HOME"
+        "$HOME/Work"
+        "$HOME/Projects"
+        "$HOME/Dev"
+        "$HOME/Code"
+        "/opt"
+        "/var/www"
+        "/srv"
+    )
+
+    # Find directories that exist
+    existing_dirs=()
+    for dir in "${dirs[@]}"; do
+        if [[ -d "$dir" ]]; then
+            existing_dirs+=("$dir")
+        fi
+    done
+
+    if command -v fzf &> /dev/null && [[ ${#existing_dirs[@]} -gt 0 ]]; then
+        selected=$(find "${existing_dirs[@]}" -mindepth 1 -maxdepth 2 -type d 2>/dev/null | fzf)
+    else
+        echo "Available directories:"
+        for i in "${!existing_dirs[@]}"; do
+            echo "$((i+1)). ${existing_dirs[$i]}"
+        done
+        read -p "Select directory (1-${#existing_dirs[@]}): " choice
+        if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -ge 1 ]] && [[ "$choice" -le "${#existing_dirs[@]}" ]]; then
+            selected="${existing_dirs[$((choice-1))]}"
+        else
+            echo "Invalid selection"
+            exit 1
+        fi
+    fi
 fi
 
 if [[ -z $selected ]]; then
@@ -20,39 +51,16 @@ selected_name=$(basename "$selected" | tr . _)
 tmux_running=$(pgrep tmux)
 
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-    tmux new-session -s $selected_name -c $selected
+    tmux new-session -s "$selected_name" -c "$selected"
     exit 0
 fi
 
-if ! tmux has-session -t $selected_name 2> /dev/null; then
-    # Create new session with multiple windows for DevOps workflow
-    tmux new-session -d -s $selected_name -c $selected -n "main"
-    
-    # Add common DevOps windows
-    tmux new-window -t $selected_name -n "logs" -c $selected
-    tmux new-window -t $selected_name -n "monitor" -c $selected
-    tmux new-window -t $selected_name -n "deploy" -c $selected
-    
-    # Setup main window with editor and terminal
-    tmux send-keys -t $selected_name:main "clear" C-m
-    tmux split-window -t $selected_name:main -h -c $selected
-    tmux send-keys -t $selected_name:main.1 "clear" C-m
-    
-    # Setup logs window
-    tmux send-keys -t $selected_name:logs "tail -f /var/log/syslog 2>/dev/null || echo 'No system logs accessible'" C-m
-    
-    # Setup monitor window with system monitoring
-    tmux send-keys -t $selected_name:monitor "htop" C-m
-    tmux split-window -t $selected_name:monitor -v -c $selected
-    tmux send-keys -t $selected_name:monitor.1 "watch -n 2 'df -h'" C-m
-    
-    # Focus back to main window
-    tmux select-window -t $selected_name:main
-    tmux select-pane -t $selected_name:main.0
+if ! tmux has-session -t="$selected_name" 2> /dev/null; then
+    tmux new-session -d -s "$selected_name" -c "$selected"
 fi
 
 if [[ -z $TMUX ]]; then
-    tmux attach-session -t $selected_name
+    tmux attach-session -t "$selected_name"
 else
-    tmux switch-client -t $selected_name
+    tmux switch-client -t "$selected_name"
 fi

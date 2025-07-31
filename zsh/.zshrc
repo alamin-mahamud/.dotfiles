@@ -22,3 +22,4 @@ alias tmk='tmux kill-session -t'
 alias tmks='tmux kill-server'
 alias tms='tmux-sessionizer'
 alias tmp='tmux-project-manager'
+export PATH="$HOME/.local/bin:$PATH"

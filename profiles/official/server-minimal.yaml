@@ -1,0 +1,60 @@
+profile:
+  name: "server-minimal"
+  description: "Lightweight server setup for production environments with essential security hardening"
+  version: "1.0.0"
+  author: "dotfiles-maintainer"
+  target_os: ["linux"]
+  tags: ["server", "minimal", "security", "production"]
+
+requirements:
+  min_memory_gb: 1
+  min_disk_gb: 10
+  network_required: true
+  sudo_required: true
+
+components:
+  core:
+    - system_updates
+    - essential_packages
+    - user_management
+    - timezone_config
+    
+  security:
+    - ssh_hardening
+    - firewall_basic
+    - fail2ban
+    - automatic_updates
+    
+  productivity:
+    - zsh_minimal
+    - tmux_basic
+    - vim_enhanced
+    - modern_cli_minimal
+
+configuration:
+  timezone: "UTC"
+  locale: "en_US.UTF-8"
+  shell: "zsh"
+  editor: "vim"
+  
+  security:
+    ssh_port: 22
+    firewall_enabled: true
+    fail2ban_enabled: true
+    
+  performance:
+    swap_size: "1G"
+    vm_swappiness: 10
+
+post_install:
+  scripts:
+    - "verify_installation.sh"
+    - "generate_ssh_keys.sh"
+  manual_steps:
+    - "Configure SSH public key authentication"
+    - "Review firewall rules"
+    - "Set up monitoring alerts"
+  validation:
+    - "systemctl status sshd"
+    - "ufw status"
+    - "fail2ban-client status"

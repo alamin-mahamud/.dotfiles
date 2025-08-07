@@ -217,6 +217,9 @@ bind S choose-session
 # Kill session with confirmation
 bind X confirm-before -p "Kill session #S? (y/n)" kill-session
 
+bind d detach-session
+
+
 # ============================================================================
 # COPY MODE CONFIGURATION - VIM BINDINGS
 # ============================================================================
@@ -341,7 +344,7 @@ set -g message-command-style "fg=colour255,bg=colour238,bold"
 bind-key -r i split-window -h "htop || top"
 
 # Docker container monitoring
-bind-key -r d split-window -h "if command -v docker &> /dev/null; then docker ps -a; echo ''; echo 'Press Enter to monitor containers:'; read; docker stats; else echo 'Docker not installed'; fi"
+bind-key -r D split-window -h "if command -v docker &> /dev/null; then docker ps -a; echo ''; echo 'Press Enter to monitor containers:'; read; docker stats; else echo 'Docker not installed'; fi"
 
 # System log monitoring (auto-detects available log system)
 bind-key -r L split-window -h "if [ -f /var/log/syslog ]; then tail -f /var/log/syslog; elif [ -f /var/log/messages ]; then tail -f /var/log/messages; else journalctl -f; fi"

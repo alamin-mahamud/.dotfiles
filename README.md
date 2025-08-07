@@ -4,12 +4,13 @@ A comprehensive, modular dotfiles repository for automated development environme
 
 ## Features
 
+- **Atomic Installers**: Standalone, idempotent scripts for each tool
 - **Multi-platform support**: Ubuntu Desktop, Ubuntu Server, macOS
 - **Modular installation**: Choose only what you need
 - **Automated setup**: One-command installation with interactive menu
 - **Environment detection**: Automatically detects OS and environment type
 - **Backup functionality**: Safely backs up existing configurations
-- **Standalone server script**: Minimal setup for production servers
+- **Simple & Clean**: Following Unix philosophy and Python's Zen
 - **Development tools**: Modern toolchain for multiple languages
 - **Shell configuration**: Zsh with Oh My Zsh, tmux, and productivity tools
 
@@ -44,6 +45,38 @@ The script will:
 - Detect your operating system and environment
 - Present an interactive menu with installation options
 - Guide you through the setup process
+
+## Installation Options
+
+### 🚀 Full Installation
+```bash
+./bootstrap.sh
+# Select option 1
+```
+Installs: Git, Vim, Neovim, Tmux, Zsh with Oh My Zsh, Development tools
+
+### 🛠️ Core Tools Only
+```bash
+./bootstrap.sh
+# Select option 2
+```
+Installs: Git, Vim, Neovim, Tmux, Zsh (essential tools only)
+
+### 🎯 Individual Tool Installation
+```bash
+./bootstrap.sh
+# Select option 3
+# Then choose specific tools
+```
+
+### 📦 Direct Tool Installation
+```bash
+# Install specific tools directly
+./scripts/install-git.sh    # Git with configuration
+./scripts/install-vim.sh    # Vim and/or Neovim
+./scripts/install-tmux.sh   # Tmux with TPM
+./scripts/install-zsh.sh    # Zsh with Oh My Zsh
+```
 
 ### Standalone Ubuntu Server Installation
 
@@ -103,10 +136,16 @@ Terminal and shell setup:
 .dotfiles/
 ├── bootstrap.sh          # Main entry point with OS detection
 ├── ubuntu-server-setup.sh # Standalone server installation
-├── scripts/              # Modular installation scripts
-│   ├── install-dev-tools.sh
-│   ├── install-shell.sh
-│   └── custom-install.sh
+├── scripts/              # Atomic installation scripts
+│   ├── install-git.sh    # Git installer
+│   ├── install-vim.sh    # Vim/Neovim installer
+│   ├── install-tmux.sh   # Tmux installer
+│   ├── install-zsh.sh    # Zsh installer
+│   ├── install-dev-tools.sh  # Development tools
+│   ├── install-shell.sh  # Shell configuration
+│   └── custom-install.sh  # Custom installation
+├── docs/                 # Documentation
+│   └── ATOMIC_INSTALLERS.md  # Detailed installer docs
 ├── configs/              # Shared configuration files
 ├── linux/                # Linux-specific configurations
 │   ├── install.sh        # Main Linux setup
@@ -122,6 +161,17 @@ Terminal and shell setup:
 └── git/                  # Git configuration
     └── .gitconfig       # Global git config
 ```
+
+## Atomic Installer System
+
+The repository uses standalone, idempotent installers for each tool:
+
+- **Simple**: Each script does one thing well
+- **Idempotent**: Safe to run multiple times
+- **Independent**: No complex dependencies
+- **Cross-platform**: Works on Linux and macOS
+
+See [docs/ATOMIC_INSTALLERS.md](docs/ATOMIC_INSTALLERS.md) for detailed documentation.
 
 ## Configuration Details
 

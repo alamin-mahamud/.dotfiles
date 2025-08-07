@@ -144,22 +144,11 @@ show_installation_menu() {
     echo -e "${MAGENTA}Select installation type:${NC}"
     echo
     
-    case "$DOTFILES_OS" in
-        linux)
-            echo "  1) Full Installation (Desktop with GUI)"
-            echo "  2) Server Installation (Minimal, no GUI)"
-            echo "  3) Development Tools Only"
-            echo "  4) Shell Configuration Only (Zsh + Tmux)"
-            echo "  5) Custom Installation"
-            ;;
-        macos)
-            echo "  1) Full Installation"
-            echo "  2) Development Tools Only"
-            echo "  3) Shell Configuration Only (Zsh + Tmux)"
-            echo "  4) Custom Installation"
-            ;;
-    esac
-    
+    echo "  1) Full Installation (All tools)"
+    echo "  2) Core Tools (git, vim, tmux, zsh)"
+    echo "  3) Individual Tool Installation"
+    echo "  4) Development Tools Only"
+    echo "  5) Custom Installation (Legacy)"
     echo "  q) Quit"
     echo
     read -rp "Enter your choice: " choice
@@ -176,67 +165,102 @@ show_installation_menu() {
     esac
 }
 
+# Individual tool installation menu
+show_tool_menu() {
+    echo
+    echo -e "${CYAN}Select tool to install:${NC}"
+    echo
+    echo "  1) Git"
+    echo "  2) Vim/Neovim"
+    echo "  3) Tmux"
+    echo "  4) Zsh (with Oh My Zsh)"
+    echo "  b) Back to main menu"
+    echo
+    read -rp "Enter your choice: " tool_choice
+    echo
+    
+    case "$tool_choice" in
+        1)
+            print_status "Installing Git..."
+            bash "$SCRIPT_DIR/scripts/install-git.sh"
+            ;;
+        2)
+            print_status "Installing Vim/Neovim..."
+            bash "$SCRIPT_DIR/scripts/install-vim.sh"
+            ;;
+        3)
+            print_status "Installing Tmux..."
+            bash "$SCRIPT_DIR/scripts/install-tmux.sh"
+            ;;
+        4)
+            print_status "Installing Zsh..."
+            bash "$SCRIPT_DIR/scripts/install-zsh.sh"
+            ;;
+        b|B)
+            return 0
+            ;;
+        *)
+            print_error "Invalid choice"
+            ;;
+    esac
+    
+    # Ask if user wants to install another tool
+    read -p "Install another tool? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        show_tool_menu
+    fi
+}
+
 # Run installation based on selection
 run_installation() {
     local choice=$1
     
-    case "$DOTFILES_OS" in
-        linux)
-            case "$choice" in
-                1)
-                    print_status "Starting full Linux desktop installation..."
-                    source "$SCRIPT_DIR/linux/install.sh"
-                    ;;
-                2)
-                    print_status "Starting Linux server installation..."
-                    if [[ -f "$SCRIPT_DIR/ubuntu-server-setup.sh" ]]; then
-                        bash "$SCRIPT_DIR/ubuntu-server-setup.sh"
-                    else
-                        print_error "Server setup script not found!"
-                        exit 1
-                    fi
-                    ;;
-                3)
-                    print_status "Installing development tools only..."
-                    source "$SCRIPT_DIR/scripts/install-dev-tools.sh"
-                    ;;
-                4)
-                    print_status "Installing shell configuration only..."
-                    source "$SCRIPT_DIR/scripts/install-shell.sh"
-                    ;;
-                5)
-                    print_status "Custom installation selected..."
-                    source "$SCRIPT_DIR/scripts/custom-install.sh"
-                    ;;
-                *)
-                    print_error "Invalid choice"
-                    exit 1
-                    ;;
-            esac
+    case "$choice" in
+        1)
+            print_status "Starting full installation..."
+            # Install all core tools
+            bash "$SCRIPT_DIR/scripts/install-git.sh"
+            bash "$SCRIPT_DIR/scripts/install-vim.sh" <<< "3"  # Install both vim and neovim
+            bash "$SCRIPT_DIR/scripts/install-tmux.sh"
+            bash "$SCRIPT_DIR/scripts/install-zsh.sh" <<< "y"  # Set as default shell
+            
+            # Install development tools if they exist
+            if [[ -f "$SCRIPT_DIR/scripts/install-dev-tools.sh" ]]; then
+                source "$SCRIPT_DIR/scripts/install-dev-tools.sh"
+            fi
             ;;
-        macos)
-            case "$choice" in
-                1)
-                    print_status "Starting full macOS installation..."
-                    source "$SCRIPT_DIR/macos/install.sh"
-                    ;;
-                2)
-                    print_status "Installing development tools only..."
-                    source "$SCRIPT_DIR/scripts/install-dev-tools.sh"
-                    ;;
-                3)
-                    print_status "Installing shell configuration only..."
-                    source "$SCRIPT_DIR/scripts/install-shell.sh"
-                    ;;
-                4)
-                    print_status "Custom installation selected..."
-                    source "$SCRIPT_DIR/scripts/custom-install.sh"
-                    ;;
-                *)
-                    print_error "Invalid choice"
-                    exit 1
-                    ;;
-            esac
+        2)
+            print_status "Installing core tools..."
+            bash "$SCRIPT_DIR/scripts/install-git.sh"
+            bash "$SCRIPT_DIR/scripts/install-vim.sh" <<< "3"  # Install both vim and neovim
+            bash "$SCRIPT_DIR/scripts/install-tmux.sh"
+            bash "$SCRIPT_DIR/scripts/install-zsh.sh" <<< "n"  # Don't set as default shell
+            ;;
+        3)
+            show_tool_menu
+            ;;
+        4)
+            print_status "Installing development tools only..."
+            if [[ -f "$SCRIPT_DIR/scripts/install-dev-tools.sh" ]]; then
+                source "$SCRIPT_DIR/scripts/install-dev-tools.sh"
+            else
+                print_error "Development tools script not found!"
+                exit 1
+            fi
+            ;;
+        5)
+            print_status "Custom installation selected..."
+            if [[ -f "$SCRIPT_DIR/scripts/custom-install.sh" ]]; then
+                source "$SCRIPT_DIR/scripts/custom-install.sh"
+            else
+                print_error "Custom install script not found!"
+                exit 1
+            fi
+            ;;
+        *)
+            print_error "Invalid choice"
+            exit 1
             ;;
     esac
 }

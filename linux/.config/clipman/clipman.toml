@@ -1,4 +1,0 @@
-history-size = 50
-
-# Enable persistent history across reboots
-persist = true

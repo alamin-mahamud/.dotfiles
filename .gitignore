@@ -1,1 +1,22 @@
+# OS Files
 .DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Local customizations
+*.local
+.zshrc.local
+
+# Backup files
+*.backup
+*.bak
+.dotfiles.backup.*

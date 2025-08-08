@@ -56,12 +56,12 @@ detect_environment() {
     local env_type=""
     local distro=""
     local version=""
-    
+
     # Detect OS
     case "$OSTYPE" in
         linux-gnu*)
             os_type="linux"
-            
+
             # Check if it's WSL
             if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null; then
                 env_type="wsl"
@@ -73,7 +73,7 @@ detect_environment() {
                     env_type="server"
                 fi
             fi
-            
+
             # Get distribution info
             if [[ -f /etc/os-release ]]; then
                 source /etc/os-release
@@ -91,13 +91,13 @@ detect_environment() {
             exit 1
             ;;
     esac
-    
+
     # Export environment variables
     export DOTFILES_OS="$os_type"
     export DOTFILES_ENV="$env_type"
     export DOTFILES_DISTRO="${distro:-unknown}"
     export DOTFILES_VERSION="${version:-unknown}"
-    
+
     print_success "Detected environment:"
     echo "  OS: $DOTFILES_OS"
     echo "  Environment: $DOTFILES_ENV"
@@ -108,23 +108,23 @@ detect_environment() {
 # Check prerequisites
 check_prerequisites() {
     print_status "Checking prerequisites..."
-    
+
     # Check for required commands
     local required_commands=("git" "curl")
     local missing_commands=()
-    
+
     for cmd in "${required_commands[@]}"; do
         if ! command -v "$cmd" &> /dev/null; then
             missing_commands+=("$cmd")
         fi
     done
-    
+
     if [[ ${#missing_commands[@]} -gt 0 ]]; then
         print_error "Missing required commands: ${missing_commands[*]}"
         print_status "Please install them before running this script."
         exit 1
     fi
-    
+
     # Check if running as root
     if [[ $EUID -eq 0 ]]; then
         print_warning "Running as root is not recommended."
@@ -134,7 +134,7 @@ check_prerequisites() {
             exit 0
         fi
     fi
-    
+
     print_success "Prerequisites check passed"
 }
 
@@ -143,7 +143,7 @@ show_installation_menu() {
     echo
     echo -e "${MAGENTA}Select installation type:${NC}"
     echo
-    
+
     case "$DOTFILES_OS" in
         linux)
             echo "  1) Full Installation (Desktop with GUI)"
@@ -159,12 +159,12 @@ show_installation_menu() {
             echo "  4) Custom Installation"
             ;;
     esac
-    
+
     echo "  q) Quit"
     echo
     read -rp "Enter your choice: " choice
     echo
-    
+
     case "$choice" in
         q|Q)
             print_status "Installation cancelled."
@@ -179,7 +179,7 @@ show_installation_menu() {
 # Run installation based on selection
 run_installation() {
     local choice=$1
-    
+
     case "$DOTFILES_OS" in
         linux)
             case "$choice" in
@@ -189,10 +189,12 @@ run_installation() {
                     ;;
                 2)
                     print_status "Starting Linux server installation..."
+                    # Ubuntu server setup script is in the root directory
                     if [[ -f "$SCRIPT_DIR/ubuntu-server-setup.sh" ]]; then
                         bash "$SCRIPT_DIR/ubuntu-server-setup.sh"
                     else
-                        print_error "Server setup script not found!"
+                        print_error "Server setup script not found at $SCRIPT_DIR/ubuntu-server-setup.sh"
+                        print_status "Please ensure ubuntu-server-setup.sh is in the repository root"
                         exit 1
                     fi
                     ;;
@@ -248,19 +250,19 @@ backup_existing_dotfiles() {
     if [[ ! "$response" =~ ^([nN][oO]|[nN])$ ]]; then
         local backup_dir="$HOME/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
         mkdir -p "$backup_dir"
-        
+
         local dotfiles=(
             ".bashrc" ".zshrc" ".vimrc" ".tmux.conf"
             ".gitconfig" ".config/nvim" ".config/kitty"
         )
-        
+
         for file in "${dotfiles[@]}"; do
             if [[ -e "$HOME/$file" ]]; then
                 print_status "Backing up $file..."
                 cp -r "$HOME/$file" "$backup_dir/" 2>/dev/null || true
             fi
         done
-        
+
         print_success "Backup created at: $backup_dir"
     fi
 }
@@ -279,7 +281,7 @@ show_summary() {
     echo "  2. Restart your shell or run: source ~/.zshrc"
     echo "  3. Check the README for usage instructions"
     echo
-    
+
     if [[ "$DOTFILES_ENV" == "server" ]]; then
         print_warning "Server installation notes:"
         echo "  - Remember to set up SSH keys"
@@ -293,23 +295,23 @@ main() {
     # Clear screen and show banner
     clear
     print_banner
-    
+
     # Detect environment
     detect_environment
-    
+
     # Check prerequisites
     check_prerequisites
-    
+
     # Backup existing dotfiles
     backup_existing_dotfiles
-    
+
     # Show installation menu and get choice
     show_installation_menu
     local choice=$?
-    
+
     # Run selected installation
     run_installation "$choice"
-    
+
     # Show summary
     show_summary
 }

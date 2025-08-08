@@ -4,7 +4,7 @@
 # STANDALONE TMUX INSTALLER AND CONFIGURATION SCRIPT
 # ============================================================================
 # Purpose: Comprehensive tmux installation for DevOps engineers and developers
-# Supports: Ubuntu, Debian, Fedora, CentOS, RHEL, Rocky, AlmaLinux, Arch, 
+# Supports: Ubuntu, Debian, Fedora, CentOS, RHEL, Rocky, AlmaLinux, Arch,
 #           Manjaro, Alpine, openSUSE, SLES, macOS
 # Features:
 #   - Automatic OS detection and package manager selection
@@ -18,11 +18,11 @@
 #   1. Direct download and run:
 #      curl -fsSL https://your-domain.com/tmux-installer.sh | bash
 #      wget -qO- https://your-domain.com/tmux-installer.sh | bash
-#   
+#
 #   2. Local execution:
 #      chmod +x tmux-installer.sh
 #      ./tmux-installer.sh
-#   
+#
 #   3. With options:
 #      ./tmux-installer.sh --skip-tools    # Skip additional tools
 #      ./tmux-installer.sh --config-only   # Only update configuration
@@ -115,13 +115,13 @@ Options:
 Examples:
     # Standard installation
     $0
-    
+
     # Update configuration only
     $0 --config-only
-    
+
     # Test what would be installed
     $0 --dry-run
-    
+
     # Verify installation
     $0 --verify
 
@@ -201,13 +201,13 @@ show_banner() {
 # Returns: 0 on success, 1 on failure
 detect_os() {
     print_status "Detecting operating system..."
-    
+
     # Check for macOS using OSTYPE environment variable
     if [[ "$OSTYPE" == "darwin"* ]]; then
         OS="macos"
         OS_VERSION=$(sw_vers -productVersion)
         print_success "Detected macOS $OS_VERSION"
-    
+
     # Check for Linux distributions using /etc/os-release
     elif [[ -f /etc/os-release ]]; then
         # Source the os-release file to get distribution info
@@ -216,19 +216,19 @@ detect_os() {
         OS_VERSION="${VERSION_ID:-unknown}"
         OS_PRETTY="${PRETTY_NAME:-$ID}"
         print_success "Detected $OS_PRETTY"
-    
+
     # Fallback for older systems without os-release
     elif [[ -f /etc/redhat-release ]]; then
         OS="rhel"
         OS_VERSION=$(rpm -E %{rhel})
         print_success "Detected RHEL/CentOS $OS_VERSION"
-    
+
     else
         print_error "Unable to detect operating system"
         print_info "Supported systems: Ubuntu, Debian, Fedora, CentOS, RHEL, Arch, Alpine, openSUSE, macOS"
         exit 1
     fi
-    
+
     # Validate detected OS is supported
     case $OS in
         ubuntu|debian|fedora|centos|rhel|rocky|almalinux|arch|manjaro|alpine|opensuse*|sles|macos)
@@ -239,6 +239,9 @@ detect_os() {
             print_info "Installation will attempt to continue with generic Linux commands"
             ;;
     esac
+
+    # Force output flush to prevent hanging
+    exec 2>&1
 }
 
 # Get the appropriate package manager for the detected OS
@@ -297,18 +300,18 @@ check_privileges() {
 # Returns: 0 on success, 1 on failure
 install_tmux() {
     print_status "Installing tmux..."
-    
+
     # Skip if doing dry run
     if [[ "$DRY_RUN" == true ]]; then
         print_info "[DRY RUN] Would install tmux using $(get_package_manager)"
         return 0
     fi
-    
+
     # Check if tmux is already installed
     if command -v tmux &> /dev/null; then
         local tmux_version=$(tmux -V | cut -d' ' -f2)
         print_success "Tmux is already installed (version $tmux_version)"
-        
+
         # Check for minimum version (2.1 for mouse support)
         if [[ $(echo "$tmux_version < 2.1" | bc -l 2>/dev/null) == "1" ]]; then
             print_warning "Tmux version is old. Consider upgrading for better features."
@@ -318,7 +321,7 @@ install_tmux() {
 
     # Install based on operating system
     print_info "Using package manager: $(get_package_manager)"
-    
+
     case $OS in
         "macos")
             # macOS uses Homebrew package manager
@@ -327,7 +330,7 @@ install_tmux() {
                 print_warning "Homebrew not found. Installing Homebrew first..."
                 print_info "This may take a few minutes and require your password"
                 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-                
+
                 # Add Homebrew to PATH for Apple Silicon Macs
                 if [[ -f "/opt/homebrew/bin/brew" ]]; then
                     eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -335,7 +338,7 @@ install_tmux() {
             fi
             brew install tmux git curl
             ;;
-            
+
         "ubuntu"|"debian")
             # Debian-based distributions use APT
             print_info "Updating package lists..."
@@ -343,7 +346,7 @@ install_tmux() {
             print_info "Installing tmux and dependencies..."
             sudo apt install -y tmux git curl
             ;;
-            
+
         "fedora"|"centos"|"rhel"|"rocky"|"almalinux")
             # Red Hat-based distributions use DNF or YUM
             if command -v dnf &> /dev/null; then
@@ -354,27 +357,27 @@ install_tmux() {
                 sudo yum install -y tmux git curl
             fi
             ;;
-            
+
         "arch"|"manjaro")
             # Arch-based distributions use Pacman
             # Update package database first
             sudo pacman -Sy
             sudo pacman -S --noconfirm tmux git curl
             ;;
-            
+
         "alpine")
             # Alpine Linux uses APK
             # Note: Alpine uses ash by default, we need bash for this script
             sudo apk update
             sudo apk add --no-cache tmux git curl bash
             ;;
-            
+
         "opensuse"|"opensuse-leap"|"opensuse-tumbleweed"|"sles")
             # openSUSE and SLES use Zypper
             sudo zypper refresh
             sudo zypper install -y tmux git curl
             ;;
-            
+
         *)
             print_error "Unsupported OS: $OS"
             print_info "Please install tmux manually using your package manager"
@@ -382,7 +385,7 @@ install_tmux() {
             exit 1
             ;;
     esac
-    
+
     # Verify installation
     if command -v tmux &> /dev/null; then
         print_success "Tmux installed successfully ($(tmux -V))"
@@ -393,17 +396,17 @@ install_tmux() {
 }
 
 # Install additional tools useful for DevOps workflows
-# Includes: fzf (fuzzy finder), htop (process viewer), 
+# Includes: fzf (fuzzy finder), htop (process viewer),
 #           jq (JSON processor), watch (command repeater)
 # Returns: 0 on success (even if some tools fail)
 install_additional_tools() {
     print_status "Installing additional DevOps tools..."
-    
+
     if [[ "$SKIP_TOOLS" == true ]]; then
         print_info "Skipping additional tools installation (--skip-tools flag set)"
         return 0
     fi
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         print_info "[DRY RUN] Would install: fzf, htop, watch, jq, ripgrep, fd"
         return 0
@@ -420,9 +423,9 @@ install_additional_tools() {
         "tree:Directory structure viewer"
         "ncdu:Disk usage analyzer"
     )
-    
+
     print_info "Installing tools for enhanced productivity..."
-    
+
     case $OS in
         "macos")
             # macOS with Homebrew
@@ -430,14 +433,14 @@ install_additional_tools() {
             # Install fzf key bindings
             $(brew --prefix)/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash 2>/dev/null || true
             ;;
-            
+
         "ubuntu"|"debian")
             # Install available tools from APT
             sudo apt install -y fzf htop procps jq ripgrep fd-find bat tree ncdu 2>/dev/null || {
                 # Some tools might not be available in older versions
                 print_warning "Some tools may not be available in your repository"
                 sudo apt install -y htop procps jq tree ncdu 2>/dev/null || true
-                
+
                 # Install fzf manually if not available
                 if ! command -v fzf &> /dev/null; then
                     print_info "Installing fzf from git..."
@@ -446,7 +449,7 @@ install_additional_tools() {
                 fi
             }
             ;;
-            
+
         "fedora"|"centos"|"rhel"|"rocky"|"almalinux")
             if command -v dnf &> /dev/null; then
                 # Modern Red Hat systems with DNF
@@ -457,7 +460,7 @@ install_additional_tools() {
             else
                 # Older systems with YUM
                 sudo yum install -y htop procps-ng jq tree ncdu 2>/dev/null || true
-                
+
                 # Install fzf manually for older systems
                 if ! command -v fzf &> /dev/null; then
                     print_info "Installing fzf from git..."
@@ -466,7 +469,7 @@ install_additional_tools() {
                 fi
             fi
             ;;
-            
+
         "arch"|"manjaro")
             # Arch Linux with Pacman
             sudo pacman -S --noconfirm fzf htop procps-ng jq ripgrep fd bat tree ncdu 2>/dev/null || {
@@ -474,7 +477,7 @@ install_additional_tools() {
                 sudo pacman -S --noconfirm htop procps-ng jq tree ncdu 2>/dev/null || true
             }
             ;;
-            
+
         "alpine")
             # Alpine Linux with APK
             sudo apk add --no-cache fzf htop procps jq ripgrep fd bat tree ncdu 2>/dev/null || {
@@ -482,7 +485,7 @@ install_additional_tools() {
                 sudo apk add --no-cache htop procps jq tree 2>/dev/null || true
             }
             ;;
-            
+
         "opensuse"|"opensuse-leap"|"opensuse-tumbleweed"|"sles")
             # openSUSE with Zypper
             sudo zypper install -y fzf htop procps jq ripgrep fd bat tree ncdu 2>/dev/null || {
@@ -491,10 +494,10 @@ install_additional_tools() {
             }
             ;;
     esac
-    
+
     # Report installed tools
     print_success "Additional tools installation completed"
-    
+
     # List which tools were successfully installed
     if [[ "$VERBOSE" == true ]]; then
         print_info "Checking installed tools:"
@@ -514,14 +517,14 @@ install_additional_tools() {
 # Repository: https://github.com/tmux-plugins/tpm
 install_tpm() {
     print_status "Installing Tmux Plugin Manager (TPM)..."
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         print_info "[DRY RUN] Would install TPM to ~/.tmux/plugins/tpm"
         return 0
     fi
-    
+
     local tpm_path="$HOME/.tmux/plugins/tpm"
-    
+
     if [[ ! -d "$tpm_path" ]]; then
         # Clone TPM repository
         print_info "Cloning TPM repository..."
@@ -538,7 +541,7 @@ install_tpm() {
         cd - > /dev/null
         print_success "TPM updated to latest version"
     fi
-    
+
     # Create plugins directory if it doesn't exist
     mkdir -p "$HOME/.tmux/plugins"
 }
@@ -548,19 +551,19 @@ install_tpm() {
 # Includes mouse support, vim bindings, and DevOps shortcuts
 create_tmux_config() {
     print_status "Creating tmux configuration..."
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         print_info "[DRY RUN] Would create ~/.tmux.conf with enhanced configuration"
         return 0
     fi
-    
+
     # Backup existing config if it exists
     if [[ -f ~/.tmux.conf ]]; then
         local backup_file="$HOME/.tmux.conf.backup.$(date +%Y%m%d_%H%M%S)"
         cp ~/.tmux.conf "$backup_file"
         print_info "Backed up existing config to $backup_file"
     fi
-    
+
     # Create new tmux configuration
     # This configuration is optimized for DevOps workflows
     cat > ~/.tmux.conf << 'EOF'
@@ -835,20 +838,20 @@ EOF
 #           project-manager (DevOps project layouts)
 create_scripts() {
     print_status "Creating utility scripts..."
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         print_info "[DRY RUN] Would create tmux-sessionizer and tmux-project-manager scripts"
         return 0
     fi
-    
+
     # Create local bin directory for user scripts
     mkdir -p ~/.local/bin
-    
+
     # Ensure ~/.local/bin is in PATH
     if [[ ! "$PATH" == *"$HOME/.local/bin"* ]]; then
         print_warning "~/.local/bin is not in PATH. Will add to shell config later."
     fi
-    
+
     # ============================================================================
     # TMUX SESSIONIZER SCRIPT
     # Quick project navigation and session management
@@ -861,7 +864,7 @@ create_scripts() {
 # ============================================================================
 # Purpose: Quickly switch between project directories in tmux sessions
 # Usage: tmux-sessionizer [directory]
-# 
+#
 # Features:
 #   - Fuzzy search through common project directories
 #   - Automatic session creation/attachment
@@ -944,7 +947,7 @@ fi
 EOF
 
     chmod +x ~/.local/bin/tmux-sessionizer
-    
+
     # ============================================================================
     # TMUX PROJECT MANAGER SCRIPT
     # Advanced project session management with DevOps layouts
@@ -1018,7 +1021,7 @@ usage() {
 create_session() {
     local project_name="$1"
     local project_path="$PROJECTS_DIR/$project_name"
-    
+
     # Check if session already exists
     if tmux has-session -t "$project_name" 2>/dev/null; then
         echo -e "${YELLOW}⚠ Session '$project_name' already exists${NC}"
@@ -1029,47 +1032,47 @@ create_session() {
         fi
         return
     fi
-    
+
     echo -e "${GREEN}Creating session: $project_name${NC}"
-    
+
     # Create project directory if it doesn't exist
     if [[ ! -d "$project_path" ]]; then
         echo -e "${YELLOW}Creating project directory: $project_path${NC}"
         mkdir -p "$project_path"
     fi
-    
+
     # Create base session with multiple windows
     tmux new-session -d -s "$project_name" -c "$project_path" -n "editor"
-    
+
     # Window 2: Terminal (with splits for multiple terminals)
     tmux new-window -t "$project_name:2" -n "terminal" -c "$project_path"
     tmux split-window -t "$project_name:terminal" -h -c "$project_path"
     tmux split-window -t "$project_name:terminal.1" -v -c "$project_path"
-    
+
     # Window 3: Logs (for monitoring application and system logs)
     tmux new-window -t "$project_name:3" -n "logs" -c "$project_path"
-    
+
     # Window 4: Monitoring (for system monitoring tools)
     tmux new-window -t "$project_name:4" -n "monitoring" -c "$project_path"
-    
+
     # Window 5: Docker/K8s (for container management)
     tmux new-window -t "$project_name:5" -n "containers" -c "$project_path"
-    
+
     # Window 6: Database (for database connections)
     tmux new-window -t "$project_name:6" -n "database" -c "$project_path"
-    
+
     # Window 7: API Testing (for curl, httpie, etc.)
     tmux new-window -t "$project_name:7" -n "api" -c "$project_path"
-    
+
     # Window 8: Git (for version control)
     tmux new-window -t "$project_name:8" -n "git" -c "$project_path"
-    
+
     # Setup initial commands in windows
     setup_window_commands "$project_name" "$project_path"
-    
+
     # Focus on editor window
     tmux select-window -t "$project_name:editor"
-    
+
     echo -e "${GREEN}✓ Session '$project_name' created successfully${NC}"
     echo -e "${CYAN}Run '$0 attach $project_name' to enter the session${NC}"
 }
@@ -1078,28 +1081,28 @@ create_session() {
 setup_window_commands() {
     local project_name="$1"
     local project_path="$2"
-    
+
     # Editor window - clear and show project info
     tmux send-keys -t "$project_name:editor" "clear" C-m
     tmux send-keys -t "$project_name:editor" "echo 'Project: $project_name'" C-m
     tmux send-keys -t "$project_name:editor" "echo 'Path: $project_path'" C-m
     tmux send-keys -t "$project_name:editor" "echo ''" C-m
     tmux send-keys -t "$project_name:editor" "# Start coding here or open your editor" C-m
-    
+
     # Monitoring window - start htop if available
     if command -v htop &> /dev/null; then
         tmux send-keys -t "$project_name:monitoring" "htop" C-m
     else
         tmux send-keys -t "$project_name:monitoring" "top" C-m
     fi
-    
+
     # Docker window - show docker status
     if command -v docker &> /dev/null; then
         tmux send-keys -t "$project_name:containers" "docker ps -a" C-m
     else
         tmux send-keys -t "$project_name:containers" "echo 'Docker not installed'" C-m
     fi
-    
+
     # Git window - show git status
     tmux send-keys -t "$project_name:git" "git status 2>/dev/null || echo 'Not a git repository'" C-m
 }
@@ -1108,25 +1111,25 @@ setup_window_commands() {
 setup_devops_layout() {
     local project_name="$1"
     local project_path="$PROJECTS_DIR/$project_name"
-    
+
     if ! tmux has-session -t "$project_name" 2>/dev/null; then
         echo -e "${RED}✗ Session '$project_name' does not exist${NC}"
         echo -e "${CYAN}Creating it first...${NC}"
         create_session "$project_name"
         return
     fi
-    
+
     echo -e "${GREEN}Setting up DevOps layout for: $project_name${NC}"
-    
+
     # Logs window - split for multiple log streams
     tmux select-window -t "$project_name:logs"
     tmux split-window -t "$project_name:logs" -h -c "$project_path"
-    
+
     # Left pane: Application logs
     tmux send-keys -t "$project_name:logs.0" "clear" C-m
     tmux send-keys -t "$project_name:logs.0" "# Application logs" C-m
     tmux send-keys -t "$project_name:logs.0" "tail -f *.log 2>/dev/null || echo 'No log files found'" C-m
-    
+
     # Right pane: System logs
     tmux send-keys -t "$project_name:logs.1" "# System logs" C-m
     if [[ -f /var/log/syslog ]]; then
@@ -1136,27 +1139,27 @@ setup_devops_layout() {
     else
         tmux send-keys -t "$project_name:logs.1" "echo 'No system logs accessible'" C-m
     fi
-    
+
     # Monitoring window - split for different monitoring tools
     tmux select-window -t "$project_name:monitoring"
     tmux split-window -t "$project_name:monitoring" -h -c "$project_path"
     tmux split-window -t "$project_name:monitoring.1" -v -c "$project_path"
-    
+
     # Top-left: htop/top
     # Already set up in create_session
-    
+
     # Top-right: Docker stats
     if command -v docker &> /dev/null; then
         tmux send-keys -t "$project_name:monitoring.1" "watch -n 2 'docker ps --format \"table {{.Names}}\t{{.Status}}\t{{.Ports}}\"'" C-m
     fi
-    
+
     # Bottom-right: Network connections
     if command -v ss &> /dev/null; then
         tmux send-keys -t "$project_name:monitoring.2" "watch -n 5 'ss -tunlp 2>/dev/null | head -20'" C-m
     else
         tmux send-keys -t "$project_name:monitoring.2" "watch -n 5 'netstat -tunlp 2>/dev/null | head -20'" C-m
     fi
-    
+
     echo -e "${GREEN}✓ DevOps layout configured for '$project_name'${NC}"
 }
 
@@ -1164,7 +1167,7 @@ setup_devops_layout() {
 list_sessions() {
     echo -e "${BLUE}Active tmux sessions:${NC}"
     echo -e "${BLUE}====================${NC}"
-    
+
     if tmux list-sessions 2>/dev/null; then
         echo ""
         echo -e "${CYAN}Tip: Use '$0 attach <name>' to connect to a session${NC}"
@@ -1178,7 +1181,7 @@ list_sessions() {
 # Attach to existing session
 attach_session() {
     local project_name="$1"
-    
+
     if tmux has-session -t "$project_name" 2>/dev/null; then
         if [[ -z $TMUX ]]; then
             # Not inside tmux, attach normally
@@ -1197,7 +1200,7 @@ attach_session() {
 # Kill a specific session
 kill_session() {
     local project_name="$1"
-    
+
     if tmux has-session -t "$project_name" 2>/dev/null; then
         echo -e "${YELLOW}⚠ Killing session '$project_name'...${NC}"
         tmux kill-session -t "$project_name"
@@ -1212,7 +1215,7 @@ kill_all_sessions() {
     echo -e "${YELLOW}⚠ This will kill ALL tmux sessions!${NC}"
     read -p "Are you sure? (y/N): " -n 1 -r
     echo
-    
+
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         tmux kill-server 2>/dev/null || echo "No sessions to kill"
         echo -e "${GREEN}✓ All sessions killed${NC}"
@@ -1224,20 +1227,20 @@ kill_all_sessions() {
 # Save session layout
 save_layout() {
     local project_name="$1"
-    
+
     if ! tmux has-session -t "$project_name" 2>/dev/null; then
         echo -e "${RED}✗ Session '$project_name' does not exist${NC}"
         return 1
     fi
-    
+
     mkdir -p "$LAYOUTS_DIR"
     local layout_file="$LAYOUTS_DIR/${project_name}.layout"
-    
+
     echo -e "${YELLOW}Saving layout for session '$project_name'...${NC}"
-    
+
     # Save window list and layouts
     tmux list-windows -t "$project_name" -F "#{window_index}:#{window_name}:#{window_layout}" > "$layout_file"
-    
+
     echo -e "${GREEN}✓ Layout saved to $layout_file${NC}"
 }
 
@@ -1245,25 +1248,25 @@ save_layout() {
 restore_layout() {
     local project_name="$1"
     local layout_file="$LAYOUTS_DIR/${project_name}.layout"
-    
+
     if [[ ! -f "$layout_file" ]]; then
         echo -e "${RED}✗ No saved layout found for '$project_name'${NC}"
         return 1
     fi
-    
+
     echo -e "${YELLOW}Restoring layout for session '$project_name'...${NC}"
-    
+
     # Create session if it doesn't exist
     if ! tmux has-session -t "$project_name" 2>/dev/null; then
         create_session "$project_name"
     fi
-    
+
     # Restore window layouts
     while IFS=: read -r index name layout; do
         tmux select-window -t "$project_name:$index" 2>/dev/null
         tmux select-layout -t "$project_name:$index" "$layout" 2>/dev/null
     done < "$layout_file"
-    
+
     echo -e "${GREEN}✓ Layout restored for '$project_name'${NC}"
 }
 
@@ -1333,11 +1336,11 @@ case "${1:-help}" in
         ;;
 esac
 EOF
-    
+
     chmod +x ~/.local/bin/tmux-project-manager
-    
+
     print_success "Utility scripts created successfully"
-    
+
     # List created scripts
     print_info "Created scripts:"
     echo "  • tmux-sessionizer - Quick session switching"
@@ -1348,23 +1351,23 @@ EOF
 # This function installs all plugins defined in .tmux.conf
 install_plugins() {
     print_status "Installing tmux plugins..."
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         print_info "[DRY RUN] Would install tmux plugins via TPM"
         return 0
     fi
-    
+
     # Check if TPM is installed
     if [[ ! -d ~/.tmux/plugins/tpm ]]; then
         print_warning "TPM not found. Installing TPM first..."
         install_tpm
     fi
-    
+
     # Start a temporary tmux server to install plugins
     print_info "Starting tmux server for plugin installation..."
     tmux new-session -d -s __temp_plugin_install__ 2>/dev/null || true
     sleep 2
-    
+
     # Install plugins
     if [[ -f ~/.tmux/plugins/tpm/bin/install_plugins ]]; then
         ~/.tmux/plugins/tpm/bin/install_plugins
@@ -1372,7 +1375,7 @@ install_plugins() {
     else
         print_warning "TPM plugin installer not found. Plugins will install on first tmux start."
     fi
-    
+
     # Kill temporary session
     tmux kill-session -t __temp_plugin_install__ 2>/dev/null || true
 }
@@ -1381,16 +1384,16 @@ install_plugins() {
 # Adds tmux aliases and ensures scripts are in PATH
 setup_shell() {
     print_status "Setting up shell integration..."
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         print_info "[DRY RUN] Would add tmux aliases and PATH configuration"
         return 0
     fi
-    
+
     # Detect user's shell
     local user_shell=$(basename "$SHELL")
     local shell_configs=()
-    
+
     # Determine which shell config files to update
     case "$user_shell" in
         bash)
@@ -1407,20 +1410,20 @@ setup_shell() {
             shell_configs=(~/.bashrc ~/.zshrc ~/.profile)
             ;;
     esac
-    
+
     local config_added=false
-    
+
     for config in "${shell_configs[@]}"; do
         if [[ -f "$config" ]]; then
             print_info "Updating $config..."
-            
+
             # Add ~/.local/bin to PATH if not already there
             if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$config" 2>/dev/null; then
                 echo '' >> "$config"
                 echo '# Added by tmux installer' >> "$config"
                 echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$config"
             fi
-            
+
             # Add tmux aliases if they don't exist
             if ! grep -q "alias tm=" "$config" 2>/dev/null; then
                 cat >> "$config" << 'ALIASES'
@@ -1458,7 +1461,7 @@ ALIASES
                 config_added=true
                 print_success "Added tmux aliases to $config"
             fi
-            
+
             # Add tmux completion for bash
             if [[ "$user_shell" == "bash" ]] && [[ "$config" == *bashrc* ]]; then
                 if ! grep -q "_tmux_completion" "$config" 2>/dev/null; then
@@ -1475,7 +1478,7 @@ COMPLETION
             fi
         fi
     done
-    
+
     if [[ "$config_added" == "true" ]]; then
         print_warning "Shell configuration updated. Restart your shell or run:"
         echo "         source ${shell_configs[0]}"
@@ -1488,10 +1491,10 @@ COMPLETION
 verify_installation() {
     print_status "Verifying tmux installation..."
     echo ""
-    
+
     local checks_passed=0
     local checks_failed=0
-    
+
     # Check tmux installation
     echo -n "Checking tmux binary... "
     if command -v tmux &> /dev/null; then
@@ -1501,7 +1504,7 @@ verify_installation() {
         echo -e "${RED}✗${NC} Not found"
         ((checks_failed++))
     fi
-    
+
     # Check TPM installation
     echo -n "Checking TPM installation... "
     if [[ -d ~/.tmux/plugins/tpm ]]; then
@@ -1511,7 +1514,7 @@ verify_installation() {
         echo -e "${RED}✗${NC} Not found"
         ((checks_failed++))
     fi
-    
+
     # Check tmux config
     echo -n "Checking tmux configuration... "
     if [[ -f ~/.tmux.conf ]]; then
@@ -1521,7 +1524,7 @@ verify_installation() {
         echo -e "${RED}✗${NC} Not found"
         ((checks_failed++))
     fi
-    
+
     # Check utility scripts
     echo -n "Checking tmux-sessionizer... "
     if [[ -x ~/.local/bin/tmux-sessionizer ]]; then
@@ -1531,7 +1534,7 @@ verify_installation() {
         echo -e "${RED}✗${NC} Not found"
         ((checks_failed++))
     fi
-    
+
     echo -n "Checking tmux-project-manager... "
     if [[ -x ~/.local/bin/tmux-project-manager ]]; then
         echo -e "${GREEN}✓${NC} Installed"
@@ -1540,7 +1543,7 @@ verify_installation() {
         echo -e "${RED}✗${NC} Not found"
         ((checks_failed++))
     fi
-    
+
     # Check PATH
     echo -n "Checking PATH configuration... "
     if [[ "$PATH" == *"$HOME/.local/bin"* ]]; then
@@ -1549,7 +1552,7 @@ verify_installation() {
     else
         echo -e "${YELLOW}⚠${NC} Not in current PATH (will be added on next shell start)"
     fi
-    
+
     # Check for additional tools
     echo ""
     echo "Additional tools:"
@@ -1562,7 +1565,7 @@ verify_installation() {
             echo -e "${YELLOW}-${NC} (optional)"
         fi
     done
-    
+
     # Summary
     echo ""
     echo "====================================="
@@ -1592,24 +1595,24 @@ uninstall_tmux_config() {
     echo ""
     read -p "Continue with uninstall? (y/N): " -n 1 -r
     echo
-    
+
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo "Uninstall cancelled"
         return 0
     fi
-    
+
     print_status "Removing tmux configuration..."
-    
+
     # Backup before removing
     local backup_dir="$HOME/.tmux-uninstall-backup-$(date +%Y%m%d_%H%M%S)"
     mkdir -p "$backup_dir"
-    
+
     # Move files to backup
     [[ -f ~/.tmux.conf ]] && mv ~/.tmux.conf "$backup_dir/"
     [[ -d ~/.tmux ]] && mv ~/.tmux "$backup_dir/"
     [[ -f ~/.local/bin/tmux-sessionizer ]] && mv ~/.local/bin/tmux-sessionizer "$backup_dir/"
     [[ -f ~/.local/bin/tmux-project-manager ]] && mv ~/.local/bin/tmux-project-manager "$backup_dir/"
-    
+
     print_success "Configuration removed. Backup saved to: $backup_dir"
     print_info "To restore: cp -r $backup_dir/.* ~/"
 }
@@ -1618,16 +1621,16 @@ uninstall_tmux_config() {
 main() {
     # Parse command line arguments first
     parse_arguments "$@"
-    
+
     # Show banner
     show_banner
-    
+
     print_status "Starting tmux installation..."
     echo ""
-    
+
     # Detect operating system
     detect_os
-    
+
     # Check privileges
     check_privileges
 
@@ -1640,25 +1643,25 @@ main() {
             local tmux_version=$(tmux -V | cut -d' ' -f2)
             print_success "Tmux is already installed (version $tmux_version)"
         fi
-        
+
         # Install additional tools
         install_additional_tools
     else
         print_info "Skipping installations (--config-only mode)"
     fi
-    
+
     # Install TPM
     install_tpm
-    
+
     # Create configuration
     create_tmux_config
-    
+
     # Create utility scripts
     create_scripts
-    
+
     # Install plugins
     install_plugins
-    
+
     # Setup shell integration
     setup_shell
 
@@ -1668,7 +1671,7 @@ main() {
     echo "║     🎉 Tmux Installation Completed Successfully!        ║"
     echo "╚═══════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
-    
+
     echo -e "${CYAN}Quick Start Guide:${NC}"
     echo "┌──────────────────────────────────────────────────────────┐"
     echo "│ ${YELLOW}Basic Commands:${NC}                                        │"
@@ -1684,7 +1687,7 @@ main() {
     echo "│   ${GREEN}tmp attach <name>${NC}      Attach to project            │"
     echo "└──────────────────────────────────────────────────────────┘"
     echo ""
-    
+
     echo -e "${CYAN}Essential Key Bindings:${NC}"
     echo "┌──────────────────────────────────────────────────────────┐"
     echo "│ ${YELLOW}Prefix Key: ${MAGENTA}Ctrl-a${NC}                                    │"
@@ -1725,14 +1728,14 @@ main() {
     echo "│   ${GREEN}Prefix + m${NC}             Toggle mouse on/off          │"
     echo "└──────────────────────────────────────────────────────────┘"
     echo ""
-    
+
     echo -e "${YELLOW}Next Steps:${NC}"
     echo "  1. Restart your shell or run: source ~/.bashrc (or ~/.zshrc)"
     echo "  2. Run '${GREEN}tmux${NC}' to start your first session"
     echo "  3. Run '${GREEN}$0 --verify${NC}' to check installation"
     echo "  4. Run '${GREEN}$0 --help${NC}' for more options"
     echo ""
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         echo -e "${YELLOW}Note: This was a dry run. No changes were made.${NC}"
         echo -e "      Run without --dry-run to perform actual installation."

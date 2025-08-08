@@ -90,7 +90,7 @@ install_zsh_plugins() {
             "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-completions"
     fi
 
-    # fzf-tab
+    # fzf-tab (must be loaded after compinit, as last plugin)
     if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab" ]]; then
         git clone https://github.com/Aloxaf/fzf-tab \
             "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab"
@@ -163,6 +163,7 @@ HISTFILE=~/.zsh_history
 ZSH=$HOME/.oh-my-zsh
 export ZSH_THEME="powerlevel10k/powerlevel10k"
 
+# Note: fzf-tab must be the last plugin to properly bind Tab key
 export plugins=(
   git
   docker
@@ -217,6 +218,170 @@ export NVM_DIR="$HOME/.nvm"
 # Z directory jumping
 [ -f ~/.z.sh ] && source ~/.z.sh
 
+# ============================================================================
+# fzf-tab configuration - Enhanced Tab Completion with FZF
+# ============================================================================
+#
+# USAGE EXAMPLES:
+# --------------
+# Basic Navigation:
+#   cd <TAB>           - Browse directories with preview
+#   ls <TAB>           - Browse files with content preview
+#   vim <TAB>          - Open files with preview
+#
+# Git Commands:
+#   git checkout <TAB> - Switch branches with commit preview
+#   git add <TAB>      - Stage files with diff preview
+#   git diff <TAB>     - View diffs with preview
+#   git log <TAB>      - Browse commits with details
+#
+# Process Management:
+#   kill <TAB>         - Select process with command preview
+#   ps aux | grep <TAB>- Filter processes
+#
+# System Commands:
+#   systemctl <TAB>    - Manage services with status preview
+#   ssh <TAB>          - Connect to hosts from history
+#   docker <TAB>       - Manage containers/images
+#
+# KEY BINDINGS:
+# ------------
+#   TAB / Shift-TAB   - Navigate through options
+#   Enter             - Select current option
+#   Ctrl-Space        - Multi-select (mark multiple items)
+#   /                 - Start incremental search
+#   Ctrl-/            - Toggle preview window
+#   F1 / F2           - Switch between completion groups
+#   Esc               - Cancel completion
+#
+# ADVANCED FEATURES:
+# -----------------
+#   Multiple Selection:
+#     rm <TAB>        - Select multiple files with Ctrl-Space
+#     git add <TAB>   - Stage multiple files at once
+#
+#   Continuous Completion:
+#     cd /us<TAB>/lo<TAB>/bi<TAB>  - Navigate paths quickly
+#
+#   Smart Context:
+#     $<TAB>          - Show environment variable values
+#     ~<TAB>          - Expand user directories
+#     kill -<TAB>     - Show signal options
+# ============================================================================
+
+# Disable sort when completing `git checkout` for better branch organization
+zstyle ':completion:*:git-checkout:*' sort false
+
+# Set descriptions format to enable group support (shows [group name] headers)
+zstyle ':completion:*:descriptions' format '[%d]'
+
+# Set list-colors to enable filename colorizing (uses LS_COLORS)
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+# Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+
+# Preview directory contents with eza when completing cd
+# Example: cd ~/Doc<TAB> will show contents of Documents folder
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null || ls -la $realpath'
+
+# Switch between groups using F1 and F2
+# Example: git <TAB> then F1/F2 to switch between subcommands/files/options
+zstyle ':fzf-tab:*' switch-group F1 F2
+
+# Use tmux popup if available (better visual experience in tmux)
+if [[ -n $TMUX ]]; then
+  zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+fi
+
+# Give a preview of commandline arguments when completing `kill`
+# Example: kill <TAB> shows process command lines
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview \
+  '[[ $group == "[process ID]" ]] && ps -p $word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags --preview-window=down:3:wrap
+
+# Show systemd unit status
+# Example: systemctl status <TAB> shows service status
+zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
+
+# Show environment variable values
+# Example: echo $<TAB> shows variable values
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
+  fzf-preview 'echo ${(P)word}'
+
+# Show file contents preview (fallback for general file completion)
+zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath} 2>/dev/null'
+
+# Git status preview for add/diff/restore
+# Example: git add <TAB> shows file changes
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+  'git diff $word | delta 2>/dev/null || git diff $word'
+
+# Git log preview
+# Example: git log <TAB> shows commit history
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
+  'git log --color=always $word'
+
+# Git help preview
+# Example: git help <TAB> shows command documentation
+zstyle ':fzf-tab:complete:git-help:*' fzf-preview \
+  'git help $word | bat -plman --color=always'
+
+# Git show preview with smart context detection
+# Example: git show <TAB> shows commits/tags with appropriate preview
+zstyle ':fzf-tab:complete:git-show:*' fzf-preview \
+  'case "$group" in
+  "commit tag") git show --color=always $word ;;
+  *) git show --color=always $word | delta ;;
+  esac'
+
+# Git checkout preview with context-aware previews
+# Example: git checkout <TAB> shows different previews for branches/files/commits
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
+  'case "$group" in
+  "modified file") git diff $word | delta ;;
+  "recent commit object name") git show --color=always $word | delta ;;
+  *) git log --color=always $word ;;
+  esac'
+
+# Docker command previews
+# Example: docker run <TAB> shows image details
+zstyle ':fzf-tab:complete:docker-run:*' fzf-preview \
+  '[[ $group == "image" ]] && docker image inspect $word'
+
+# Example: docker exec <TAB> shows container details
+zstyle ':fzf-tab:complete:docker-exec:*' fzf-preview \
+  '[[ $group == "container" ]] && docker container inspect $word'
+
+# SSH host preview - shows SSH config details
+# Example: ssh <TAB> shows host configuration
+zstyle ':fzf-tab:complete:ssh:*' fzf-preview \
+  '[[ $group == "host" ]] && grep -A 5 "^Host $word" ~/.ssh/config 2>/dev/null'
+
+# Man page preview
+# Example: man <TAB> shows brief description
+zstyle ':fzf-tab:complete:man:*' fzf-preview \
+  'man -f $word 2>/dev/null || echo "No manual entry for $word"'
+
+# APT package preview (for Ubuntu/Debian)
+# Example: apt install <TAB> shows package info
+zstyle ':fzf-tab:complete:apt-(install|show|remove):*' fzf-preview \
+  '[[ $group == "package" ]] && apt-cache show $word 2>/dev/null | head -20'
+
+# History command preview
+# Example: history <TAB> shows command from history
+zstyle ':fzf-tab:complete:history:*' fzf-preview 'echo $word'
+
+# Custom preview window size for different commands
+zstyle ':fzf-tab:complete:cd:*' fzf-flags --preview-window=right:50%
+zstyle ':fzf-tab:complete:vim:*' fzf-flags --preview-window=right:60%
+zstyle ':fzf-tab:complete:git-*:*' fzf-flags --preview-window=right:65%
+
+# Aliases for common fzf-tab behaviors (add to aliases section)
+alias fzf-preview-on='zstyle ":fzf-tab:*" fzf-flags --preview-window=right:50%'
+alias fzf-preview-off='zstyle ":fzf-tab:*" fzf-flags --preview-window=hidden'
+alias fzf-preview-toggle='zstyle ":fzf-tab:*" fzf-flags --preview-window=right:50%:hidden'
+
 ZSHRC_EOF
 
     # Create functions file
@@ -244,37 +409,6 @@ function myip() {
   ifconfig en0 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en0 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
   ifconfig en1 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "en1 (IPv4): " $2 " " $3 " " $4 " " $5 " " $6}'
   ifconfig en1 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en1 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
-}
-
-# Teleport SSH function
-function tss() {
-  if [ -z "$GH_USER" ]; then
-    echo "❌ GH_USER environment variable is not set."
-    return 1
-  fi
-
-  if [ $# -eq 0 ]; then
-    echo "❌ Please enter a client name."
-    return 1
-  fi
-
-  options_to_login=($(tsh ls | grep "$1" | awk '{print $1}'))
-
-  if [ ${#options_to_login[@]} -eq 0 ]; then
-    echo "❌ No instances found for client name: $1"
-    return 1
-  fi
-
-  echo "Please select an instance:"
-  select opt in "${options_to_login[@]}"; do
-    if [ -n "$opt" ]; then
-      echo "Accessing $opt"
-      tsh ssh "$GH_USER@$opt"
-      break
-    else
-      echo "❌ Invalid selection. Please try again."
-    fi
-  done
 }
 FUNCTIONS_EOF
 
@@ -579,7 +713,28 @@ install_shell_tools() {
                 ncdu \
                 tree \
                 jq \
-                tldr
+                tldr \
+                curl \
+                wget
+
+            # Install eza (modern replacement for ls)
+            # Check if eza is available in the repos, otherwise install from GitHub
+            if ! command -v eza &> /dev/null; then
+                print_status "Installing eza from GitHub release..."
+                EZA_VERSION=$(curl -s "https://api.github.com/repos/eza-community/eza/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+                curl -Lo /tmp/eza.tar.gz "https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz"
+                sudo tar -xzf /tmp/eza.tar.gz -C /usr/local/bin
+                rm /tmp/eza.tar.gz
+            fi
+
+            # Install delta (git diff viewer) if not present
+            if ! command -v delta &> /dev/null; then
+                print_status "Installing delta from GitHub release..."
+                DELTA_VERSION=$(curl -s "https://api.github.com/repos/dandavison/delta/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+                curl -Lo /tmp/delta.deb "https://github.com/dandavison/delta/releases/latest/download/git-delta_${DELTA_VERSION}_amd64.deb"
+                sudo dpkg -i /tmp/delta.deb
+                rm /tmp/delta.deb
+            fi
 
             # Create symlinks for different names
             sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
@@ -622,9 +777,9 @@ install_fonts() {
 
     # Download and install popular Nerd Fonts
     local fonts=(
-        "FiraCode"
-        "JetBrainsMono"
-        "Hack"
+        # "FiraCode"
+        # "JetBrainsMono"
+        # "Hack"
         "SourceCodePro"
     )
 
@@ -652,6 +807,7 @@ install_fonts() {
 }
 
 # Change default shell to Zsh
+# Returns 0 if shell was changed, 1 otherwise
 change_shell_to_zsh() {
     print_status "Would you like to change your default shell to Zsh? (Y/n)"
     read -r response
@@ -667,17 +823,24 @@ change_shell_to_zsh() {
             # Change shell
             chsh -s "$zsh_path"
             print_success "Default shell changed to Zsh"
-            print_warning "Please log out and back in for the change to take effect"
+            # Return 0 to indicate shell was changed
+            return 0
         else
             print_error "Zsh not found. Please install it first."
+            return 1
         fi
     fi
+    # Return 1 to indicate shell was not changed
+    return 1
 }
 
 # Main installation flow
 main() {
     print_status "Shell Configuration Installation"
     echo
+
+    # Track if shell was changed
+    local shell_changed=0
 
     # Install shells and tools
     install_zsh
@@ -692,15 +855,32 @@ main() {
     install_shell_tools
     install_fonts
 
-    # Change default shell
-    change_shell_to_zsh
+    # Change default shell (captures return value)
+    if change_shell_to_zsh; then
+        shell_changed=1
+    fi
 
     print_success "Shell configuration completed!"
     echo
     print_status "Next steps:"
-    echo "  1. Log out and back in to use Zsh as default shell"
-    echo "  2. Run 'p10k configure' to set up Powerlevel10k theme"
-    echo "  3. Install tmux plugins: prefix + I (Ctrl-a then Shift-i)"
+
+    # Only show logout reminder if shell was actually changed
+    if [[ $shell_changed -eq 1 ]]; then
+        echo "  1. Log out and back in to use Zsh as default shell"
+        echo "  2. Run 'p10k configure' to set up Powerlevel10k theme"
+        echo "  3. Install tmux plugins: prefix + I (Ctrl-a then Shift-i)"
+    else
+        echo "  1. Run 'p10k configure' to set up Powerlevel10k theme"
+        echo "  2. Install tmux plugins: prefix + I (Ctrl-a then Shift-i)"
+    fi
+
+    # Additional helpful reminders
+    echo ""
+    print_status "fzf-tab is configured! Try these examples:"
+    echo "  - cd <TAB> to browse directories with preview"
+    echo "  - git checkout <TAB> to switch branches"
+    echo "  - Use Ctrl-Space for multi-selection"
+    echo "  - Press F1/F2 to switch between groups"
 }
 
 # Run if executed directly

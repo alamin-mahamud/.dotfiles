@@ -226,13 +226,19 @@ configure_security() {
     sudo ufw default allow outgoing
     
     # allow 22/tcp: Explicitly allow SSH connections on port 22 with descriptive comment
-    sudo ufw allow 22/tcp comment 'SSH'
+    # Check if SSH rule already exists to avoid duplicate rule warnings
+    if ! sudo ufw status | grep -q "22/tcp.*ALLOW"; then
+        sudo ufw allow 22/tcp comment 'SSH'
+    fi
 
     # Configure fail2ban with basic SSH protection if installed
     # fail2ban monitors log files and bans IP addresses that show suspicious activity
     if command -v fail2ban-server &> /dev/null; then
         sudo mkdir -p /etc/fail2ban
-        sudo tee /etc/fail2ban/jail.local > /dev/null <<'EOF'
+        
+        # Only create jail.local if it doesn't exist or has different content
+        if [[ ! -f /etc/fail2ban/jail.local ]] || ! grep -q "maxretry = 3" /etc/fail2ban/jail.local; then
+            sudo tee /etc/fail2ban/jail.local > /dev/null <<'EOF'
 # Global fail2ban configuration
 [DEFAULT]
 # bantime: Duration (in seconds) an IP is banned (3600 = 1 hour)
@@ -261,6 +267,7 @@ logpath = /var/log/auth.log
 # maxretry: SSH-specific failure threshold (stricter than default)
 maxretry = 3
 EOF
+        fi
 
         # enable: Configure fail2ban to start automatically at boot
         sudo systemctl enable fail2ban
@@ -302,6 +309,21 @@ configure_git() {
 # Setup Docker (optional)
 setup_docker() {
     if prompt_install "docker" "Docker container platform"; then
+        # Check if Docker is already installed
+        if command -v docker &> /dev/null; then
+            print_status "Docker is already installed, checking configuration..."
+            # Ensure user is in docker group
+            if ! groups "$USER" | grep -q "\bdocker\b"; then
+                sudo usermod -aG docker "$USER"
+                print_status "Added $USER to docker group"
+            fi
+            # Ensure service is enabled and running
+            sudo systemctl enable docker
+            sudo systemctl start docker
+            print_success "Docker configuration verified"
+            return
+        fi
+
         print_status "Installing Docker..."
 
         # Add Docker's official GPG key for package verification
@@ -309,13 +331,17 @@ setup_docker() {
         sudo mkdir -p /etc/apt/keyrings
         # -fsSL: Follow redirects, silent, show errors, location header
         # --dearmor: Convert ASCII-armored GPG key to binary format
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+        if [[ ! -f /etc/apt/keyrings/docker.gpg ]]; then
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+        fi
 
         # Add Docker repository to apt sources
         # dpkg --print-architecture: Get system architecture (amd64, arm64, etc.)
         # lsb_release -cs: Get Ubuntu codename (focal, jammy, etc.)
         # tee: Write to file and stdout simultaneously, > /dev/null suppresses stdout
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        if [[ ! -f /etc/apt/sources.list.d/docker.list ]]; then
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        fi
 
         # Install Docker packages
         # Update package index to include new Docker repository
@@ -345,8 +371,20 @@ setup_docker() {
 # Install Node.js (optional)
 install_nodejs() {
     if prompt_install "nodejs" "Node.js JavaScript runtime"; then
+        # Check if Node.js is already installed
+        if command -v node &> /dev/null; then
+            local node_version=$(node --version)
+            print_status "Node.js is already installed (version: $node_version)"
+            return
+        fi
+
         print_status "Installing Node.js..."
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        
+        # Only add NodeSource repository if not already added
+        if [[ ! -f /etc/apt/sources.list.d/nodesource.list ]]; then
+            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        fi
+        
         sudo apt-get install -y nodejs
         print_success "Node.js installed"
     fi
@@ -359,8 +397,9 @@ setup_system_maintenance() {
     # Create directories
     mkdir -p "$HOME/.local/bin" "$HOME/scripts" "$HOME/logs" "$HOME/backups"
 
-    # Create maintenance script
-    cat > "$HOME/scripts/system-maintenance.sh" <<'EOF'
+    # Create maintenance script only if it doesn't exist
+    if [[ ! -f "$HOME/scripts/system-maintenance.sh" ]]; then
+        cat > "$HOME/scripts/system-maintenance.sh" <<'EOF'
 #!/bin/bash
 # System maintenance script
 LOG_FILE="$HOME/logs/maintenance-$(date +%Y%m%d).log"
@@ -372,11 +411,15 @@ echo "Disk usage:" >> "$LOG_FILE"
 df -h >> "$LOG_FILE"
 echo "=== System Maintenance Completed at $(date) ===" >> "$LOG_FILE"
 EOF
+        chmod +x "$HOME/scripts/system-maintenance.sh"
+    fi
 
-    chmod +x "$HOME/scripts/system-maintenance.sh"
-
-    # Add weekly cron job
-    (crontab -l 2>/dev/null; echo "0 2 * * 0 $HOME/scripts/system-maintenance.sh") | crontab -
+    # Add weekly cron job only if it doesn't already exist
+    local cron_job="0 2 * * 0 $HOME/scripts/system-maintenance.sh"
+    if ! crontab -l 2>/dev/null | grep -Fq "$HOME/scripts/system-maintenance.sh"; then
+        (crontab -l 2>/dev/null; echo "$cron_job") | crontab -
+        print_status "Added weekly maintenance cron job"
+    fi
 
     print_success "System maintenance configured"
 }

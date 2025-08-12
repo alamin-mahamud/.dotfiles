@@ -215,28 +215,56 @@ install_essential_packages() {
 configure_security() {
     print_status "Configuring basic security..."
 
-    # Configure UFW firewall
+    # Configure UFW (Uncomplicated Firewall) - Ubuntu's frontend for iptables
+    # --force: Skip interactive confirmation prompts
     sudo ufw --force enable
+    
+    # default deny incoming: Block all incoming connections by default (security best practice)
     sudo ufw default deny incoming
+    
+    # default allow outgoing: Allow all outgoing connections (needed for system updates, etc.)
     sudo ufw default allow outgoing
+    
+    # allow 22/tcp: Explicitly allow SSH connections on port 22 with descriptive comment
     sudo ufw allow 22/tcp comment 'SSH'
 
     # Configure fail2ban with basic SSH protection
+    # fail2ban monitors log files and bans IP addresses that show suspicious activity
+    sudo mkdir -p /etc/fail2ban
     sudo tee /etc/fail2ban/jail.local > /dev/null <<'EOF'
+# Global fail2ban configuration
 [DEFAULT]
+# bantime: Duration (in seconds) an IP is banned (3600 = 1 hour)
 bantime = 3600
+
+# findtime: Time window (in seconds) to count failures (600 = 10 minutes)
 findtime = 600
+
+# maxretry: Number of failures within findtime before banning (default for most services)
 maxretry = 5
 
+# SSH-specific protection configuration
 [sshd]
+# enabled: Activate this jail (true/false)
 enabled = true
+
+# port: SSH port to monitor (standard SSH port)
 port = 22
+
+# filter: Predefined filter to detect SSH attack patterns
 filter = sshd
+
+# logpath: Location of SSH authentication logs to monitor
 logpath = /var/log/auth.log
+
+# maxretry: SSH-specific failure threshold (stricter than default)
 maxretry = 3
 EOF
 
+    # enable: Configure fail2ban to start automatically at boot
     sudo systemctl enable fail2ban
+    
+    # restart: Apply the new configuration by restarting the service
     sudo systemctl restart fail2ban
 
     print_success "Basic security configured (UFW firewall and fail2ban)"
@@ -272,22 +300,38 @@ setup_docker() {
     if prompt_install "docker" "Docker container platform"; then
         print_status "Installing Docker..."
 
-        # Add Docker's official GPG key
+        # Add Docker's official GPG key for package verification
+        # -p: Create parent directories as needed
         sudo mkdir -p /etc/apt/keyrings
+        # -fsSL: Follow redirects, silent, show errors, location header
+        # --dearmor: Convert ASCII-armored GPG key to binary format
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-        # Add repository
+        # Add Docker repository to apt sources
+        # dpkg --print-architecture: Get system architecture (amd64, arm64, etc.)
+        # lsb_release -cs: Get Ubuntu codename (focal, jammy, etc.)
+        # tee: Write to file and stdout simultaneously, > /dev/null suppresses stdout
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-        # Install Docker
+        # Install Docker packages
+        # Update package index to include new Docker repository
         sudo apt-get update
+        # -y: Automatically answer yes to prompts
+        # docker-ce: Docker Community Edition engine
+        # docker-ce-cli: Command-line interface for Docker
+        # containerd.io: Container runtime
+        # docker-buildx-plugin: Extended build capabilities plugin
+        # docker-compose-plugin: Docker Compose v2 plugin
         sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-        # Add user to docker group
+        # Add current user to docker group for non-root access
+        # -aG: Append user to supplementary group
         sudo usermod -aG docker "$USER"
 
-        # Enable Docker service
+        # Configure Docker service to start automatically
+        # enable: Configure service to start at boot
         sudo systemctl enable docker
+        # start: Start the service immediately
         sudo systemctl start docker
 
         print_success "Docker installed. Log out and back in for group changes to take effect."

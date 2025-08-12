@@ -10,33 +10,53 @@ This is a comprehensive, modular dotfiles repository for automated development e
 
 ### Main Installation
 - `./bootstrap.sh` - Enhanced main entry point with interactive menu and environment detection
-- `./ubuntu-server-setup.sh` - Standalone minimal server installation script
 - `chmod +x ./bootstrap.sh` - Make bootstrap script executable before running
 
-### Modular Installation Scripts
+### DRY Standalone Installers (can be run independently via curl)
+- `./scripts/ubuntu-server-setup.sh` - DRY Ubuntu Server setup orchestrator
+- `./scripts/install-shell.sh` - Enhanced shell environment (Zsh + Oh My Zsh + plugins)
+- `./scripts/tmux-installer.sh` - Comprehensive tmux setup with DevOps features  
+- `./scripts/vim-installer.sh` - Enhanced vim configuration with plugins
 - `./scripts/install-dev-tools.sh` - Development tools installation (Python, Node.js, Docker, etc.)
-- `./scripts/install-shell.sh` - Shell environment setup (Zsh, Oh My Zsh, tmux)
-- `./scripts/custom-install.sh` - Custom component selection installation
 
-### Platform-Specific Setup
-- Linux Desktop: `./linux/install-enhanced.sh` (called automatically by bootstrap)
-- macOS: `./macos/install-enhanced.sh` (called automatically by bootstrap)
-- Ubuntu Server: `./ubuntu-server-setup.sh` (standalone script)
+### One-liner Installation (DRY approach)
+```bash
+# Ubuntu Server (calls individual component installers)
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/ubuntu-server-setup.sh | bash
 
-### Legacy Support
-- `./linux/install.sh` - Delegates to enhanced version
-- `./macos/install.sh` - Delegates to enhanced version
+# Individual components
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/tmux-installer.sh | bash  
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/vim-installer.sh | bash
+```
+
+### Platform-Specific Setup (DRY orchestrators)
+- Linux Desktop: `./linux/install.sh` - DRY Linux desktop orchestrator
+- macOS: `./macos/install.sh` - DRY macOS orchestrator  
+- Ubuntu Server: `./scripts/ubuntu-server-setup.sh` - DRY Ubuntu Server orchestrator
+
+## DRY Architecture Principles
+
+This repository follows DRY (Don't Repeat Yourself) principles:
+
+- **Individual Component Scripts**: Each tool/service has its own specialized installer
+- **Platform Orchestrators**: Platform-specific scripts call individual component installers  
+- **GitHub Raw URLs**: All installers can be called remotely to avoid code duplication
+- **Modular Design**: Users can install individual components or complete environments
+- **Single Source of Truth**: Component logic lives in one place, referenced by orchestrators
 
 ## Architecture
 
-### Enhanced Directory Structure
+### DRY Directory Structure
 ```
 .dotfiles/
-├── bootstrap.sh                    # Enhanced main entry point with environment detection
-├── ubuntu-server-setup.sh          # Standalone server installation
-├── scripts/                        # Modular installation scripts
+├── bootstrap.sh                    # Main entry point with environment detection
+├── scripts/                        # DRY component installers
+│   ├── ubuntu-server-setup.sh     # Ubuntu Server orchestrator (DRY)
+│   ├── install-shell.sh           # Enhanced shell environment
+│   ├── tmux-installer.sh           # Comprehensive tmux setup  
+│   ├── vim-installer.sh            # Enhanced vim configuration
 │   ├── install-dev-tools.sh       # Development environment setup
-│   ├── install-shell.sh           # Shell and terminal configuration
 │   └── custom-install.sh          # Component-based custom installation
 ├── docs/                           # Comprehensive documentation
 │   ├── UBUNTU_DESKTOP.md          # Ubuntu desktop installation guide
@@ -44,13 +64,12 @@ This is a comprehensive, modular dotfiles repository for automated development e
 │   └── MACOS.md                   # macOS installation guide
 ├── configs/                        # Shared configuration files
 ├── linux/                          # Linux-specific configurations
-│   ├── install.sh                 # Delegates to enhanced version
-│   ├── install-enhanced.sh        # Full Linux desktop installation
+│   ├── install.sh                 # DRY Linux desktop orchestrator
 │   ├── .config/                   # Application configuration files
 │   └── .local/                    # User scripts and binaries
 ├── macos/                          # macOS-specific configurations
-│   ├── install.sh                 # Delegates to enhanced version
-│   └── install-enhanced.sh        # Full macOS installation with Homebrew
+│   ├── install.sh                 # DRY macOS orchestrator
+│   └── iterm/                     # iTerm2 configurations
 ├── zsh/                            # Zsh shell configuration
 │   ├── .zshrc                     # Main zsh configuration
 │   └── *.zsh                      # Modular configuration files

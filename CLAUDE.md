@@ -17,17 +17,22 @@ This is a comprehensive, modular dotfiles repository for automated development e
 - `./scripts/install-shell.sh` - Enhanced shell environment (Zsh + Oh My Zsh + plugins)
 - `./scripts/tmux-installer.sh` - Comprehensive tmux setup with DevOps features  
 - `./scripts/vim-installer.sh` - Enhanced vim configuration with plugins
-- `./scripts/install-dev-tools.sh` - Development tools installation (Python, Node.js, Docker, etc.)
+- `./scripts/install-dev-tools.sh` - Development tools installation (Git, Docker, Node.js, Python, Rust, Go, etc.)
+- `./scripts/custom-install.sh` - Component-based custom installation
 
 ### One-liner Installation (DRY approach)
 ```bash
 # Ubuntu Server (calls individual component installers)
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/ubuntu-server-setup.sh | bash
 
-# Individual components
+# Individual components (idempotent, standalone)
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/tmux-installer.sh | bash  
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/vim-installer.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash
+
+# Development tools - install all
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash -s -- --all
 ```
 
 ### Platform-Specific Setup (DRY orchestrators)
@@ -37,13 +42,16 @@ curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scr
 
 ## DRY Architecture Principles
 
-This repository follows DRY (Don't Repeat Yourself) principles:
+This repository follows DRY (Don't Repeat Yourself) principles with idempotent, standalone installers:
 
-- **Individual Component Scripts**: Each tool/service has its own specialized installer
+- **Idempotent Scripts**: All installers can be run multiple times safely without causing issues
+- **Standalone Design**: Each script is self-contained with embedded configurations and dependencies
+- **Individual Component Scripts**: Each tool/service has its own specialized installer with comprehensive OS support
 - **Platform Orchestrators**: Platform-specific scripts call individual component installers  
 - **GitHub Raw URLs**: All installers can be called remotely to avoid code duplication
 - **Modular Design**: Users can install individual components or complete environments
 - **Single Source of Truth**: Component logic lives in one place, referenced by orchestrators
+- **Comprehensive Logging**: All scripts provide detailed logging and backup functionality
 
 ## Architecture
 
@@ -105,24 +113,70 @@ The system automatically detects:
 ### Component Architecture
 
 #### Development Tools (`install-dev-tools.sh`)
-- **Languages**: Python (pyenv, pipx, pipenv), Node.js, Rust, Go
-- **Containers**: Docker, docker-compose
-- **Cloud Tools**: AWS CLI, kubectl, Terraform
-- **Editors**: Neovim, VS Code
-- **Databases**: PostgreSQL, MySQL, Redis clients
+- **Core Tools**: Git (with sensible defaults), comprehensive multi-OS support
+- **Languages**: Python (pyenv, pipx, poetry, pipenv), Node.js (yarn, pnpm), Rust, Go
+- **Containers**: Docker with compose plugins, user group management
+- **Cloud Tools**: AWS CLI v2, kubectl, Terraform (HashiCorp official repos)
+- **Editors**: Neovim (AppImage for latest), VS Code (official repos)
+- **Databases**: PostgreSQL, MySQL, Redis clients across all platforms
+- **Interactive Mode**: Menu-driven selection or --all flag for batch installation
 
 #### Shell Environment (`install-shell.sh`)
-- **Shell**: Zsh with Oh My Zsh framework
-- **Theme**: Powerlevel10k with custom configuration
-- **Plugins**: autosuggestions, syntax-highlighting, completions, fzf-tab
-- **Terminal**: tmux with TPM (Tmux Plugin Manager)
-- **Tools**: FZF, ripgrep, bat, eza, zoxide
+- **Shell**: Zsh with Oh My Zsh framework (idempotent installation/updates)
+- **Theme**: Powerlevel10k with embedded configuration
+- **Plugins**: autosuggestions, syntax-highlighting, completions, fzf-tab (auto-updating)
+- **Tools**: FZF, Z directory jumper, ripgrep, bat, eza, modern CLI tools
+- **Configuration**: Embedded .zshrc with comprehensive DevOps aliases and functions
+- **Fonts**: Nerd Fonts support with automatic installation
 
 #### Server-Specific Features (`ubuntu-server-setup.sh`)
-- **Security**: UFW firewall, fail2ban, SSH hardening
-- **Monitoring**: htop, iotop, nethogs, system stats
-- **Maintenance**: Automated update scripts, log rotation
-- **Minimal GUI**: No desktop environment components
+- **Security**: UFW firewall, fail2ban with detailed SSH protection, comprehensive configuration
+- **Monitoring**: htop, iotop, nethogs, system stats, modern CLI tools
+- **Maintenance**: Automated update scripts with logging, system maintenance cron jobs
+- **Enhanced Integration**: Calls specialized installers for shell, tmux, vim with server-appropriate defaults
+- **Minimal GUI**: No desktop environment components, optimized for server workflows
+
+#### Tmux Environment (`tmux-installer.sh`)
+- **Comprehensive Setup**: Enhanced tmux with extensive OS support and configuration
+- **Plugin Manager**: TPM (Tmux Plugin Manager) with automatic plugin installation
+- **DevOps Shortcuts**: Integrated monitoring (htop, Docker stats, logs, K8s, network)
+- **Session Management**: Advanced project session manager and sessionizer utilities
+- **Mouse Support**: Full mouse integration with clipboard support across platforms
+- **Utility Scripts**: tmux-sessionizer and tmux-project-manager for workflow enhancement
+
+#### Vim Environment (`vim-installer.sh`)
+- **Modern Setup**: vim-plug plugin manager with curated DevOps-focused plugins
+- **DevOps Configuration**: YAML, JSON, Python, Shell script optimizations with proper indentation
+- **Practice Resources**: Interactive practice file and comprehensive cheat sheet
+- **Plugin Integration**: NERDTree, CtrlP, GitGutter, Airline, Commentary, and more
+- **Beginner Friendly**: Extensive documentation and helpful shortcuts embedded in configuration
+- **Cross-Platform**: Comprehensive OS support with intelligent plugin installation
+
+### Enhanced Script Features
+
+#### Idempotent Design
+- **Safe Re-execution**: All scripts can be run multiple times without causing conflicts
+- **State Checking**: Scripts detect existing installations and update appropriately
+- **Backup Strategy**: Automatic backup of existing configurations before changes
+- **Update Capability**: Git repositories and plugins are updated when scripts are re-run
+
+#### Comprehensive OS Support
+- **Linux Distributions**: Ubuntu, Debian, Fedora, CentOS, RHEL, Rocky, AlmaLinux, Arch, Manjaro, Alpine, openSUSE
+- **macOS**: Full Homebrew integration with Apple Silicon support
+- **Package Managers**: Automatic detection and use of apt, dnf, yum, pacman, apk, zypper, brew
+- **Architecture Support**: x86_64 and arm64 (Apple Silicon) where applicable
+
+#### Logging and Monitoring
+- **Detailed Logging**: All operations logged with timestamps to `/tmp/` files
+- **Progress Tracking**: Clear status messages with color-coded output
+- **Error Handling**: Graceful error handling with informative messages
+- **Summary Reports**: Comprehensive installation summaries with next steps
+
+#### Professional DevOps Features
+- **Security-First**: Proper user permissions, group management, firewall configuration
+- **Production Ready**: Server hardening, fail2ban configuration, SSH security
+- **Modern Toolchain**: Latest versions via official repositories and releases
+- **Workflow Integration**: Seamless integration between tmux, vim, shell, and development tools
 
 ### Configuration Strategy
 

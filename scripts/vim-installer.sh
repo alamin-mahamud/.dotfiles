@@ -1,242 +1,300 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Standalone Vim Installer and Configuration Script
-# Perfect for DevOps engineers working on remote servers
-# This creates a practical vim setup with helpful comments for beginners
-# Usage: curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/refs/heads/master/standalone-vim-installer.sh | bash
-#   or: ./vim-installer.sh
+# DRY orchestrator for enhanced vim setup with plugins and DevOps configurations
+# This creates a practical vim setup with helpful documentation for beginners
+# Usage: curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/vim-installer.sh | bash
 
-set -e
+set -euo pipefail
 
-# Colors for output
+# Color codes for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m'
+NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 Standalone Vim Installer & Configuration${NC}"
-echo -e "${BLUE}============================================${NC}"
+# Configuration
+LOG_FILE="/tmp/vim-install-$(date +%Y%m%d_%H%M%S).log"
+BACKUP_DIR="$HOME/.vim-backup-$(date +%Y%m%d_%H%M%S)"
 
-# Create vim configuration directory
-mkdir -p ~/.vim/{autoload,backup,colors,undo}
+# Logging
+exec > >(tee -a "$LOG_FILE") 2>&1
 
-# Install vim if not present
-if ! command -v vim &> /dev/null; then
-    echo -e "${YELLOW}📦 Installing vim...${NC}"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        brew install vim
-    elif command -v apt-get &> /dev/null; then
-        sudo apt-get update && sudo apt-get install -y vim
-    elif command -v yum &> /dev/null; then
-        sudo yum install -y vim
-    elif command -v dnf &> /dev/null; then
-        sudo dnf install -y vim
-    elif command -v pacman &> /dev/null; then
-        sudo pacman -S --noconfirm vim
-    elif command -v apk &> /dev/null; then
-        sudo apk add --no-cache vim
-    else
-        echo -e "${RED}❌ Could not install vim automatically. Please install manually.${NC}"
+# Print colored output
+print_status() {
+    echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ✓ $1"
+}
+
+print_error() {
+    echo -e "${RED}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ✗ $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ⚠ $1"
+}
+
+# Check if running as root
+check_root() {
+    if [[ $EUID -eq 0 ]]; then
+        print_error "This script should not be run as root!"
+        print_status "Please run as a regular user with sudo privileges."
         exit 1
     fi
-fi
+}
 
-# Backup existing vimrc if it exists
-if [[ -f ~/.vimrc ]]; then
-    mv ~/.vimrc ~/.vimrc.backup.$(date +%Y%m%d_%H%M%S)
-    echo -e "${YELLOW}📁 Backed up existing .vimrc${NC}"
-fi
+# Detect operating system
+detect_os() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        OS="macos"
+        print_success "Detected macOS"
+    elif [[ -f /etc/os-release ]]; then
+        source /etc/os-release
+        OS=$ID
+        print_success "Detected $PRETTY_NAME"
+    else
+        print_error "Unsupported operating system"
+        exit 1
+    fi
+}
 
-# Create the vimrc configuration
-cat > ~/.vimrc << 'VIMRC'
+# Backup existing vim configuration (idempotent)
+backup_existing_configs() {
+    local files_to_backup=(
+        "$HOME/.vimrc"
+        "$HOME/.vim"
+    )
+    
+    local backup_needed=false
+    for file in "${files_to_backup[@]}"; do
+        if [[ -e "$file" ]] && [[ ! -L "$file" ]]; then
+            backup_needed=true
+            break
+        fi
+    done
+    
+    if [[ "$backup_needed" == true ]]; then
+        print_status "Backing up existing vim configuration..."
+        mkdir -p "$BACKUP_DIR"
+        
+        for file in "${files_to_backup[@]}"; do
+            if [[ -e "$file" ]] && [[ ! -L "$file" ]]; then
+                cp -r "$file" "$BACKUP_DIR/" 2>/dev/null || true
+                print_status "Backed up $(basename "$file")"
+            fi
+        done
+        print_success "Backups saved to $BACKUP_DIR"
+    fi
+}
+
+# Install vim (idempotent)
+install_vim() {
+    print_status "Checking vim installation..."
+    
+    if command -v vim &> /dev/null; then
+        print_success "Vim is already installed ($(vim --version | head -n1))"
+        return 0
+    fi
+    
+    print_status "Installing vim..."
+    case "$OS" in
+        ubuntu|debian)
+            sudo apt-get update
+            sudo apt-get install -y vim
+            ;;
+        fedora|centos|rhel|rocky|almalinux)
+            sudo dnf install -y vim || sudo yum install -y vim
+            ;;
+        arch|manjaro)
+            sudo pacman -S --noconfirm vim
+            ;;
+        alpine)
+            sudo apk add --no-cache vim
+            ;;
+        opensuse*|sles)
+            sudo zypper install -y vim
+            ;;
+        macos)
+            if ! command -v brew &> /dev/null; then
+                print_warning "Homebrew not found. Installing Homebrew first..."
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            fi
+            brew install vim
+            ;;
+        *)
+            print_error "Unsupported OS for vim installation: $OS"
+            return 1
+            ;;
+    esac
+    
+    print_success "Vim installed successfully"
+}
+
+# Create vim directories (idempotent)
+create_vim_directories() {
+    print_status "Creating vim directories..."
+    
+    local vim_dirs=(
+        "$HOME/.vim/autoload"
+        "$HOME/.vim/backup"
+        "$HOME/.vim/colors"
+        "$HOME/.vim/swap"
+        "$HOME/.vim/undo"
+        "$HOME/.vim/plugged"
+    )
+    
+    for dir in "${vim_dirs[@]}"; do
+        mkdir -p "$dir"
+    done
+    
+    print_success "Vim directories created"
+}
+
+# Install vim-plug (idempotent)
+install_vim_plug() {
+    print_status "Installing vim-plug plugin manager..."
+    
+    local plug_file="$HOME/.vim/autoload/plug.vim"
+    
+    if [[ -f "$plug_file" ]]; then
+        print_success "vim-plug is already installed"
+        # Update vim-plug
+        print_status "Updating vim-plug..."
+        curl -fsSLo "$plug_file" --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        return 0
+    fi
+    
+    curl -fsSLo "$plug_file" --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    
+    print_success "vim-plug installed"
+}
+
+# Create vimrc configuration (idempotent)
+create_vimrc() {
+    print_status "Creating vim configuration..."
+    
+    cat > "$HOME/.vimrc" << 'VIMRC_EOF'
 " ============================================================================
 " VIM CONFIGURATION FOR DEVOPS ENGINEERS
-" A practical setup with extensive comments for vim beginners
+" A practical setup with helpful comments for vim beginners
+" Generated by vim-installer.sh
 " ============================================================================
 
 " ============================================================================
 " VIM BASICS - UNDERSTANDING MODES
 " ============================================================================
 " Vim has several modes:
-" 1. NORMAL mode (default) - For navigation and commands
-"    - Press 'Esc' to enter this mode from any other mode
-" 2. INSERT mode - For typing/editing text
-"    - Press 'i' to insert before cursor
-"    - Press 'a' to insert after cursor
-"    - Press 'o' to insert new line below
-"    - Press 'O' to insert new line above
-" 3. VISUAL mode - For selecting text
-"    - Press 'v' for character selection
-"    - Press 'V' for line selection
-"    - Press 'Ctrl+v' for block selection
-" 4. COMMAND mode - For running commands
-"    - Press ':' to enter command mode
-"    - Common commands: :w (save), :q (quit), :wq (save & quit)
+" 1. NORMAL mode (default) - For navigation and commands (press Esc)
+" 2. INSERT mode - For typing text (press i, a, o, or O)
+" 3. VISUAL mode - For selecting text (press v, V, or Ctrl+v)
+" 4. COMMAND mode - For running commands (press :)
 
 " ============================================================================
 " GENERAL SETTINGS
 " ============================================================================
 
-" Disable compatibility with vi which can cause unexpected issues
-set nocompatible
-
-" Enable file type detection and load plugins for specific file types
-filetype plugin indent on
-
-" Enable syntax highlighting (colors for code)
-syntax enable
-
-" Show line numbers on the left
-set number
-
-" Show relative line numbers (helps with jumping: 5j moves 5 lines down)
-set relativenumber
-
-" Always show cursor position in bottom right
-set ruler
-
-" Show command in bottom bar as you type it
-set showcmd
-
-" Highlight matching brackets/parentheses when cursor is on them
-set showmatch
-
-" Enable mouse support (click to position cursor, scroll, select)
-set mouse=a
-
-" Set encoding to UTF-8 (important for special characters)
-set encoding=utf-8
+set nocompatible              " Disable vi compatibility
+filetype plugin indent on     " Enable file type detection
+syntax enable                 " Enable syntax highlighting
+set encoding=utf-8            " Set encoding to UTF-8
+set number                    " Show line numbers
+set relativenumber            " Show relative line numbers
+set ruler                     " Show cursor position
+set showcmd                   " Show command being typed
+set showmatch                 " Highlight matching brackets
+set mouse=a                   " Enable mouse support
+set cursorline                " Highlight current line
+set colorcolumn=80            " Show column marker at 80 characters
+set scrolloff=5               " Keep 5 lines visible above/below cursor
+set lazyredraw                " Redraw only when needed
+set laststatus=2              " Always show status line
+set wildmenu                  " Enhanced command line completion
+set wildignore=*.o,*~,*.pyc,*.class,*.git,*.svn
 
 " ============================================================================
 " SEARCH SETTINGS
 " ============================================================================
 
-" Search as you type (incremental search)
-set incsearch
-
-" Highlight all search matches
-set hlsearch
-
-" Ignore case when searching...
-set ignorecase
-
-" ...unless search pattern contains uppercase letters
-set smartcase
-
-" Clear search highlight with ,<space> (comma then space)
-nnoremap <leader><space> :nohlsearch<CR>
+set incsearch                 " Incremental search
+set hlsearch                  " Highlight search results
+set ignorecase                " Case-insensitive search
+set smartcase                 " Case-sensitive if uppercase used
 
 " ============================================================================
-" INDENTATION SETTINGS (CRUCIAL FOR YAML/PYTHON)
+" INDENTATION SETTINGS
 " ============================================================================
 
-" Number of visual spaces per TAB character
-set tabstop=2
-
-" Number of spaces in TAB when editing
-set softtabstop=2
-
-" Number of spaces to use for autoindent
-set shiftwidth=2
-
-" Convert TABs to spaces (important for YAML)
-set expandtab
-
-" Copy indent from current line when starting new line
-set autoindent
-
-" Smart autoindenting when starting new line
-set smartindent
-
-" ============================================================================
-" UI CONFIGURATION
-" ============================================================================
-
-" Show a visual line at column 80 (helps keep lines short)
-set colorcolumn=80
-
-" Highlight current line (makes it easier to see where you are)
-set cursorline
-
-" Always show at least 5 lines above/below cursor
-set scrolloff=5
-
-" Redraw only when needed (faster macros)
-set lazyredraw
-
-" Show status line always
-set laststatus=2
-
-" Enhanced command line completion (TAB to see options)
-set wildmenu
-
-" Ignore these files when using wildmenu
-set wildignore=*.o,*~,*.pyc,*.class,*.git,*.svn
+set tabstop=2                 " Visual spaces per TAB
+set softtabstop=2             " Spaces in TAB when editing
+set shiftwidth=2              " Spaces for autoindent
+set expandtab                 " Convert TABs to spaces
+set autoindent                " Copy indent from current line
+set smartindent               " Smart autoindenting
 
 " ============================================================================
 " BACKUP AND UNDO SETTINGS
 " ============================================================================
 
-" Keep backup files in central directory (not next to files)
-set backup
-set backupdir=~/.vim/backup//
-
-" Keep undo history in files (can undo even after closing)
-set undofile
-set undodir=~/.vim/undo//
-
-" Keep swap files in central directory
-set directory=~/.vim/swap//
-
-" Create directories if they don't exist
-if !isdirectory(expand("~/.vim/backup"))
-    call mkdir(expand("~/.vim/backup"), "p")
-endif
-if !isdirectory(expand("~/.vim/undo"))
-    call mkdir(expand("~/.vim/undo"), "p")
-endif
-if !isdirectory(expand("~/.vim/swap"))
-    call mkdir(expand("~/.vim/swap"), "p")
-endif
+set backup                    " Keep backup files
+set backupdir=~/.vim/backup// " Backup directory
+set undofile                  " Persistent undo
+set undodir=~/.vim/undo//     " Undo directory
+set directory=~/.vim/swap//   " Swap file directory
 
 " ============================================================================
-" KEY MAPPINGS (CUSTOM SHORTCUTS)
+" KEY MAPPINGS
 " ============================================================================
-" Note: <leader> is set to comma (,) by default
 
-" Set leader key to comma (easier to reach than backslash)
-let mapleader = ","
+let mapleader = ","           " Set leader key to comma
 
-" Quick save with ,w
+" Quick save and quit
 nnoremap <leader>w :w<CR>
-
-" Quick save and quit with ,q
 nnoremap <leader>q :wq<CR>
+nnoremap <leader>Q :q!<CR>
 
-" Move between windows with Ctrl+h/j/k/l (like tmux)
+" Clear search highlight
+nnoremap <leader><space> :nohlsearch<CR>
+
+" Window navigation
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" Easier moving of code blocks in visual mode
-" < and > to indent/dedent, then gv to reselect
+" Visual mode indenting
 vnoremap < <gv
 vnoremap > >gv
 
-" Move visual selection up/down with J/K
+" Move visual blocks
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
-" Double tap j to escape insert mode (easier than reaching for Esc)
+" Double tap j to escape insert mode
 inoremap jj <Esc>
 
+" Format JSON (requires jq)
+nnoremap <leader>j :%!jq '.'<CR>
+
+" Format XML (requires xmllint)
+nnoremap <leader>x :%!xmllint --format -<CR>
+
+" Remove trailing whitespace
+nnoremap <leader>t :%s/\s\+$//e<CR>
+
+" Convert tabs to spaces
+nnoremap <leader>T :%s/\t/  /g<CR>
+
 " ============================================================================
-" FILE TYPE SPECIFIC SETTINGS
+" FILE TYPE SETTINGS
 " ============================================================================
 
-" YAML files - critical for DevOps
+" YAML files
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Python files
@@ -245,61 +303,39 @@ autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab
 " Shell scripts
 autocmd FileType sh setlocal ts=4 sts=4 sw=4 expandtab
 
-" JSON files - show quotes
+" JSON files
 autocmd FileType json setlocal conceallevel=0
 
-" Markdown files - enable word wrap
+" Markdown files
 autocmd FileType markdown setlocal wrap linebreak
-
-" ============================================================================
-" USEFUL COMMANDS FOR DEVOPS
-" ============================================================================
-
-" Format JSON with ,j (requires jq)
-nnoremap <leader>j :%!jq '.'<CR>
-
-" Format XML with ,x (requires xmllint)
-nnoremap <leader>x :%!xmllint --format -<CR>
-
-" Remove trailing whitespace with ,t
-nnoremap <leader>t :%s/\s\+$//e<CR>
-
-" Convert tabs to spaces in whole file with ,T
-nnoremap <leader>T :%s/\t/  /g<CR>
 
 " ============================================================================
 " CLIPBOARD INTEGRATION
 " ============================================================================
 
-" Use system clipboard for copy/paste (requires vim compiled with +clipboard)
-" Check with: vim --version | grep clipboard
 if has('clipboard')
     set clipboard=unnamed,unnamedplus
 endif
 
-" Copy to clipboard in visual mode with Ctrl+c
+" Copy to clipboard in visual mode
 vnoremap <C-c> "+y
 
-" Paste from clipboard with Ctrl+v
+" Paste from clipboard
 inoremap <C-v> <Esc>"+pa
 
 " ============================================================================
 " COLOR SCHEME
 " ============================================================================
 
-" Use desert colorscheme (works well on most terminals)
 colorscheme desert
-
-" Override some colors for better visibility
 highlight LineNr ctermfg=grey
 highlight CursorLineNr ctermfg=yellow
 highlight Search cterm=NONE ctermfg=black ctermbg=yellow
 
 " ============================================================================
-" STATUS LINE CONFIGURATION
+" STATUS LINE
 " ============================================================================
 
-" Custom status line showing useful information
 set statusline=
 set statusline+=%F                          " Full file path
 set statusline+=%m                          " Modified flag
@@ -307,12 +343,73 @@ set statusline+=%r                          " Readonly flag
 set statusline+=%h                          " Help file flag
 set statusline+=%=                          " Left/right separator
 set statusline+=%y                          " File type
-set statusline+=\ [%{&fileencoding?&fileencoding:&encoding}]  " Encoding
-set statusline+=\ [line\ %l/%L]             " Current line / total lines
+set statusline+=\ [%{&fileencoding?&fileencoding:&encoding}]
+set statusline+=\ [line\ %l/%L]             " Current/total lines
 set statusline+=\ [col\ %c]                 " Column number
 
 " ============================================================================
-" QUICK REFERENCE (ESSENTIAL COMMANDS)
+" PLUGINS (using vim-plug)
+" ============================================================================
+
+call plug#begin('~/.vim/plugged')
+
+" File explorer
+Plug 'preservim/nerdtree'
+
+" Status line
+Plug 'vim-airline/vim-airline'
+
+" Git integration
+Plug 'airblade/vim-gitgutter'
+
+" Fuzzy file finder
+Plug 'ctrlpvim/ctrlp.vim'
+
+" Multiple cursors
+Plug 'terryma/vim-multiple-cursors'
+
+" Auto-close brackets
+Plug 'jiangmiao/auto-pairs'
+
+" Comment lines
+Plug 'tpope/vim-commentary'
+
+" Better syntax highlighting
+Plug 'sheerun/vim-polyglot'
+
+" Surround text objects
+Plug 'tpope/vim-surround'
+
+" Git wrapper
+Plug 'tpope/vim-fugitive'
+
+call plug#end()
+
+" ============================================================================
+" PLUGIN CONFIGURATIONS
+" ============================================================================
+
+" NERDTree
+nnoremap <leader>n :NERDTreeToggle<CR>
+let NERDTreeShowHidden=1
+let NERDTreeIgnore=['\.pyc$', '\~$', '\.swp$', '\.git$']
+
+" CtrlP
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_show_hidden = 1
+let g:ctrlp_working_path_mode = 'ra'
+
+" GitGutter
+set updatetime=100
+let g:gitgutter_max_signs = 500
+
+" Airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+" ============================================================================
+" QUICK REFERENCE
 " ============================================================================
 " NAVIGATION:
 "   h/j/k/l     - left/down/up/right
@@ -320,58 +417,92 @@ set statusline+=\ [col\ %c]                 " Column number
 "   0/$         - beginning/end of line
 "   gg/G        - beginning/end of file
 "   Ctrl+f/b    - page down/up
-"   :123        - go to line 123
 "
 " EDITING:
 "   i/a         - insert before/after cursor
 "   o/O         - new line below/above
-"   x           - delete character
 "   dd          - delete line
 "   yy          - copy line
-"   p/P         - paste after/before cursor
+"   p/P         - paste after/before
 "   u/Ctrl+r    - undo/redo
-"   .           - repeat last command
 "
-" VISUAL MODE:
-"   v           - character selection
-"   V           - line selection
-"   Ctrl+v      - block selection
-"   d           - delete selection
-"   y           - copy selection
-"   >/<         - indent/dedent
-"
-" SEARCH & REPLACE:
-"   /pattern    - search forward
-"   ?pattern    - search backward
-"   n/N         - next/previous match
-"   :%s/old/new/g - replace all in file
-"   :s/old/new/g  - replace all in line
-"
-" FILES:
-"   :w          - save
-"   :q          - quit
-"   :wq or :x   - save and quit
-"   :q!         - quit without saving
-"   :e file     - open file
-"   :split      - horizontal split
-"   :vsplit     - vertical split
-"
-" CUSTOM SHORTCUTS (defined above):
+" CUSTOM SHORTCUTS:
 "   ,w          - quick save
 "   ,q          - save and quit
-"   ,<space>    - clear search highlight
+"   ,n          - toggle file tree
 "   ,j          - format JSON
-"   ,t          - remove trailing whitespace
+"   ,t          - remove trailing spaces
 "   jj          - escape insert mode
-"
+"   Ctrl+p      - fuzzy file search
 " ============================================================================
-" Remember: If you make a mistake, press 'u' to undo!
-" Press 'Esc' if you get stuck in any mode
-" ============================================================================
-VIMRC
+VIMRC_EOF
+    
+    print_success "Vim configuration created"
+}
 
-# Create a simple vim cheat sheet
-cat > ~/vim-cheatsheet.txt << 'CHEATSHEET'
+# Create practice file
+create_practice_file() {
+    print_status "Creating practice file..."
+    
+    cat > "$HOME/vim-practice.txt" << 'PRACTICE_EOF'
+VIM PRACTICE FILE
+=================
+
+Practice basic movements:
+- Use hjkl to move around
+- Try pressing w to jump words forward
+- Try pressing b to jump words backward
+
+Practice editing (press i to start):
+TODO: Add your name here: ___________
+TODO: Add today's date: ___________
+
+Practice visual selection:
+Select this line with V and delete with d
+Select this line with V and copy with y
+[paste the copied line below with p]
+
+Practice search:
+Find the word "practice" with /practice
+
+YAML practice (check indentation):
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+JSON practice (try ,j to format):
+{"name":"test","version":"1.0","dependencies":{"express":"^4.17.1","mongoose":"^5.12.0"},"scripts":{"start":"node index.js","test":"jest"}}
+
+Practice find and replace:
+Change all 'old_version' to 'new_version':
+old_version: 1.0.0
+app_old_version: 1.0.0
+db_old_version: 1.0.0
+
+Lines with trailing spaces (try ,t to clean):
+This line has trailing spaces     
+So does this one     
+
+Remember:
+- Press Esc if you get stuck
+- Use :w to save changes
+- Use :q to quit (or :q! without saving)
+PRACTICE_EOF
+    
+    print_success "Practice file created at ~/vim-practice.txt"
+}
+
+# Create cheatsheet
+create_cheatsheet() {
+    print_status "Creating vim cheatsheet..."
+    
+    cat > "$HOME/vim-cheatsheet.txt" << 'CHEATSHEET_EOF'
 VIM QUICK REFERENCE FOR DEVOPS
 ==============================
 
@@ -400,10 +531,11 @@ PRACTICAL EXAMPLES FOR DEVOPS:
 
 2. Search for a word:
    Press / then type the word, press Enter
-   Press n for next match
+   Press n for next match, N for previous
 
 3. Find and replace:
-   :%s/old_text/new_text/g
+   :%s/old_text/new_text/g     (all occurrences)
+   :s/old_text/new_text/g      (current line)
 
 4. Delete multiple lines:
    Press V, select lines with j/k, press d
@@ -422,152 +554,143 @@ PRACTICAL EXAMPLES FOR DEVOPS:
 8. Compare files side by side:
    vim -d file1.conf file2.conf
 
-CUSTOM SHORTCUTS IN THIS CONFIG:
+CUSTOM SHORTCUTS (THIS CONFIG):
 ,w - quick save
 ,q - save and quit
+,n - toggle file tree (NERDTree)
 ,j - format JSON
 ,t - remove trailing spaces
-jj - escape insert mode (instead of Esc key)
+jj - escape insert mode
+Ctrl+p - fuzzy file search
+
+PLUGIN COMMANDS:
+NERDTree (File Explorer):
+  ,n - toggle file tree
+  o - open file/folder
+  s - open in split
+  t - open in new tab
+
+CtrlP (Fuzzy Finder):
+  Ctrl+p - open fuzzy finder
+  Ctrl+j/k - navigate results
+  Enter - open file
+
+Commentary:
+  gcc - comment/uncomment line
+  gc (visual) - comment selection
+
+GitGutter:
+  [c - previous change
+  ]c - next change
+  ,hs - stage hunk
+  ,hu - undo hunk
 
 PRO TIPS:
 - Number before command repeats it (5dd deletes 5 lines)
 - . (dot) repeats last command
-- u undoes last change
-- Ctrl+r redoes
-CHEATSHEET
+- u undoes last change, Ctrl+r redoes
+- :set paste before pasting from clipboard
+- :set nopaste after pasting
+CHEATSHEET_EOF
+    
+    print_success "Cheatsheet created at ~/vim-cheatsheet.txt"
+}
 
-# Install vim-plug (lightweight plugin manager)
-echo -e "${YELLOW}🔌 Installing vim-plug...${NC}"
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+# Install plugins
+install_plugins() {
+    print_status "Installing vim plugins..."
+    
+    # Check if vim supports plugin installation
+    if ! vim --version | grep -q "+eval"; then
+        print_warning "Your vim version doesn't support plugins"
+        return 1
+    fi
+    
+    # Install plugins silently
+    vim +PlugInstall +qall 2>/dev/null || {
+        print_warning "Plugin installation may require manual completion"
+        print_status "Run ':PlugInstall' inside vim to install plugins"
+    }
+    
+    print_success "Plugin installation initiated"
+}
 
-# Add plugin section to vimrc
-cat >> ~/.vimrc << 'PLUGINS'
+# Show summary
+show_summary() {
+    echo
+    echo "========================================"
+    echo "Vim Installation Summary"
+    echo "========================================"
+    echo
+    print_success "✓ Vim installed and configured"
+    print_success "✓ vim-plug plugin manager installed"
+    print_success "✓ Enhanced vimrc with DevOps settings"
+    print_success "✓ Practice file created"
+    print_success "✓ Cheatsheet created"
+    print_success "✓ Plugins ready to install"
+    echo
+    print_status "📋 Files created:"
+    echo "  • ~/.vimrc - Main configuration"
+    echo "  • ~/vim-practice.txt - Practice file"
+    echo "  • ~/vim-cheatsheet.txt - Quick reference"
+    echo
+    print_status "📁 Log file: $LOG_FILE"
+    if [[ -d "$BACKUP_DIR" ]]; then
+        print_status "📁 Backups: $BACKUP_DIR"
+    fi
+    echo
+    print_warning "📝 Next Steps:"
+    echo "  1. Practice with: vim ~/vim-practice.txt"
+    echo "  2. View cheatsheet: cat ~/vim-cheatsheet.txt"
+    echo "  3. Install plugins: Open vim and run :PlugInstall"
+    echo
+    print_status "🔑 Essential Commands:"
+    echo "  • i = insert mode (start typing)"
+    echo "  • Esc = back to normal mode"
+    echo "  • :w = save file"
+    echo "  • :q = quit vim"
+    echo "  • :wq = save and quit"
+    echo "  • u = undo last change"
+    echo
+    print_status "💡 Custom Shortcuts:"
+    echo "  • ,w = quick save"
+    echo "  • ,n = toggle file tree"
+    echo "  • ,j = format JSON"
+    echo "  • jj = escape insert mode"
+    echo "  • Ctrl+p = fuzzy file search"
+    echo
+    print_status "🚀 Your vim environment is ready for DevOps work!"
+}
 
-" ============================================================================
-" PLUGINS (using vim-plug)
-" ============================================================================
-" To install plugins: Open vim and run :PlugInstall
+# Main installation
+main() {
+    clear
+    echo "========================================"
+    echo "Standalone Vim Installer & Configuration"
+    echo "========================================"
+    echo
+    
+    # Pre-flight checks
+    check_root
+    detect_os
+    
+    # Backup existing configuration
+    backup_existing_configs
+    
+    # Installation steps
+    install_vim
+    create_vim_directories
+    install_vim_plug
+    create_vimrc
+    create_practice_file
+    create_cheatsheet
+    install_plugins
+    
+    # Show summary
+    show_summary
+}
 
-call plug#begin('~/.vim/plugged')
-
-" File tree explorer - press ,n to toggle
-Plug 'preservim/nerdtree'
-
-" Better status line
-Plug 'vim-airline/vim-airline'
-
-" Git integration - shows git changes in files
-Plug 'airblade/vim-gitgutter'
-
-" Fuzzy file finder - press Ctrl+p to search files
-Plug 'ctrlpvim/ctrlp.vim'
-
-" Multiple cursors - Ctrl+n to select next occurrence
-Plug 'terryma/vim-multiple-cursors'
-
-" Auto-close brackets and quotes
-Plug 'jiangmiao/auto-pairs'
-
-" Comment lines with gc in visual mode
-Plug 'tpope/vim-commentary'
-
-" Better syntax highlighting for many languages
-Plug 'sheerun/vim-polyglot'
-
-call plug#end()
-
-" Plugin configurations
-" NERDTree - File explorer
-nnoremap <leader>n :NERDTreeToggle<CR>
-let NERDTreeShowHidden=1  " Show hidden files
-
-" CtrlP - Fuzzy finder
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-let g:ctrlp_show_hidden = 1
-
-" GitGutter - Update time
-set updatetime=100
-
-" ============================================================================
-" After adding these plugins, restart vim and run :PlugInstall
-" ============================================================================
-PLUGINS
-
-# Create a simple test file to practice with
-cat > ~/vim-practice.txt << 'PRACTICE'
-VIM PRACTICE FILE
-=================
-
-Practice basic movements:
-- Use hjkl to move around
-- Try pressing w to jump words forward
-- Try pressing b to jump words backward
-
-Practice editing (press i to start):
-TODO: Add your name here: ___________
-TODO: Add today's date: ___________
-
-Practice visual selection:
-Select this line with V and delete with d
-Select this line with V and copy with y
-[paste the copied line below this one with p]
-
-Practice search:
-Find the word "practice" in this file with /practice
-
-YAML practice (check indentation):
-services:
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-
-JSON practice (try ,j to format):
-{"name":"test","version":"1.0","dependencies":{"express":"^4.17.1","mongoose":"^5.12.0"},"scripts":{"start":"node index.js","test":"jest"}}
-
-Practice find and replace:
-Change all 'old_version' to 'new_version':
-old_version: 1.0.0
-app_old_version: 1.0.0
-db_old_version: 1.0.0
-
-Lines with trailing spaces (try ,t to clean):
-This line has trailing spaces
-So does this one
-
-Remember:
-- Press Esc if you get stuck
-- Use :w to save your changes
-- Use :q to quit (or :q! to quit without saving)
-PRACTICE
-
-echo ""
-echo -e "${GREEN}✅ Vim installation and configuration complete!${NC}"
-echo -e "${BLUE}============================================${NC}"
-echo ""
-echo -e "${YELLOW}📚 Quick Start Guide:${NC}"
-echo -e "  1. Practice with: ${GREEN}vim ~/vim-practice.txt${NC}"
-echo -e "  2. View cheatsheet: ${GREEN}cat ~/vim-cheatsheet.txt${NC}"
-echo -e "  3. Install plugins: Open vim and run ${GREEN}:PlugInstall${NC}"
-echo ""
-echo -e "${YELLOW}🔑 Essential Commands to Remember:${NC}"
-echo -e "  - ${GREEN}i${NC} = insert mode (start typing)"
-echo -e "  - ${GREEN}Esc${NC} = back to normal mode"
-echo -e "  - ${GREEN}:w${NC} = save file"
-echo -e "  - ${GREEN}:q${NC} = quit vim"
-echo -e "  - ${GREEN}:wq${NC} = save and quit"
-echo -e "  - ${GREEN}u${NC} = undo last change"
-echo ""
-echo -e "${YELLOW}💡 Custom Shortcuts:${NC}"
-echo -e "  - ${GREEN},w${NC} = quick save"
-echo -e "  - ${GREEN},n${NC} = toggle file tree"
-echo -e "  - ${GREEN},j${NC} = format JSON"
-echo -e "  - ${GREEN}jj${NC} = escape insert mode"
-echo ""
-echo -e "${BLUE}Start practicing with: vim ~/vim-practice.txt${NC}"
+# Run main function if executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

@@ -25,22 +25,26 @@ A comprehensive, modular dotfiles repository for automated development environme
 ### Installation
 
 1. Clone the repository:
+
 ```bash
-git clone https://github.com/yourusername/dotfiles.git ~/Work/.dotfiles
-cd ~/Work/.dotfiles
+git clone https://github.com/alamin-mahamud/dotfiles.git ~/src/.dotfiles
+cd ~/src/.dotfiles
 ```
 
 2. Make the bootstrap script executable:
+
 ```bash
 chmod +x ./bootstrap.sh
 ```
 
 3. Run the bootstrap script:
+
 ```bash
 ./bootstrap.sh
 ```
 
 The script will:
+
 - Detect your operating system and environment
 - Present an interactive menu with installation options
 - Guide you through the setup process
@@ -50,12 +54,13 @@ The script will:
 For Ubuntu servers, use the standalone script for a minimal setup:
 
 ```bash
-wget https://raw.githubusercontent.com/yourusername/dotfiles/main/ubuntu-server-setup.sh
+wget https://raw.githubusercontent.com/alamin-mahamud/dotfiles/master/scripts/ubuntu-server-setup.sh
 chmod +x ubuntu-server-setup.sh
 ./ubuntu-server-setup.sh
 ```
 
 This script includes:
+
 - Essential system packages
 - Security hardening (UFW, fail2ban)
 - Development tools (Git, Python, Node.js)
@@ -66,7 +71,9 @@ This script includes:
 ## Installation Options
 
 ### 1. Full Installation (Desktop)
+
 Includes everything needed for a complete development workstation:
+
 - Window manager configurations (i3/Hyprland)
 - GUI applications (Kitty, Rofi, etc.)
 - All development tools
@@ -74,7 +81,9 @@ Includes everything needed for a complete development workstation:
 - Fonts and themes
 
 ### 2. Server Installation
+
 Minimal setup optimized for servers:
+
 - Core utilities and monitoring tools
 - Security configurations
 - Shell enhancements
@@ -82,7 +91,9 @@ Minimal setup optimized for servers:
 - No GUI components
 
 ### 3. Development Tools Only
+
 Just the development environment:
+
 - Programming languages (Python, Node.js, Rust, Go)
 - Version managers (pyenv, nvm)
 - Docker and container tools
@@ -90,7 +101,9 @@ Just the development environment:
 - Code editors (Neovim, VS Code)
 
 ### 4. Shell Configuration Only
+
 Terminal and shell setup:
+
 - Zsh with Oh My Zsh
 - Powerlevel10k theme
 - Tmux with plugins
@@ -128,6 +141,7 @@ Terminal and shell setup:
 ### Shell Environment
 
 The setup includes a modular Zsh configuration with:
+
 - **Oh My Zsh**: Framework for managing Zsh configuration
 - **Plugins**: autosuggestions, syntax-highlighting, completions
 - **Theme**: Powerlevel10k for a beautiful, informative prompt
@@ -137,17 +151,20 @@ The setup includes a modular Zsh configuration with:
 ### Development Environment
 
 #### Python
+
 - **pyenv**: Python version management
 - **pipenv**: Virtual environment and dependency management
 - **pipx**: Global Python application installation
 - **Tools**: black, flake8, mypy, poetry
 
 #### Node.js
+
 - **nvm** or **system Node.js**: Version management
 - **Package managers**: npm, yarn, pnpm
 - **Global tools**: TypeScript, ESLint, Prettier
 
 #### Other Languages
+
 - **Rust**: Via rustup with cargo tools
 - **Go**: Latest stable version
 - **Docker**: Container development
@@ -235,10 +252,12 @@ To add new tools or configurations:
 ### Common Issues
 
 1. **Permission denied errors**
+
    - Ensure you're not running as root
    - Check file permissions on scripts
 
 2. **Package installation failures**
+
    - Update package lists: `sudo apt update`
    - Check internet connection
    - Review log files in `/tmp/`
@@ -250,12 +269,14 @@ To add new tools or configurations:
 ### Logs
 
 Installation logs are saved to:
+
 - Bootstrap: `/tmp/dotfiles-bootstrap-[timestamp].log`
 - Server setup: `/tmp/ubuntu-server-setup.log`
 
 ## Security Considerations
 
 The server setup includes several security enhancements:
+
 - UFW firewall configuration
 - fail2ban for intrusion prevention
 - SSH hardening options
@@ -265,6 +286,7 @@ The server setup includes several security enhancements:
 ## Contributing
 
 Contributions are welcome! Please:
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes

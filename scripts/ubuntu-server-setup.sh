@@ -14,6 +14,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+
 # Configuration
 GITHUB_RAW_BASE="https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts"
 LOG_FILE="/tmp/ubuntu-server-setup.log"
@@ -63,13 +64,13 @@ check_ubuntu_version() {
         print_error "Cannot detect OS version. This script is for Ubuntu servers only."
         exit 1
     fi
-    
+
     source /etc/os-release
     if [[ "$ID" != "ubuntu" ]]; then
         print_error "This script is designed for Ubuntu. Detected: $ID"
         exit 1
     fi
-    
+
     print_success "Detected Ubuntu $VERSION_ID"
 }
 
@@ -78,14 +79,14 @@ run_installer() {
     local script_name="$1"
     local script_url="$GITHUB_RAW_BASE/$script_name"
     local script_path="$TEMP_DIR/$script_name"
-    
+
     print_status "Downloading and running $script_name..."
-    
+
     # Download the script
     if curl -fsSL "$script_url" -o "$script_path"; then
         chmod +x "$script_path"
         print_success "Downloaded $script_name"
-        
+
         # Execute the script
         if bash "$script_path"; then
             print_success "Successfully ran $script_name"
@@ -104,7 +105,7 @@ prompt_install() {
     local component="$1"
     local description="$2"
     local default="${3:-N}"
-    
+
     print_status "Would you like to install $description? (y/N)"
     read -r response
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
@@ -126,7 +127,7 @@ update_system() {
 # Install essential packages for server setup
 install_essential_packages() {
     print_status "Installing essential packages..."
-    
+
     local packages=(
         # Core utilities
         curl
@@ -146,7 +147,7 @@ install_essential_packages() {
         lsb-release
         software-properties-common
         apt-transport-https
-        
+
         # Development tools
         build-essential
         make
@@ -154,35 +155,35 @@ install_essential_packages() {
         g++
         cmake
         pkg-config
-        
+
         # System monitoring
         sysstat
         iotop
         nethogs
         iftop
-        
+
         # Network tools
         net-tools
         dnsutils
         traceroute
         nmap
         tcpdump
-        
+
         # Text processing
         sed
         awk
         grep
-        
+
         # Process management
         supervisor
-        
+
         # Security
         fail2ban
         ufw
-        
+
         # Time sync
         chrony
-        
+
         # Shell and terminal tools (for components)
         zsh
         tmux
@@ -191,35 +192,35 @@ install_essential_packages() {
         fd-find
         bat
         ncdu
-        
+
         # Python basics
         python3
         python3-pip
         python3-venv
         python3-dev
-        
+
         # Text editors
         neovim
     )
-    
+
     sudo apt-get install -y "${packages[@]}" || {
         print_warning "Some packages may have failed to install"
         print_status "Continuing with setup..."
     }
-    
+
     print_success "Essential packages installed"
 }
 
 # Configure basic security (firewall and fail2ban)
 configure_security() {
     print_status "Configuring basic security..."
-    
+
     # Configure UFW firewall
     sudo ufw --force enable
     sudo ufw default deny incoming
     sudo ufw default allow outgoing
     sudo ufw allow 22/tcp comment 'SSH'
-    
+
     # Configure fail2ban with basic SSH protection
     sudo tee /etc/fail2ban/jail.local > /dev/null <<'EOF'
 [DEFAULT]
@@ -234,35 +235,35 @@ filter = sshd
 logpath = /var/log/auth.log
 maxretry = 3
 EOF
-    
+
     sudo systemctl enable fail2ban
     sudo systemctl restart fail2ban
-    
+
     print_success "Basic security configured (UFW firewall and fail2ban)"
 }
 
 # Configure Git basics
 configure_git() {
     print_status "Configuring Git..."
-    
+
     # Check if git config exists
     if [[ -z "$(git config --global user.name 2>/dev/null)" ]]; then
         print_status "Enter your Git user name:"
         read -r git_name
         git config --global user.name "$git_name"
     fi
-    
+
     if [[ -z "$(git config --global user.email 2>/dev/null)" ]]; then
         print_status "Enter your Git email:"
         read -r git_email
         git config --global user.email "$git_email"
     fi
-    
+
     # Set useful defaults
     git config --global init.defaultBranch main
     git config --global core.editor vim
     git config --global pull.rebase false
-    
+
     print_success "Git configured"
 }
 
@@ -270,25 +271,25 @@ configure_git() {
 setup_docker() {
     if prompt_install "docker" "Docker container platform"; then
         print_status "Installing Docker..."
-        
+
         # Add Docker's official GPG key
         sudo mkdir -p /etc/apt/keyrings
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-        
+
         # Add repository
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-        
+
         # Install Docker
         sudo apt-get update
         sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-        
+
         # Add user to docker group
         sudo usermod -aG docker "$USER"
-        
+
         # Enable Docker service
         sudo systemctl enable docker
         sudo systemctl start docker
-        
+
         print_success "Docker installed. Log out and back in for group changes to take effect."
     fi
 }
@@ -306,10 +307,10 @@ install_nodejs() {
 # Create useful directories and maintenance script
 setup_system_maintenance() {
     print_status "Setting up system maintenance..."
-    
+
     # Create directories
     mkdir -p "$HOME/.local/bin" "$HOME/scripts" "$HOME/logs" "$HOME/backups"
-    
+
     # Create maintenance script
     cat > "$HOME/scripts/system-maintenance.sh" <<'EOF'
 #!/bin/bash
@@ -323,12 +324,12 @@ echo "Disk usage:" >> "$LOG_FILE"
 df -h >> "$LOG_FILE"
 echo "=== System Maintenance Completed at $(date) ===" >> "$LOG_FILE"
 EOF
-    
+
     chmod +x "$HOME/scripts/system-maintenance.sh"
-    
+
     # Add weekly cron job
     (crontab -l 2>/dev/null; echo "0 2 * * 0 $HOME/scripts/system-maintenance.sh") | crontab -
-    
+
     print_success "System maintenance configured"
 }
 
@@ -357,21 +358,21 @@ main() {
     echo "from GitHub to keep everything DRY and maintainable."
     echo "=============================================="
     echo
-    
+
     # Pre-flight checks
     check_root
     check_ubuntu_version
-    
+
     # Core system setup
     update_system
     install_essential_packages
     configure_security
     configure_git
-    
+
     # Optional components with prompts
     setup_docker
     install_nodejs
-    
+
     # Enhanced shell and editor setup via specialized installers
     print_status "Installing enhanced shell environment..."
     if prompt_install "shell" "enhanced shell environment (Zsh + Oh My Zsh + plugins)"; then
@@ -379,28 +380,28 @@ main() {
     else
         print_status "Skipping enhanced shell installation"
     fi
-    
+
     print_status "Installing enhanced tmux configuration..."
     if prompt_install "tmux" "enhanced tmux configuration with DevOps features"; then
         run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
     else
         print_status "Skipping enhanced tmux installation"
     fi
-    
+
     print_status "Installing enhanced vim configuration..."
     if prompt_install "vim" "enhanced vim configuration with plugins"; then
         run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
     else
         print_status "Skipping enhanced vim installation"
     fi
-    
+
     # System maintenance setup
     setup_system_maintenance
-    
+
     # Summary
     echo
     show_system_info
-    
+
     print_success "Ubuntu Server setup completed!"
     echo
     print_status "📋 Installation Summary:"

@@ -171,7 +171,7 @@ install_essential_packages() {
 
         # Text processing
         sed
-        awk
+        gawk
         grep
 
         # Process management
@@ -228,10 +228,11 @@ configure_security() {
     # allow 22/tcp: Explicitly allow SSH connections on port 22 with descriptive comment
     sudo ufw allow 22/tcp comment 'SSH'
 
-    # Configure fail2ban with basic SSH protection
+    # Configure fail2ban with basic SSH protection if installed
     # fail2ban monitors log files and bans IP addresses that show suspicious activity
-    sudo mkdir -p /etc/fail2ban
-    sudo tee /etc/fail2ban/jail.local > /dev/null <<'EOF'
+    if command -v fail2ban-server &> /dev/null; then
+        sudo mkdir -p /etc/fail2ban
+        sudo tee /etc/fail2ban/jail.local > /dev/null <<'EOF'
 # Global fail2ban configuration
 [DEFAULT]
 # bantime: Duration (in seconds) an IP is banned (3600 = 1 hour)
@@ -261,13 +262,16 @@ logpath = /var/log/auth.log
 maxretry = 3
 EOF
 
-    # enable: Configure fail2ban to start automatically at boot
-    sudo systemctl enable fail2ban
-    
-    # restart: Apply the new configuration by restarting the service
-    sudo systemctl restart fail2ban
-
-    print_success "Basic security configured (UFW firewall and fail2ban)"
+        # enable: Configure fail2ban to start automatically at boot
+        sudo systemctl enable fail2ban
+        
+        # restart: Apply the new configuration by restarting the service
+        sudo systemctl restart fail2ban
+        
+        print_success "Basic security configured (UFW firewall and fail2ban)"
+    else
+        print_warning "fail2ban not available, only UFW firewall configured"
+    fi
 }
 
 # Configure Git basics
@@ -276,15 +280,15 @@ configure_git() {
 
     # Check if git config exists
     if [[ -z "$(git config --global user.name 2>/dev/null)" ]]; then
-        print_status "Enter your Git user name:"
-        read -r git_name
-        git config --global user.name "$git_name"
+        # Set default if not configured (can be changed later)
+        git config --global user.name "Ubuntu User"
+        print_status "Git user.name set to 'Ubuntu User' (change with: git config --global user.name 'Your Name')"
     fi
 
     if [[ -z "$(git config --global user.email 2>/dev/null)" ]]; then
-        print_status "Enter your Git email:"
-        read -r git_email
-        git config --global user.email "$git_email"
+        # Set default if not configured (can be changed later)
+        git config --global user.email "user@example.com"
+        print_status "Git user.email set to 'user@example.com' (change with: git config --global user.email 'your@email.com')"
     fi
 
     # Set useful defaults

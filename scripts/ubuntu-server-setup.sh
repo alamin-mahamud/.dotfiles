@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# Ubuntu Server Standalone Setup Script
+# Ubuntu Server Standalone Setup Script (Non-Interactive)
 # DRY orchestrator that calls individual component installers via GitHub raw URLs
 # This script provides a minimal yet functional setup for Ubuntu servers
+# Auto-installs all components without prompting for confirmation
 # Usage: curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/ubuntu-server-setup.sh | bash
 
 set -euo pipefail
@@ -100,19 +101,14 @@ run_installer() {
     fi
 }
 
-# Prompt for optional component installation
+# Auto-accept all installations (non-interactive mode)
 prompt_install() {
     local component="$1"
     local description="$2"
-    local default="${3:-N}"
+    local default="${3:-Y}"
 
-    print_status "Would you like to install $description? (y/N)"
-    read -r response
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-        return 0
-    else
-        return 1
-    fi
+    print_status "Auto-installing $description (non-interactive mode)"
+    return 0  # Always return success to install everything
 }
 
 # Update system packages
@@ -306,9 +302,11 @@ configure_git() {
     print_success "Git configured"
 }
 
-# Setup Docker (optional)
+# Setup Docker (auto-installed)
 setup_docker() {
-    if prompt_install "docker" "Docker container platform"; then
+    # Auto-install Docker without prompting
+    print_status "Installing Docker container platform..."
+    if true; then  # Always install
         # Check if Docker is already installed
         if command -v docker &> /dev/null; then
             print_status "Docker is already installed, checking configuration..."
@@ -368,9 +366,11 @@ setup_docker() {
     fi
 }
 
-# Install Node.js (optional)
+# Install Node.js (auto-installed)
 install_nodejs() {
-    if prompt_install "nodejs" "Node.js JavaScript runtime"; then
+    # Auto-install Node.js without prompting
+    print_status "Installing Node.js JavaScript runtime..."
+    if true; then  # Always install
         # Check if Node.js is already installed
         if command -v node &> /dev/null; then
             local node_version=$(node --version)
@@ -443,10 +443,11 @@ show_system_info() {
 main() {
     clear
     echo "=============================================="
-    echo "Ubuntu Server DRY Setup Script (Orchestrator)"
+    echo "Ubuntu Server DRY Setup Script (Non-Interactive)"
     echo "=============================================="
     echo "This script calls individual component installers"
     echo "from GitHub to keep everything DRY and maintainable."
+    echo "Auto-installing all components without prompts."
     echo "=============================================="
     echo
 
@@ -460,31 +461,19 @@ main() {
     configure_security
     configure_git
 
-    # Optional components with prompts
+    # Auto-install all components (non-interactive)
     setup_docker
     install_nodejs
 
-    # Enhanced shell and editor setup via specialized installers
-    print_status "Installing enhanced shell environment..."
-    if prompt_install "shell" "enhanced shell environment (Zsh + Oh My Zsh + plugins)"; then
-        run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
-    else
-        print_status "Skipping enhanced shell installation"
-    fi
+    # Enhanced shell and editor setup via specialized installers (auto-installed)
+    print_status "Installing enhanced shell environment (Zsh + Oh My Zsh + plugins)..."
+    run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
 
-    print_status "Installing enhanced tmux configuration..."
-    if prompt_install "tmux" "enhanced tmux configuration with DevOps features"; then
-        run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
-    else
-        print_status "Skipping enhanced tmux installation"
-    fi
+    print_status "Installing enhanced tmux configuration with DevOps features..."
+    run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
 
-    print_status "Installing enhanced vim configuration..."
-    if prompt_install "vim" "enhanced vim configuration with plugins"; then
-        run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
-    else
-        print_status "Skipping enhanced vim installation"
-    fi
+    print_status "Installing enhanced vim configuration with plugins..."
+    run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
 
     # System maintenance setup
     setup_system_maintenance

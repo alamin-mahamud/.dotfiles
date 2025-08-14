@@ -2318,6 +2318,7 @@ extract() {
 # ============================================================================
 
 # Git checkout branch/tag with FZF
+unalias gco 2>/dev/null # Unaliasing gco to avoid duplicate reference
 gco() {
     local branches branch
     branches=$(git --no-pager branch -a \

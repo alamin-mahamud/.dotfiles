@@ -219,11 +219,12 @@ main() {
     install_gui_applications
     
     # Core components via specialized installers (DRY approach)
-    print_status "Installing enhanced shell environment (includes Neovim, Kitty, and LazyVim)..."
+    print_status "Installing enhanced shell environment (includes Neovim, Kitty, LazyVim, and Tmux)..."
     run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
     
-    print_status "Installing enhanced tmux configuration..."
-    run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
+    # Tmux is now included in install-shell.sh
+    # print_status "Installing enhanced tmux configuration..."
+    # run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
     
     print_status "Installing enhanced vim configuration..."
     run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."

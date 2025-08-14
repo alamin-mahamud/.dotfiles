@@ -470,7 +470,8 @@ main() {
     run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
 
     print_status "Installing enhanced tmux configuration with DevOps features..."
-    run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
+    # Tmux is now included in install-shell.sh
+    # run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
 
     print_status "Installing enhanced vim configuration with plugins..."
     run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."

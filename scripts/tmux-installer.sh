@@ -726,12 +726,21 @@ bind -n S-MouseDrag1Pane set -q @mouse-orig-status $status \; set -g mouse off
 bind -n S-MouseDragEnd1Pane set -g mouse on \; display-message "Mouse re-enabled"
 
 # ============================================================================
-# STATUS BAR CONFIGURATION
+# STATUS BAR CONFIGURATION - Tokyo Night Moon Theme
 # ============================================================================
 
+# Status bar colors and styling - Tokyo Night Moon palette
+# Background: #222436 (dark blue-gray)
+# Foreground: #c8d3f5 (light blue-gray)
+# Accent: #82aaff (blue)
+# Secondary: #86e1fc (cyan)
+# Warning: #ffc777 (yellow)
+# Error: #ff757f (red)
+# Success: #c3e88d (green)
+
 # Status bar colors and styling
-set -g status-bg colour235
-set -g status-fg colour255
+set -g status-bg "#1e2030"  # Darker background for status bar
+set -g status-fg "#c8d3f5"  # Light foreground text
 set -g status-interval 5
 
 # Status bar position
@@ -741,32 +750,32 @@ set -g status-position bottom
 set -g status-left-length 50
 set -g status-right-length 100
 
-# Left side: session name with icon
-set -g status-left "#[fg=colour39,bg=colour235,bold] #S #[fg=colour245]| "
+# Left side: session name with icon - using Tokyo Night Moon colors
+set -g status-left "#[fg=#1e2030,bg=#82aaff,bold] #S #[fg=#82aaff,bg=#2f334d] #[fg=#545c7e,bg=#2f334d]"
 
-# Right side: prefix indicator, time, date, user@host
-set -g status-right "#[fg=colour245]#{?client_prefix,🔴 ,}#[fg=colour39]%H:%M #[fg=colour245]| #[fg=colour39]%d-%b #[fg=colour245]| #[fg=colour39]#(whoami)@#h"
+# Right side: prefix indicator, time, date, user@host - Tokyo Night Moon style
+set -g status-right "#[fg=#545c7e,bg=#1e2030]#{?client_prefix,#[fg=#ff757f]● ,}#[fg=#86e1fc]%H:%M #[fg=#545c7e]• #[fg=#c3e88d]%d-%b #[fg=#545c7e]• #[fg=#c099ff]#(whoami)#[fg=#545c7e]@#[fg=#c099ff]#h "
 
-# Window status format
-setw -g window-status-format "#[fg=colour245] #I:#W "
-setw -g window-status-current-format "#[fg=colour39,bg=colour238,bold] #I:#W "
+# Window status format - Tokyo Night Moon style
+setw -g window-status-format "#[fg=#545c7e,bg=#1e2030] #I:#W "
+setw -g window-status-current-format "#[fg=#1e2030,bg=#82aaff,bold] #I:#W #[fg=#82aaff,bg=#1e2030]"
 
 # Activity monitoring
 setw -g monitor-activity on
 set -g visual-activity off
-setw -g window-status-activity-style "fg=colour196,bg=colour235"
+setw -g window-status-activity-style "fg=#ff757f,bg=#1e2030,bold"
 
 # ============================================================================
-# PANE STYLING
+# PANE STYLING - Tokyo Night Moon Theme
 # ============================================================================
 
-# Pane borders
-set -g pane-border-style "fg=colour238"
-set -g pane-active-border-style "fg=colour39"
+# Pane borders - using Tokyo Night Moon colors
+set -g pane-border-style "fg=#2f334d"
+set -g pane-active-border-style "fg=#82aaff"
 
-# Message styling
-set -g message-style "fg=colour255,bg=colour238,bold"
-set -g message-command-style "fg=colour255,bg=colour238,bold"
+# Message styling - Tokyo Night Moon
+set -g message-style "fg=#c8d3f5,bg=#2f334d,bold"
+set -g message-command-style "fg=#c8d3f5,bg=#2f334d,bold"
 
 # ============================================================================
 # DEVOPS SHORTCUTS

@@ -14,11 +14,11 @@ This is a comprehensive, modular dotfiles repository for automated development e
 
 ### DRY Standalone Installers (can be run independently via curl)
 - `./scripts/ubuntu-server-setup.sh` - DRY Ubuntu Server setup orchestrator
-- `./scripts/install-shell.sh` - Enhanced shell environment (Zsh + Oh My Zsh + plugins)
-- `./scripts/tmux-installer.sh` - Comprehensive tmux setup with DevOps features  
+- `./scripts/install-shell.sh` - Enhanced shell environment (Zsh + Oh My Zsh + plugins + Tmux with Tokyo Night Moon theme)
 - `./scripts/vim-installer.sh` - Enhanced vim configuration with plugins
 - `./scripts/install-dev-tools.sh` - Development tools installation (Git, Docker, Node.js, Python, Rust, Go, etc.)
 - `./scripts/custom-install.sh` - Component-based custom installation
+- `./scripts/tmux-installer.sh` - (Deprecated - now integrated into install-shell.sh)
 
 ### One-liner Installation (DRY approach)
 ```bash
@@ -26,8 +26,7 @@ This is a comprehensive, modular dotfiles repository for automated development e
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/ubuntu-server-setup.sh | bash
 
 # Individual components (idempotent, standalone)
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/tmux-installer.sh | bash  
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash  # Includes tmux
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/vim-installer.sh | bash
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash
 
@@ -61,11 +60,11 @@ This repository follows DRY (Don't Repeat Yourself) principles with idempotent, 
 ├── bootstrap.sh                    # Main entry point with environment detection
 ├── scripts/                        # DRY component installers
 │   ├── ubuntu-server-setup.sh     # Ubuntu Server orchestrator (DRY)
-│   ├── install-shell.sh           # Enhanced shell environment
-│   ├── tmux-installer.sh           # Comprehensive tmux setup  
+│   ├── install-shell.sh           # Enhanced shell environment (includes tmux)
 │   ├── vim-installer.sh            # Enhanced vim configuration
 │   ├── install-dev-tools.sh       # Development environment setup
-│   └── custom-install.sh          # Component-based custom installation
+│   ├── custom-install.sh          # Component-based custom installation
+│   └── tmux-installer.sh           # (Deprecated - integrated into install-shell.sh)
 ├── docs/                           # Comprehensive documentation
 │   ├── UBUNTU_DESKTOP.md          # Ubuntu desktop installation guide
 │   ├── UBUNTU_SERVER.md           # Ubuntu server installation guide
@@ -126,6 +125,9 @@ The system automatically detects:
 - **Theme**: Powerlevel10k with embedded configuration
 - **Plugins**: autosuggestions, syntax-highlighting, completions, fzf-tab (auto-updating)
 - **Tools**: FZF, Z directory jumper, ripgrep, bat, eza, modern CLI tools
+- **Terminal**: Kitty with Tokyo Night Moon theme
+- **Multiplexer**: Tmux with Tokyo Night Moon theme (matching Kitty)
+- **Editor**: Neovim with LazyVim configuration
 - **Configuration**: Embedded .zshrc with comprehensive DevOps aliases and functions
 - **Fonts**: Nerd Fonts support with automatic installation
 
@@ -136,13 +138,13 @@ The system automatically detects:
 - **Enhanced Integration**: Calls specialized installers for shell, tmux, vim with server-appropriate defaults
 - **Minimal GUI**: No desktop environment components, optimized for server workflows
 
-#### Tmux Environment (`tmux-installer.sh`)
+#### Tmux Environment (now part of `install-shell.sh`)
 - **Comprehensive Setup**: Enhanced tmux with extensive OS support and configuration
 - **Plugin Manager**: TPM (Tmux Plugin Manager) with automatic plugin installation
-- **DevOps Shortcuts**: Integrated monitoring (htop, Docker stats, logs, K8s, network)
-- **Session Management**: Advanced project session manager and sessionizer utilities
-- **Mouse Support**: Full mouse integration with clipboard support across platforms
-- **Utility Scripts**: tmux-sessionizer and tmux-project-manager for workflow enhancement
+- **Theme**: Tokyo Night Moon (consistent with Kitty terminal)
+- **Key Bindings**: Vim-style navigation with Ctrl-a prefix
+- **Mouse Support**: Full mouse integration with clipboard support
+- **Session Management**: Persistent sessions with tmux-resurrect and tmux-continuum
 
 #### Vim Environment (`vim-installer.sh`)
 - **Modern Setup**: vim-plug plugin manager with curated DevOps-focused plugins

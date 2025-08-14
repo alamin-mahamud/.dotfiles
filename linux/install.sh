@@ -154,101 +154,38 @@ create_directories() {
     print_success "Directories created"
 }
 
-# Update system packages
-update_system() {
-    print_status "Updating system packages..."
+
+# Install essential Linux packages
+install_essentials() {
+    print_status "Installing essential packages..."
     
     case "$DISTRO_FAMILY" in
         debian)
-            sudo apt update && sudo apt upgrade -y
+            sudo apt update
+            sudo apt install -y curl wget git build-essential
             ;;
         arch)
-            sudo pacman -Syu --noconfirm
+            sudo pacman -S --noconfirm curl wget git base-devel
+            ;;
+        redhat)
+            sudo dnf install -y curl wget git gcc gcc-c++ make
             ;;
     esac
     
-    print_success "System updated"
+    print_success "Essential packages installed"
 }
 
-# Install essential Linux desktop packages
-install_desktop_essentials() {
-    print_status "Installing essential desktop packages..."
-    
-    local packages=""
-    
-    case "$DISTRO_FAMILY" in
-        debian)
-            packages="curl wget git vim neovim htop btop tree unzip zip build-essential cmake zsh tmux fzf ripgrep fd-find bat software-properties-common apt-transport-https ca-certificates gnupg lsb-release"
-            sudo apt install -y $packages
-            ;;
-        arch)
-            # Install AUR helper first
-            if ! command_exists paru && ! command_exists yay; then
-                sudo pacman -S --needed --noconfirm base-devel git
-                git clone https://aur.archlinux.org/paru.git /tmp/paru
-                cd /tmp/paru && makepkg -si --noconfirm && cd - && rm -rf /tmp/paru
-            fi
-            
-            packages="curl wget git vim neovim htop btop tree unzip zip base-devel cmake zsh tmux fzf ripgrep fd bat gnupg"
-            sudo pacman -S --noconfirm $packages
-            ;;
-    esac
-    
-    print_success "Essential desktop packages installed"
-}
-
-# Install Linux window manager packages
-install_window_manager_packages() {
-    print_status "Installing window manager and desktop packages..."
-    
-    case "$DISTRO_FAMILY" in
-        debian)
-            sudo apt install -y \
-                i3-gaps i3blocks i3lock i3status \
-                polybar rofi dunst picom \
-                feh arandr lxappearance \
-                kitty alacritty firefox \
-                thunar gvfs-backends tumbler \
-                pavucontrol network-manager-applet \
-                blueman flameshot \
-                xclip xsel brightnessctl playerctl
-            ;;
-        arch)
-            if command_exists paru; then
-                paru -S --noconfirm \
-                    i3-gaps i3blocks i3lock i3status \
-                    polybar rofi dunst picom \
-                    feh arandr lxappearance-gtk3 \
-                    kitty alacritty firefox \
-                    thunar gvfs tumbler \
-                    pavucontrol network-manager-applet \
-                    blueman flameshot \
-                    xclip xsel brightnessctl playerctl
-            else
-                sudo pacman -S --noconfirm \
-                    i3-gaps i3blocks i3lock i3status \
-                    rofi dunst picom \
-                    feh arandr lxappearance-gtk3 \
-                    kitty alacritty firefox \
-                    thunar gvfs tumbler \
-                    pavucontrol network-manager-applet \
-                    blueman flameshot \
-                    xclip xsel brightnessctl playerctl
-            fi
-            ;;
-    esac
-    
-    print_success "Window manager packages installed"
-}
 
 # Main DRY orchestrator for Linux desktop
 main() {
     clear
     echo "=========================================================="
-    echo "Linux Desktop DRY Installation Orchestrator"
+    echo "Linux Development Environment DRY Installer"
     echo "=========================================================="
-    echo "This script calls individual component installers from"
-    echo "GitHub to keep everything DRY and maintainable."
+    echo "Installs essential tools and calls specialized installers:"
+    echo "• Enhanced Shell (Zsh, Neovim, LazyVim, Kitty)"
+    echo "• Enhanced Tmux & Vim configurations"
+    echo "• Optional development tools"
     echo "=========================================================="
     echo
     
@@ -257,32 +194,20 @@ main() {
     create_directories
     
     # Core system setup
-    update_system
-    install_desktop_essentials
+    install_essentials
     
-    # Enhanced components via specialized installers
-    print_status "Installing enhanced shell environment..."
-    if prompt_install "shell" "enhanced shell environment (Zsh + Oh My Zsh + plugins)"; then
-        run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
-    fi
+    # Core components via specialized installers (DRY approach)
+    print_status "Installing enhanced shell environment (includes Neovim, Kitty, and LazyVim)..."
+    run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
     
     print_status "Installing enhanced tmux configuration..."
-    if prompt_install "tmux" "enhanced tmux configuration with DevOps features"; then
-        run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
-    fi
+    run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
     
     print_status "Installing enhanced vim configuration..."
-    if prompt_install "vim" "enhanced vim configuration with plugins"; then
-        run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
-    fi
-    
-    # Desktop-specific components
-    if prompt_install "desktop" "desktop environment packages (window managers, GUI apps)"; then
-        install_window_manager_packages
-    fi
+    run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
     
     # Optional development tools
-    if prompt_install "dev-tools" "development tools installer"; then
+    if prompt_install "dev-tools" "development tools and programming languages"; then
         run_installer "install-dev-tools.sh" || print_warning "Development tools installation failed, continuing..."
     fi
     
@@ -296,18 +221,21 @@ main() {
     print_success "Linux Desktop setup completed!"
     echo
     print_status "📋 Installation Summary:"
-    echo "  • Essential desktop packages: ✓ Installed"  
-    echo "  • Enhanced components: Installed based on your choices"
+    echo "  • Essential packages: ✓ Installed"  
+    echo "  • Enhanced shell (Zsh, Neovim, LazyVim, Kitty): ✓ Installed"
+    echo "  • Enhanced tmux: ✓ Installed"
+    echo "  • Enhanced vim: ✓ Installed"
+    echo "  • Development tools: Installed if selected"
     echo "  • Configuration symlinks: Created if repo available"
     echo
     print_status "📁 Log file saved to: $LOG_FILE"
     echo
     print_warning "📝 Next Steps:"
     echo "  1. Log out and back in to apply shell changes"
-    echo "  2. Run 'p10k configure' if you installed enhanced shell"
-    echo "  3. Test window manager: Alt+Enter for terminal"
-    echo "  4. Configure display settings if needed"
-    echo "  5. Install additional packages as needed"
+    echo "  2. Run 'p10k configure' to set up Powerlevel10k theme"
+    echo "  3. Open Kitty terminal and run 'nvim' to complete LazyVim setup"
+    echo "  4. Run 'kitty +kitten themes' to browse terminal themes"
+    echo "  5. Install additional desktop packages as needed"
     echo
     print_status "🚀 Your Linux desktop is ready for development!"
 }

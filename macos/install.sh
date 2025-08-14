@@ -139,8 +139,8 @@ install_homebrew() {
 install_essential_packages() {
     print_status "Installing essential macOS packages..."
     
-    # Essential CLI tools
-    local packages="coreutils findutils gnu-tar gnu-sed git wget curl jq tree htop ncdu zsh tmux ripgrep fd bat fzf neovim vim gh mas font-fira-code-nerd-font font-jetbrains-mono-nerd-font"
+    # Essential CLI tools (DRY approach - let specialized installers handle specific tools)
+    local packages="coreutils findutils gnu-tar gnu-sed git wget curl"
     
     brew install $packages || {
         print_warning "Some packages may have failed to install"
@@ -150,13 +150,13 @@ install_essential_packages() {
     print_success "Essential macOS packages installed"
 }
 
-# Install macOS GUI applications
+# Install essential macOS GUI applications
 install_gui_applications() {
-    if prompt_install "gui-apps" "popular GUI applications (Chrome, VS Code, iTerm2, etc.)"; then
+    if prompt_install "gui-apps" "essential GUI applications (browsers, productivity tools)"; then
         print_status "Installing GUI applications..."
         
-        # Essential GUI apps via Homebrew cask
-        local apps="google-chrome firefox visual-studio-code iterm2 rectangle alfred the-unarchiver appcleaner stats vlc"
+        # Essential GUI apps via Homebrew cask  
+        local apps="google-chrome firefox rectangle the-unarchiver"
         
         brew install --cask $apps || {
             print_warning "Some GUI applications may have failed to install"
@@ -197,10 +197,12 @@ configure_macos_preferences() {
 main() {
     clear
     echo "=========================================================="
-    echo "macOS DRY Installation Orchestrator" 
+    echo "macOS Development Environment DRY Installer"
     echo "=========================================================="
-    echo "This script calls individual component installers from"
-    echo "GitHub to keep everything DRY and maintainable."
+    echo "Installs essential tools and calls specialized installers:"
+    echo "• Enhanced Shell (Zsh, Neovim, LazyVim, Kitty)"
+    echo "• Enhanced Tmux & Vim configurations"
+    echo "• Optional development tools & GUI apps"
     echo "=========================================================="
     echo
     
@@ -216,24 +218,18 @@ main() {
     # Optional GUI applications
     install_gui_applications
     
-    # Enhanced components via specialized installers
-    print_status "Installing enhanced shell environment..."
-    if prompt_install "shell" "enhanced shell environment (Zsh + Oh My Zsh + plugins)"; then
-        run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
-    fi
+    # Core components via specialized installers (DRY approach)
+    print_status "Installing enhanced shell environment (includes Neovim, Kitty, and LazyVim)..."
+    run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
     
     print_status "Installing enhanced tmux configuration..."
-    if prompt_install "tmux" "enhanced tmux configuration with DevOps features"; then
-        run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
-    fi
+    run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
     
-    print_status "Installing enhanced vim configuration..."  
-    if prompt_install "vim" "enhanced vim configuration with plugins"; then
-        run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
-    fi
+    print_status "Installing enhanced vim configuration..."
+    run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
     
     # Optional development tools
-    if prompt_install "dev-tools" "development tools installer"; then
+    if prompt_install "dev-tools" "development tools and programming languages"; then
         run_installer "install-dev-tools.sh" || print_warning "Development tools installation failed, continuing..."
     fi
     
@@ -254,17 +250,22 @@ main() {
     echo "  • Xcode Command Line Tools: ✓ Installed"
     echo "  • Homebrew: ✓ Installed"  
     echo "  • Essential packages: ✓ Installed"
-    echo "  • Enhanced components: Installed based on your choices"
+    echo "  • Enhanced shell (Zsh, Neovim, LazyVim, Kitty): ✓ Installed"
+    echo "  • Enhanced tmux: ✓ Installed"
+    echo "  • Enhanced vim: ✓ Installed"
+    echo "  • Development tools: Installed if selected"
+    echo "  • GUI apps: Installed if selected"
     echo "  • macOS preferences: Configured if selected"
     echo
     print_status "📁 Log file saved to: $LOG_FILE"
     echo
     print_warning "📝 Next Steps:"
     echo "  1. Restart your terminal for shell changes"
-    echo "  2. Run 'p10k configure' if you installed enhanced shell"
-    echo "  3. Sign in to GUI applications if installed"
-    echo "  4. Configure Git credentials"
-    echo "  5. Install additional apps from Mac App Store using 'mas'"
+    echo "  2. Run 'p10k configure' to set up Powerlevel10k theme"
+    echo "  3. Open Kitty terminal and run 'nvim' to complete LazyVim setup"
+    echo "  4. Run 'kitty +kitten themes' to browse terminal themes"
+    echo "  5. Sign in to GUI applications if installed"
+    echo "  6. Configure Git credentials"
     echo
     print_status "🍎 Your macOS development environment is ready!"
 }

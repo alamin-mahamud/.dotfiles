@@ -239,8 +239,8 @@ fi
 # Environment variables
 export LANG=en_US.UTF-8
 export TERM=xterm-256color
-export EDITOR=vim
-export VISUAL=vim
+export EDITOR=nvim
+export VISUAL=nvim
 export PATH="$HOME/.local/bin:$PATH:/usr/local/go/bin"
 
 # History configuration
@@ -395,6 +395,334 @@ install_z() {
     print_success "Z installed"
 }
 
+# Install Neovim (idempotent)
+install_neovim() {
+    print_status "Installing Neovim..."
+    
+    if command -v nvim &> /dev/null; then
+        local nvim_version=$(nvim --version | head -n1)
+        print_success "Neovim is already installed ($nvim_version)"
+        
+        # Check if version is >= 0.9.0 for LazyVim
+        local version_num=$(nvim --version | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
+        if [[ $(echo "$version_num" | cut -d. -f2) -lt 9 ]]; then
+            print_warning "LazyVim requires Neovim 0.9.0+. Current version: $version_num"
+            print_status "Attempting to update Neovim..."
+        else
+            return 0
+        fi
+    fi
+    
+    case "$OS" in
+        ubuntu|debian)
+            # Use AppImage for latest version
+            print_status "Installing Neovim via AppImage for latest version..."
+            curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+            chmod u+x nvim.appimage
+            sudo mkdir -p /opt/nvim
+            sudo mv nvim.appimage /opt/nvim/
+            sudo ln -sf /opt/nvim/nvim.appimage /usr/local/bin/nvim
+            ;;
+        fedora|centos|rhel|rocky|almalinux)
+            sudo dnf install -y neovim || {
+                # Fallback to AppImage
+                print_status "Installing Neovim via AppImage..."
+                curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+                chmod u+x nvim.appimage
+                sudo mkdir -p /opt/nvim
+                sudo mv nvim.appimage /opt/nvim/
+                sudo ln -sf /opt/nvim/nvim.appimage /usr/local/bin/nvim
+            }
+            ;;
+        arch|manjaro)
+            sudo pacman -S --noconfirm neovim
+            ;;
+        alpine)
+            sudo apk add --no-cache neovim
+            ;;
+        opensuse*|sles)
+            sudo zypper install -y neovim
+            ;;
+        macos)
+            brew install neovim
+            ;;
+        *)
+            print_error "Unsupported OS for Neovim installation: $OS"
+            return 1
+            ;;
+    esac
+    
+    print_success "Neovim installed successfully"
+}
+
+# Install LazyVim (idempotent)
+install_lazyvim() {
+    print_status "Setting up LazyVim..."
+    
+    # Check Neovim version
+    if ! command -v nvim &> /dev/null; then
+        print_error "Neovim is not installed. Please install Neovim first."
+        return 1
+    fi
+    
+    # Backup existing Neovim config
+    if [[ -d "$HOME/.config/nvim" ]] && [[ ! -L "$HOME/.config/nvim" ]]; then
+        print_status "Backing up existing Neovim configuration..."
+        mv "$HOME/.config/nvim" "$HOME/.config/nvim.bak.$(date +%Y%m%d_%H%M%S)"
+    fi
+    
+    # Remove existing symlink or directory
+    rm -rf "$HOME/.config/nvim"
+    
+    # Clone LazyVim starter
+    print_status "Installing LazyVim starter template..."
+    git clone --quiet https://github.com/LazyVim/starter "$HOME/.config/nvim"
+    
+    # Remove .git folder to make it your own
+    rm -rf "$HOME/.config/nvim/.git"
+    
+    # Install dependencies for LazyVim
+    print_status "Installing LazyVim dependencies..."
+    case "$OS" in
+        ubuntu|debian)
+            sudo apt-get install -y \
+                build-essential \
+                unzip \
+                python3-pip \
+                nodejs npm \
+                2>/dev/null || true
+            ;;
+        fedora|centos|rhel|rocky|almalinux)
+            sudo dnf install -y \
+                gcc gcc-c++ make \
+                unzip \
+                python3-pip \
+                nodejs npm \
+                2>/dev/null || sudo yum install -y \
+                gcc gcc-c++ make \
+                unzip \
+                python3-pip \
+                nodejs npm \
+                2>/dev/null || true
+            ;;
+        arch|manjaro)
+            sudo pacman -S --noconfirm \
+                base-devel \
+                unzip \
+                python-pip \
+                nodejs npm \
+                2>/dev/null || true
+            ;;
+        macos)
+            brew install \
+                python3 \
+                node \
+                2>/dev/null || true
+            ;;
+    esac
+    
+    print_success "LazyVim installed. Run 'nvim' to complete setup."
+}
+
+# Install Kitty terminal (idempotent)
+install_kitty() {
+    print_status "Installing Kitty terminal..."
+    
+    if command -v kitty &> /dev/null; then
+        print_success "Kitty is already installed ($(kitty --version))"
+        return 0
+    fi
+    
+    case "$OS" in
+        ubuntu|debian)
+            # Install via official binary
+            curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+            
+            # Create desktop integration
+            sudo ln -sf ~/.local/kitty.app/bin/kitty /usr/local/bin/
+            sudo ln -sf ~/.local/kitty.app/bin/kitten /usr/local/bin/
+            
+            # Create desktop entry
+            cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+            cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
+            
+            # Update icon cache
+            sed -i "s|Icon=kitty|Icon=$HOME/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" \
+                ~/.local/share/applications/kitty*.desktop
+            ;;
+        fedora|centos|rhel|rocky|almalinux)
+            sudo dnf install -y kitty || {
+                # Fallback to official installer
+                curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+                sudo ln -sf ~/.local/kitty.app/bin/kitty /usr/local/bin/
+                sudo ln -sf ~/.local/kitty.app/bin/kitten /usr/local/bin/
+            }
+            ;;
+        arch|manjaro)
+            sudo pacman -S --noconfirm kitty
+            ;;
+        macos)
+            brew install --cask kitty
+            ;;
+        *)
+            print_error "Unsupported OS for Kitty installation: $OS"
+            return 1
+            ;;
+    esac
+    
+    print_success "Kitty terminal installed"
+}
+
+# Configure Kitty (idempotent)
+configure_kitty() {
+    print_status "Configuring Kitty terminal..."
+    
+    # Create kitty config directory
+    mkdir -p "$HOME/.config/kitty"
+    
+    # Backup existing config
+    if [[ -f "$HOME/.config/kitty/kitty.conf" ]] && [[ ! -L "$HOME/.config/kitty/kitty.conf" ]]; then
+        cp "$HOME/.config/kitty/kitty.conf" "$BACKUP_DIR/kitty.conf" 2>/dev/null || true
+        print_status "Backed up existing kitty.conf"
+    fi
+    
+    # Create kitty configuration
+    cat > "$HOME/.config/kitty/kitty.conf" << 'KITTY_EOF'
+# ───────────────────────────────────────────────────────────────
+# Theme support via built-in kitten
+# First time: run `kitty +kitten themes` and choose a theme.
+# Kitten will manage theme inclusion to current-theme.conf
+# include current-theme.conf
+
+# OS-specific overrides (optional per sytranvn.dev approach)
+# include ${KITTY_OS}.conf
+
+# ─── Appearance ────────────────────────────────────────────────
+# font_family      FiraCode Nerd Font
+# bold_font        auto
+# italic_font      auto
+# bold_italic_font auto
+font_size        18.0
+background #1d1f21
+foreground #c5c8c6
+
+background_opacity 0.95
+
+# macOS does not support blur natively
+background_blur    0     
+
+enable_audio_bell no
+
+cursor_shape block
+cursor_blink_interval 0
+cursor_stop_blinking_after 0
+
+# ─── Window & Layout ───────────────────────────────────────────
+window_padding_width 10
+window_margin_width 2
+hide_window_decorations no
+
+remember_window_size no
+initial_window_width  1800
+initial_window_height 1100
+
+tab_bar_edge bottom
+tab_bar_align left
+tab_bar_style powerline
+tab_powerline_style slanted
+active_tab_font_style bold
+inactive_tab_font_style normal
+
+# ─── Scrolling & History ───────────────────────────────────────
+scrollback_lines     10000
+wheel_scroll_multiplier 3.0
+scrollback_pager bash -c 'less -R'
+
+# ─── Mouse & URL handling ─────────────────────────────────────
+mouse_hide_wait -1
+map ctrl+left click open_url
+mouse_map ctrl+left press ungrabbed,grabbed mouse_click_url  # Mac reverse link-click
+
+# ─── Keyboard Shortcuts (macOS + Linux) ───────────────────────
+map ctrl+shift+enter launch --cwd=current          # open new window
+map cmd+enter       launch --cwd=current           # macOS-specific
+map ctrl+shift+t     new_tab_with_cwd
+map ctrl+shift+q     close_window
+map ctrl+shift+]     next_window
+map ctrl+shift+[     previous_window
+map ctrl+shift+l     next_layout
+
+# ─── Clipboard & Copy/Paste ──────────────────────────────────
+map ctrl+shift+c   copy_to_clipboard
+map ctrl+shift+v   paste_from_clipboard
+
+# ─── Remote control (optional) ───────────────────────────────
+# enables `kitty @` commands
+allow_remote_control yes                             
+
+# ───────────────────────────────────────────────────────────────
+
+# BEGIN_KITTY_THEME
+# Tokyo Night Moon
+include current-theme.conf
+# END_KITTY_THEME
+
+# BEGIN_KITTY_FONTS
+font_family      family='MesloLGL Nerd Font Mono' postscript_name=MesloLGLNFM-Regular
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
+# END_KITTY_FONTS
+KITTY_EOF
+    
+    # Create a default theme file (Tokyo Night Moon)
+    cat > "$HOME/.config/kitty/current-theme.conf" << 'THEME_EOF'
+# Tokyo Night Moon theme for Kitty
+# Based on Tokyo Night color scheme
+
+background #222436
+foreground #c8d3f5
+selection_background #2d3f76
+selection_foreground #c8d3f5
+url_color #4fd6be
+cursor #c8d3f5
+cursor_text_color #222436
+
+# Tabs
+active_tab_background #82aaff
+active_tab_foreground #1e2030
+inactive_tab_background #2f334d
+inactive_tab_foreground #545c7e
+tab_bar_background #1e2030
+
+# Normal colors
+color0 #1b1d2b
+color1 #ff757f
+color2 #c3e88d
+color3 #ffc777
+color4 #82aaff
+color5 #c099ff
+color6 #86e1fc
+color7 #828bb8
+
+# Bright colors
+color8 #444a73
+color9 #ff757f
+color10 #c3e88d
+color11 #ffc777
+color12 #82aaff
+color13 #c099ff
+color14 #86e1fc
+color15 #c8d3f5
+
+# Extended colors
+color16 #ff966c
+color17 #c53b53
+THEME_EOF
+    
+    print_success "Kitty configuration created"
+}
+
 # Install shell tools (idempotent)
 install_shell_tools() {
     print_status "Installing additional shell tools..."
@@ -545,21 +873,29 @@ show_summary() {
     print_success "✓ Z directory jumper installed"
     print_success "✓ Additional shell tools installed"
     print_success "✓ Nerd Fonts installed"
+    print_success "✓ Kitty terminal installed and configured"
+    print_success "✓ Neovim installed with LazyVim"
     echo
     print_status "📋 Configuration files:"
     echo "  • ~/.zshrc - Main configuration"
     echo "  • ~/.zsh_functions - Custom functions"
     echo "  • ~/.z.sh - Directory jumper"
+    echo "  • ~/.config/kitty/kitty.conf - Kitty terminal config"
+    echo "  • ~/.config/nvim/ - Neovim/LazyVim configuration"
     echo
     print_status "📁 Log file: $LOG_FILE"
     echo
     print_warning "📝 Next Steps:"
     echo "  1. Run 'p10k configure' to set up Powerlevel10k theme"
-    echo "  2. Restart your terminal or run: source ~/.zshrc"
-    echo "  3. Try these commands:"
+    echo "  2. Open a new Kitty terminal window"
+    echo "  3. Run 'nvim' to complete LazyVim setup"
+    echo "  4. Run 'kitty +kitten themes' to browse more themes"
+    echo "  5. Restart your terminal or run: source ~/.zshrc"
+    echo "  6. Try these commands:"
     echo "     • fzf - Fuzzy find files"
     echo "     • z <partial-path> - Jump to directory"
     echo "     • cd <TAB> - Browse directories with preview"
+    echo "     • nvim - Launch Neovim with LazyVim"
     echo
     print_status "🚀 Your enhanced shell environment is ready!"
 }
@@ -591,6 +927,12 @@ main() {
     install_z
     install_shell_tools
     install_fonts
+    
+    # Terminal and editor
+    install_kitty
+    configure_kitty
+    install_neovim
+    install_lazyvim
     
     # Optionally change default shell
     change_shell

@@ -2134,6 +2134,56 @@ export NVM_DIR="$HOME/.nvm"
 # FZF integration
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# FZF configuration
+export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git --exclude node_modules --exclude .cache'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git --exclude node_modules --exclude .cache'
+
+# FZF default options with preview
+export FZF_DEFAULT_OPTS="
+  --height 50%
+  --layout reverse
+  --border rounded
+  --info inline
+  --prompt '󰍉 '
+  --pointer '▶'
+  --marker '┃'
+  --bind 'ctrl-a:select-all'
+  --bind 'ctrl-d:deselect-all'
+  --bind 'ctrl-t:toggle-all'
+  --bind 'ctrl-s:toggle-sort'
+  --bind 'ctrl-p:toggle-preview'
+  --bind 'alt-up:preview-up'
+  --bind 'alt-down:preview-down'
+  --bind 'ctrl-u:preview-page-up'
+  --bind 'ctrl-d:preview-page-down'
+  --color 'fg:#f7768e,bg:#1a1b26,hl:#7aa2f7'
+  --color 'fg+:#c0caf5,bg+:#283457,hl+:#7dcfff'
+  --color 'info:#7aa2f7,prompt:#7dcfff,pointer:#bb9af7'
+  --color 'marker:#9ece6a,spinner:#bb9af7,header:#73daca'
+"
+
+# FZF preview options
+export FZF_CTRL_T_OPTS="
+  --preview 'bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || eza --tree --level=1 --color=always {} 2>/dev/null || ls -la {}'
+  --preview-window 'right:50%:wrap'
+"
+
+export FZF_ALT_C_OPTS="
+  --preview 'eza --tree --level=2 --color=always {} 2>/dev/null || ls -la {}'
+  --preview-window 'right:50%:wrap'
+"
+
+# Enhanced history search
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}'
+  --preview-window down:3:hidden:wrap
+  --bind 'ctrl-/:toggle-preview'
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'
+"
+
 # Z directory jumping
 [ -f ~/.z.sh ] && source ~/.z.sh
 
@@ -2151,13 +2201,67 @@ alias tmn='tmux new-session -s'
 alias tml='tmux list-sessions'
 alias tmk='tmux kill-session -t'
 
+# FZF + Git aliases
+alias gb='gco'           # Git branch checkout
+alias gl='gshow'         # Git log with FZF
+alias ga='gadd'          # Git add with FZF
+alias gr='greset'        # Git reset with FZF
+alias gs='gstash'        # Git stash with FZF
+alias gbd='gbdel'        # Git branch delete
+alias gh='ghistory'      # Git file history
+alias gt='gtags'         # Git tags with FZF
+alias gf='gsearch'       # Git search commits
+
+# Enhanced FZF aliases
+alias f='fe'             # Find and edit files
+alias fd='fcd'           # Find and cd to directory
+alias fk='fkill'         # Find and kill process
+alias fv='fenv'          # Browse environment variables
+alias fh='fh'            # Enhanced history search
+
 # FZF-tab configuration
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' menu no
+
+# Enhanced FZF-tab previews
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null || ls -la $realpath'
+zstyle ':fzf-tab:complete:ls:*' fzf-preview 'if [[ -d $realpath ]]; then eza --color=always $realpath; else bat --color=always --style=numbers --line-range=:500 $realpath 2>/dev/null || cat $realpath; fi'
+zstyle ':fzf-tab:complete:cat:*' fzf-preview 'bat --color=always --style=numbers --line-range=:500 $realpath 2>/dev/null || cat $realpath'
+zstyle ':fzf-tab:complete:bat:*' fzf-preview 'bat --color=always --style=numbers --line-range=:500 $realpath 2>/dev/null || cat $realpath'
+zstyle ':fzf-tab:complete:nvim:*' fzf-preview 'bat --color=always --style=numbers --line-range=:500 $realpath 2>/dev/null || cat $realpath'
+zstyle ':fzf-tab:complete:vim:*' fzf-preview 'bat --color=always --style=numbers --line-range=:500 $realpath 2>/dev/null || cat $realpath'
+
+# Git-specific FZF-tab previews
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed s/\\.\\*// <<< "$group[$word]") 2>/dev/null'
+zstyle ':fzf-tab:complete:git-show:*' fzf-preview 'git show --color=always $word 2>/dev/null'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" $word 2>/dev/null'
+zstyle ':fzf-tab:complete:git-add:*' fzf-preview 'git diff --color=always $realpath 2>/dev/null || bat --color=always --style=numbers --line-range=:500 $realpath 2>/dev/null'
+zstyle ':fzf-tab:complete:git-diff:*' fzf-preview 'git diff --color=always $word 2>/dev/null || git diff --color=always --cached $word 2>/dev/null'
+
+# Process completion
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview '[[ $group == "[process ID]" ]] && ps --pid=$word -o pid,ppid,user,comm,args'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
+
+# Environment variables
+zstyle ':fzf-tab:complete:export:*' fzf-preview 'echo $word'
+zstyle ':fzf-tab:complete:unset:*' fzf-preview 'echo $word: ${(P)word}'
+
+# Systemctl services
+zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
+
+# Man pages
+zstyle ':fzf-tab:complete:man:*' fzf-preview 'man $word | col -bx'
+
+# Docker completion
+zstyle ':fzf-tab:complete:docker:*' fzf-preview 'docker inspect $word 2>/dev/null'
+zstyle ':fzf-tab:complete:docker-container:*' fzf-preview 'docker inspect $word 2>/dev/null'
+zstyle ':fzf-tab:complete:docker-image:*' fzf-preview 'docker inspect $word 2>/dev/null'
+
+# General options
 zstyle ':fzf-tab:*' switch-group F1 F2
+zstyle ':fzf-tab:*' fzf-flags '--color=fg:#f7768e,bg:#1a1b26,hl:#7aa2f7' '--color=fg+:#c0caf5,bg+:#283457,hl+:#7dcfff' '--color=info:#7aa2f7,prompt:#7dcfff,pointer:#bb9af7'
 
 # Enable kubectl completion if available
 if command -v kubectl >/dev/null 2>&1; then
@@ -2207,6 +2311,150 @@ extract() {
     else
         echo "'$1' is not a valid file"
     fi
+}
+
+# ============================================================================
+# FZF + Git Integration Functions
+# ============================================================================
+
+# Git checkout branch/tag with FZF
+gco() {
+    local branches branch
+    branches=$(git --no-pager branch -a \
+        --format="%(if)%(HEAD)%(then)%(else)%(if:equals=HEAD)%(refname:strip=3)%(then)%(else)%1B[0;34;1mbranch%09%1B[m%(refname:short)%(end)%(end)" \
+        | sed '/^$/d') || return
+    branch=$(echo "$branches" |
+        fzf --height=50% --ansi --border --preview "git --no-pager log -150 --pretty=format:%s '..{2}'") &&
+    git checkout $(echo "$branch" | awk '{print $NF}' | sed "s#remotes/[^/]*/##")
+}
+
+# Git show commits with FZF (interactive log)
+gshow() {
+    git log --graph --color=always \
+        --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+    fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
+        --bind "ctrl-m:execute:
+            (grep -o '[a-f0-9]\{7\}' | head -1 |
+            xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
+            {}
+FZF-EOF"
+}
+
+# Git add files with FZF (interactive add)
+gadd() {
+    local files
+    files=$(git -c color.status=always status --short |
+        fzf --ansi --multi --nth 2..,.. \
+            --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
+        cut -c4- | sed 's/.* -> //')
+    [[ -n "$files" ]] && echo "$files" | xargs git add --verbose
+}
+
+# Git reset files with FZF (interactive reset)
+greset() {
+    local files
+    files=$(git diff --cached --name-only |
+        fzf --multi --preview 'git diff --cached --color=always -- {} | head -500')
+    [[ -n "$files" ]] && echo "$files" | xargs git reset HEAD --
+}
+
+# Git stash show with FZF
+gstash() {
+    local stash
+    stash=$(git stash list --pretty=format:"%C(red)%h%C(reset) - %C(dim yellow)(%C(bold magenta)%gd%C(dim yellow))%C(reset) %<(70,trunc)%s %C(green)(%cr) %C(bold blue)<%an>%C(reset)" |
+        fzf --ansi --no-sort --header="Enter: show, Ctrl-D: diff, Ctrl-A: apply, Ctrl-X: drop" \
+            --preview 'git stash show --color=always -p $(echo {} | cut -d" " -f1)' \
+            --bind 'enter:execute(git stash show --color=always -p $(echo {} | cut -d" " -f1) | less -r > /dev/tty)' \
+            --bind 'ctrl-d:execute(git diff --color=always $(echo {} | cut -d" " -f1) | less -r > /dev/tty)' \
+            --bind 'ctrl-a:execute(git stash apply $(echo {} | cut -d" " -f1))' \
+            --bind 'ctrl-x:execute(git stash drop $(echo {} | cut -d" " -f1))')
+}
+
+# Git branch delete with FZF
+gbdel() {
+    local branches branch
+    branches=$(git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | 
+        awk '$1 != "master" && $1 != "main" && $1 != "develop"') || return
+    branch=$(echo "$branches" | fzf --multi --header="Select branches to delete" |
+        awk '{print $1}')
+    [[ -n "$branch" ]] && echo "$branch" | xargs git branch -D
+}
+
+# Git file history with FZF
+ghistory() {
+    local file
+    file="$1"
+    [[ -z "$file" ]] && file=$(git ls-files | fzf --header="Select file to view history")
+    [[ -n "$file" ]] && git log --follow --color=always --oneline -- "$file" |
+        fzf --ansi --no-sort --reverse --tiebreak=index \
+            --preview "git show --color=always {1}:$file" \
+            --bind "enter:execute(git show --color=always {1} -- $file | less -R > /dev/tty)"
+}
+
+# Git worktree with FZF
+gwtree() {
+    local worktrees
+    worktrees=$(git worktree list --porcelain | awk '/^worktree/ {print $2}' | 
+        fzf --header="Select worktree to switch to" --preview 'ls -la {}')
+    [[ -n "$worktrees" ]] && cd "$worktrees"
+}
+
+# Git tags with FZF
+gtags() {
+    local tags tag
+    tags=$(git tag --sort=-version:refname) || return
+    tag=$(echo "$tags" | 
+        fzf --header="Select tag" --preview 'git show --color=always {}')
+    [[ -n "$tag" ]] && git checkout "$tag"
+}
+
+# Git search in commits with FZF
+gsearch() {
+    local query="$1"
+    [[ -z "$query" ]] && echo "Usage: gsearch <search-term>" && return
+    git log --oneline --color=always -S "$query" |
+        fzf --ansi --no-sort --reverse --tiebreak=index \
+            --preview "git show --color=always {1}" \
+            --bind "enter:execute(git show --color=always {1} | less -R > /dev/tty)"
+}
+
+# ============================================================================
+# Enhanced FZF Functions
+# ============================================================================
+
+# Find and edit files with FZF
+fe() {
+    local files
+    files=$(fd --type f --strip-cwd-prefix --hidden --follow --exclude .git --exclude node_modules |
+        fzf --multi --preview 'bat --color=always --style=numbers --line-range=:500 {}')
+    [[ -n "$files" ]] && ${EDITOR:-nvim} $files
+}
+
+# Find directories and cd with FZF
+fcd() {
+    local dir
+    dir=$(fd --type d --strip-cwd-prefix --hidden --follow --exclude .git --exclude node_modules |
+        fzf --preview 'eza --tree --level=2 --color=always {} || ls -la {}')
+    [[ -n "$dir" ]] && cd "$dir"
+}
+
+# Process finder and killer with FZF
+fkill() {
+    local pid
+    pid=$(ps -ef | sed 1d | fzf -m --header="Select process to kill" |
+        awk '{print $2}')
+    [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-9}
+}
+
+# Environment variable browser with FZF
+fenv() {
+    env | fzf --preview 'echo {}'
+}
+
+# Command history search with context
+fh() {
+    print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | 
+        fzf +s --tac | sed -E 's/ *[0-9]*\*? *//' | sed -E 's/\\/\\\\/g')
 }
 FUNCTIONS_EOF
 
@@ -2943,9 +3191,27 @@ show_summary() {
     echo "  5. Run 'kitty +kitten themes' to browse more themes (Tokyo Night Moon is default)"
     echo "  6. Optional: Run 'p10k configure' to customize prompt theme"
     echo "  7. Try these commands:"
-    echo "     • fzf - Fuzzy find files"
+    echo "     • Ctrl+T - Fuzzy find files with preview"
+    echo "     • Ctrl+R - Enhanced history search"  
+    echo "     • Alt+C - Fuzzy find directories"
     echo "     • z <partial-path> - Jump to directory"
     echo "     • cd <TAB> - Browse directories with preview"
+    echo ""
+    echo "  8. Git + FZF integration:"
+    echo "     • gb - Interactive branch checkout"
+    echo "     • gl - Interactive git log viewer"
+    echo "     • ga - Interactive git add"
+    echo "     • gs - Interactive git stash"
+    echo "     • gh - File history viewer"
+    echo "     • gf <term> - Search commits"
+    echo ""
+    echo "  9. Enhanced FZF functions:"
+    echo "     • f - Find and edit files"
+    echo "     • fd - Find and cd to directory"  
+    echo "     • fk - Find and kill processes"
+    echo "     • fv - Browse environment variables"
+    echo ""
+    echo "  10. Other tools:"
     echo "     • nvim - Launch Neovim with LazyVim"
     echo "     • tmux - Start terminal multiplexer"
     echo "     • Prefix+r - Reload tmux config (Prefix is Ctrl+a)"

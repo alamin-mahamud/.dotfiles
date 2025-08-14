@@ -2202,7 +2202,7 @@ alias tml='tmux list-sessions'
 alias tmk='tmux kill-session -t'
 
 # FZF + Git aliases
-alias gb='gco'           # Git branch checkout
+alias gb='gco'           # Git branch checkout (using gco function below)
 alias gl='gshow'         # Git log with FZF
 alias ga='gadd'          # Git add with FZF
 alias gr='greset'        # Git reset with FZF
@@ -2217,7 +2217,6 @@ alias f='fe'             # Find and edit files
 alias fd='fcd'           # Find and cd to directory
 alias fk='fkill'         # Find and kill process
 alias fv='fenv'          # Browse environment variables
-alias fh='fh'            # Enhanced history search
 
 # FZF-tab configuration
 zstyle ':completion:*:git-checkout:*' sort false
@@ -2465,18 +2464,145 @@ FUNCTIONS_EOF
 # Install FZF (idempotent)
 install_fzf() {
     print_status "Installing FZF..."
-
+    
+    local FZF_VERSION="0.65.0"
+    local INSTALL_DIR="$HOME/.local/bin"
+    local CURRENT_VERSION=""
+    
+    # Create install directory if it doesn't exist
+    mkdir -p "$INSTALL_DIR"
+    
+    # Check if fzf is already installed and get version
     if command -v fzf &> /dev/null; then
-        print_success "FZF is already installed ($(fzf --version))"
-        return 0
+        CURRENT_VERSION=$(fzf --version 2>/dev/null | cut -d' ' -f1)
+        print_status "FZF is already installed (version $CURRENT_VERSION)"
+        
+        # Compare versions - if current is >= desired, skip installation
+        if [[ "$CURRENT_VERSION" == "$FZF_VERSION" ]] || [[ "$CURRENT_VERSION" > "$FZF_VERSION" ]]; then
+            print_success "FZF $CURRENT_VERSION is up to date"
+            
+            # Ensure shell integration is set up
+            if [[ ! -f "$HOME/.fzf.zsh" ]]; then
+                print_status "Setting up FZF shell integration..."
+                setup_fzf_shell_integration
+            fi
+            return 0
+        else
+            print_status "Upgrading FZF from $CURRENT_VERSION to $FZF_VERSION..."
+        fi
     fi
-
-    if [[ ! -d "$HOME/.fzf" ]]; then
-        git clone --quiet --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+    
+    # Detect OS and architecture
+    local OS=""
+    local ARCH=""
+    
+    case "$(uname -s)" in
+        Linux*)     OS="linux";;
+        Darwin*)    OS="darwin";;
+        *)          print_error "Unsupported OS: $(uname -s)"; return 1;;
+    esac
+    
+    case "$(uname -m)" in
+        x86_64)     ARCH="amd64";;
+        aarch64|arm64) ARCH="arm64";;
+        armv7l)     ARCH="armv7";;
+        *)          print_error "Unsupported architecture: $(uname -m)"; return 1;;
+    esac
+    
+    # Download the latest FZF binary
+    local DOWNLOAD_URL="https://github.com/junegunn/fzf/releases/download/v${FZF_VERSION}/fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz"
+    local TEMP_DIR=$(mktemp -d)
+    
+    print_status "Downloading FZF ${FZF_VERSION} for ${OS}_${ARCH}..."
+    
+    if command -v curl &> /dev/null; then
+        curl -fsSL "$DOWNLOAD_URL" -o "$TEMP_DIR/fzf.tar.gz" || {
+            print_error "Failed to download FZF"
+            rm -rf "$TEMP_DIR"
+            return 1
+        }
+    elif command -v wget &> /dev/null; then
+        wget -qO "$TEMP_DIR/fzf.tar.gz" "$DOWNLOAD_URL" || {
+            print_error "Failed to download FZF"
+            rm -rf "$TEMP_DIR"
+            return 1
+        }
+    else
+        print_error "Neither curl nor wget is available"
+        rm -rf "$TEMP_DIR"
+        return 1
     fi
+    
+    # Extract and install
+    print_status "Installing FZF binary..."
+    tar -xzf "$TEMP_DIR/fzf.tar.gz" -C "$TEMP_DIR" || {
+        print_error "Failed to extract FZF"
+        rm -rf "$TEMP_DIR"
+        return 1
+    }
+    
+    # Move the binary to the install directory
+    mv "$TEMP_DIR/fzf" "$INSTALL_DIR/fzf" || {
+        print_error "Failed to install FZF binary"
+        rm -rf "$TEMP_DIR"
+        return 1
+    }
+    
+    # Make it executable
+    chmod +x "$INSTALL_DIR/fzf"
+    
+    # Clean up
+    rm -rf "$TEMP_DIR"
+    
+    # Add to PATH if not already there
+    if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
+        export PATH="$INSTALL_DIR:$PATH"
+    fi
+    
+    # Setup shell integration
+    setup_fzf_shell_integration
+    
+    print_success "FZF ${FZF_VERSION} installed successfully"
+}
 
-    "$HOME/.fzf/install" --all --no-bash --no-fish --no-update-rc
-    print_success "FZF installed"
+# Setup FZF shell integration
+setup_fzf_shell_integration() {
+    local FZF_BASE="$HOME/.fzf"
+    
+    # Clone the FZF repository for shell integration scripts if not present
+    if [[ ! -d "$FZF_BASE" ]]; then
+        print_status "Cloning FZF repository for shell integration..."
+        git clone --quiet --depth 1 https://github.com/junegunn/fzf.git "$FZF_BASE"
+    fi
+    
+    # Setup key bindings and completion for Zsh using fzf --zsh
+    if command -v fzf &> /dev/null; then
+        # Use fzf's built-in shell integration command
+        print_status "Generating FZF shell integration..."
+        fzf --zsh > "$HOME/.fzf.zsh" 2>/dev/null || {
+            # Fallback to manual setup if fzf --zsh doesn't work
+            print_status "Using fallback FZF configuration..."
+            cat > "$HOME/.fzf.zsh" << 'FZF_ZSH_EOF'
+# Setup fzf
+# ---------
+if [[ ! "$PATH" == *$HOME/.local/bin* ]]; then
+  export PATH="${PATH:+${PATH}:}$HOME/.local/bin"
+fi
+
+# Auto-completion
+# ---------------
+if [[ $- == *i* ]]; then
+  source "$HOME/.fzf/shell/completion.zsh" 2> /dev/null
+fi
+
+# Key bindings
+# ------------
+source "$HOME/.fzf/shell/key-bindings.zsh" 2> /dev/null
+FZF_ZSH_EOF
+        }
+    fi
+    
+    print_success "FZF shell integration configured"
 }
 
 # Install Z directory jumper (idempotent)

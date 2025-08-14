@@ -465,16 +465,10 @@ main() {
     setup_docker
     install_nodejs
 
-    # Enhanced shell and editor setup via specialized installers (auto-installed)
-    print_status "Installing enhanced shell environment (Zsh + Oh My Zsh + plugins)..."
+    # Enhanced shell setup via specialized installer (auto-installed)
+    # Note: install-shell.sh includes Zsh, Oh My Zsh, Tmux, Neovim with LazyVim, and other modern tools
+    print_status "Installing enhanced shell environment (Zsh + Oh My Zsh + Tmux + Neovim + plugins)..."
     run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
-
-    print_status "Installing enhanced tmux configuration with DevOps features..."
-    # Tmux is now included in install-shell.sh
-    # run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
-
-    print_status "Installing enhanced vim configuration with plugins..."
-    run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
 
     # System maintenance setup
     setup_system_maintenance
@@ -498,7 +492,7 @@ main() {
     echo "  1. Set up SSH keys if you haven't already"
     echo "  2. Log out and back in to apply shell changes"
     echo "  3. Review firewall rules: sudo ufw status"
-    echo "  4. Test enhanced tools (tmux, vim, zsh if installed)"
+    echo "  4. Test enhanced tools (zsh, tmux, neovim if installed)"
     echo "  5. Configure any additional services needed"
     echo
     print_status "🚀 Your Ubuntu server is ready for DevOps work!"

@@ -199,16 +199,8 @@ run_installation() {
                     fi
                     ;;
                 3)
-                    print_status "Installing development tools only..."
-                    source "$SCRIPT_DIR/scripts/install-dev-tools.sh"
-                    ;;
-                4)
                     print_status "Installing shell configuration only..."
                     source "$SCRIPT_DIR/scripts/install-shell.sh"
-                    ;;
-                5)
-                    print_status "Custom installation selected..."
-                    source "$SCRIPT_DIR/scripts/custom-install.sh"
                     ;;
                 *)
                     print_error "Invalid choice"
@@ -223,16 +215,8 @@ run_installation() {
                     source "$SCRIPT_DIR/macos/install.sh"
                     ;;
                 2)
-                    print_status "Installing development tools only..."
-                    source "$SCRIPT_DIR/scripts/install-dev-tools.sh"
-                    ;;
-                3)
                     print_status "Installing shell configuration only..."
                     source "$SCRIPT_DIR/scripts/install-shell.sh"
-                    ;;
-                4)
-                    print_status "Custom installation selected..."
-                    source "$SCRIPT_DIR/scripts/custom-install.sh"
                     ;;
                 *)
                     print_error "Invalid choice"

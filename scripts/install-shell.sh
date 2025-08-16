@@ -2190,16 +2190,110 @@ export FZF_CTRL_R_OPTS="
 # Load custom functions
 [ -f ~/.zsh_functions ] && source ~/.zsh_functions
 
+# Docker-style random name generator for tmux sessions
+tmux_random_name() {
+    # Adjectives (Docker-style)
+    local adjectives=(
+        "admiring" "adoring" "affectionate" "agitated" "amazing" "angry" "awesome"
+        "beautiful" "blissful" "bold" "boring" "brave" "busy" "charming" "clever"
+        "cool" "compassionate" "competent" "condescending" "confident" "cranky"
+        "crazy" "dazzling" "determined" "distracted" "dreamy" "eager" "ecstatic"
+        "elastic" "elated" "elegant" "eloquent" "epic" "exciting" "fervent"
+        "festive" "flamboyant" "focused" "friendly" "frosty" "funny" "gallant"
+        "gifted" "goofy" "gracious" "great" "happy" "hardcore" "heuristic"
+        "hopeful" "hungry" "infallible" "inspiring" "intelligent" "interesting"
+        "jolly" "jovial" "keen" "kind" "laughing" "loving" "lucid" "magical"
+        "mystifying" "modest" "musing" "naughty" "nervous" "nice" "nifty"
+        "nostalgic" "objective" "optimistic" "peaceful" "pedantic" "pensive"
+        "practical" "priceless" "quirky" "quizzical" "recursing" "relaxed"
+        "reverent" "romantic" "sad" "serene" "sharp" "silly" "sleepy" "stoic"
+        "strange" "stupefied" "suspicious" "sweet" "tender" "thirsty" "trusting"
+        "unruffled" "upbeat" "vibrant" "vigilant" "vigorous" "wizardly" "wonderful"
+        "xenodochial" "youthful" "zealous" "zen"
+    )
+    
+    # Names (famous scientists and hackers, Docker-style)
+    local names=(
+        "albattani" "allen" "almeida" "antonelli" "agnesi" "archimedes" "ardinghelli"
+        "aryabhata" "austin" "babbage" "banach" "bardeen" "bartik" "bassi" "beaver"
+        "bell" "benz" "bhabha" "bhaskara" "black" "blackburn" "blackwell" "bohr"
+        "booth" "borg" "bose" "bouman" "boyd" "brahmagupta" "brattain" "brown"
+        "buck" "burnell" "cannon" "carson" "cartwright" "cerf" "chandrasekhar"
+        "chaplygin" "chatelet" "chatterjee" "chebyshev" "cohen" "chaum" "clarke"
+        "colden" "cori" "cray" "curran" "curie" "darwin" "davinci" "dewdney" "dhawan"
+        "diffie" "dijkstra" "dirac" "driscoll" "dubinsky" "easley" "edison" "einstein"
+        "elbakyan" "elgamal" "elion" "ellis" "engelbart" "euclid" "euler" "faraday"
+        "feistel" "fermat" "fermi" "feynman" "franklin" "gagarin" "galileo" "galois"
+        "gandhi" "gauss" "germain" "goldberg" "goldstine" "goldwasser" "golick"
+        "goodall" "gould" "greider" "grothendieck" "haibt" "hamilton" "haslett"
+        "hawking" "hellman" "heisenberg" "hermann" "herschel" "hertz" "heyrovsky"
+        "hodgkin" "hofstadter" "hoover" "hopper" "hugle" "hypatia" "ishizaka"
+        "jackson" "jang" "jennings" "jepsen" "johnson" "joliot" "jones" "kalam"
+        "kapitsa" "kare" "keldysh" "keller" "kepler" "kilby" "kirch" "knuth"
+        "kowalevski" "lalande" "lamarr" "lamport" "leakey" "leavitt" "lederberg"
+        "lehmann" "lewin" "lichterman" "liskov" "lovelace" "lumiere" "mahavira"
+        "margulis" "matsumoto" "maxwell" "mayer" "mccarthy" "mcclintock" "mclaren"
+        "mclean" "mcnulty" "mendel" "mendeleev" "meitner" "meninsky" "merkle"
+        "mestorf" "mirzakhani" "montalcini" "moore" "morse" "murdock" "moser"
+        "napier" "nash" "neumann" "newton" "nightingale" "nobel" "noether" "northcutt"
+        "noyce" "panini" "pare" "pascal" "pasteur" "payne" "perlman" "pike" "poincare"
+        "poitras" "proskuriakova" "ptolemy" "raman" "ramanujan" "ride" "ritchie"
+        "rhodes" "robinson" "roentgen" "rosalind" "rubin" "saha" "sammet" "sanderson"
+        "satoshi" "shamir" "shannon" "shaw" "shirley" "shockley" "shtern" "sinoussi"
+        "snyder" "solomon" "spence" "stonebraker" "sutherland" "swanson" "swartz"
+        "swirles" "taussig" "tereshkova" "tesla" "tharp" "thompson" "torvalds" "tu"
+        "turing" "varahamihira" "vaughan" "visvesvaraya" "volhard" "villani" "wescoff"
+        "wilbur" "wiles" "williams" "williamson" "wilson" "wing" "wozniak" "wright"
+        "wu" "yalow" "yonath" "zhukovsky"
+    )
+    
+    # Generate random indices
+    local adj_index=$((RANDOM % ${#adjectives[@]}))
+    local name_index=$((RANDOM % ${#names[@]}))
+    
+    echo "${adjectives[$adj_index]}_${names[$name_index]}"
+}
+
+# Smart tmux function - creates new session with random name or attaches to existing
+tm() {
+    if [[ $# -eq 0 ]]; then
+        # No arguments - create new session with random name or attach to existing
+        if tmux list-sessions &>/dev/null; then
+            # Sessions exist, try to attach to most recent detached session
+            local detached_session=$(tmux list-sessions -F '#{session_name}:#{session_attached}' | grep ':0$' | head -n1 | cut -d: -f1)
+            if [[ -n "$detached_session" ]]; then
+                tmux attach-session -t "$detached_session"
+            else
+                # All sessions attached, create new one with random name
+                local session_name=$(tmux_random_name)
+                tmux new-session -s "$session_name"
+            fi
+        else
+            # No sessions exist, create new one with random name
+            local session_name=$(tmux_random_name)
+            tmux new-session -s "$session_name"
+        fi
+    elif [[ $1 == "new" ]] || [[ $1 == "n" ]]; then
+        # Explicitly request new session with random name
+        local session_name=$(tmux_random_name)
+        tmux new-session -s "$session_name"
+    else
+        # Session name provided, use standard tmux behavior
+        tmux "$@"
+    fi
+}
+
 # Aliases
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 alias vim='nvim 2>/dev/null || vim'
-alias tm='tmux'
+# Tmux aliases (tm is now a function with Docker-style random names)
 alias tma='tmux attach-session -t'
-alias tmn='tmux new-session -s'
+alias tmn='tm new'  # Creates new session with random name
 alias tml='tmux list-sessions'
 alias tmk='tmux kill-session -t'
+alias tmka='tmux kill-server'  # Kill all sessions
 
 # FZF + Git aliases
 alias gb='gco'           # Git branch checkout (using gco function below)

@@ -3212,16 +3212,32 @@ set -g message-style "fg=#c8d3f5,bg=#2f334d,bold"
 set -g message-command-style "fg=#c8d3f5,bg=#2f334d,bold"
 
 # Tmux Plugin Manager
+# TPM - Plugin manager for tmux (required for all plugins below)
 set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @plugin 'tmux-plugins/tmux-resurrect'
-set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'tmux-plugins/tmux-yank'
 
-# Plugin configurations
-set -g @resurrect-capture-pane-contents 'on'
-set -g @continuum-restore 'on'
-set -g @continuum-save-interval '15'
+# Essential plugins for better tmux experience
+set -g @plugin 'tmux-plugins/tmux-sensible'       # Sensible defaults for tmux
+set -g @plugin 'tmux-plugins/tmux-resurrect'      # Save/restore tmux sessions manually (Ctrl-s/Ctrl-r)
+set -g @plugin 'tmux-plugins/tmux-continuum'      # Auto-save sessions periodically (uses resurrect)
+set -g @plugin 'tmux-plugins/tmux-yank'           # Copy to system clipboard
+set -g @plugin 'tmux-plugins/tmux-copycat'        # Regex searches with predefined patterns (URLs, IPs, etc)
+set -g @plugin 'tmux-plugins/tmux-open'           # Open files/URLs directly from tmux
+
+# Session persistence configuration
+# Resurrect: Core save/restore functionality
+set -g @resurrect-capture-pane-contents 'on'      # Save pane contents (scrollback)
+set -g @resurrect-strategy-nvim 'session'         # Restore nvim sessions if available
+
+# Continuum: Automation for resurrect
+set -g @continuum-restore 'off'                   # Manual restore only - start fresh by default
+set -g @continuum-save-interval '10'              # Auto-save every 10 minutes for safety
+
+# Usage tips:
+# - Save session: prefix + Ctrl-s
+# - Restore session: prefix + Ctrl-r (when you want old sessions back)
+# - Search: prefix + / (copycat - search for URLs, files, IPs, etc)
+# - Open URL/file: prefix + o (open highlighted text)
+# - Copy: prefix + y (copy to system clipboard)
 
 # Initialize TPM (keep at bottom)
 run '~/.tmux/plugins/tpm/tpm'

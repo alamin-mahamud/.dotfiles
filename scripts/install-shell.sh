@@ -3192,13 +3192,13 @@ set -g status-position bottom
 set -g status-left-length 50
 set -g status-right-length 100
 
-# Status bar content
-set -g status-left "#[fg=#1e2030,bg=#82aaff,bold] #S #[fg=#82aaff,bg=#2f334d] #[fg=#545c7e,bg=#2f334d]"
-set -g status-right "#[fg=#545c7e,bg=#1e2030]#{?client_prefix,#[fg=#ff757f]● ,}#[fg=#86e1fc]%H:%M #[fg=#545c7e]• #[fg=#c3e88d]%d-%b #[fg=#545c7e]• #[fg=#c099ff]#(whoami)#[fg=#545c7e]@#[fg=#c099ff]#h "
+# Status bar content with slanted design (matching Kitty)
+set -g status-left "#[fg=#1e2030,bg=#82aaff,bold] #S #[fg=#82aaff,bg=#2f334d]#[fg=#c8d3f5,bg=#2f334d] #I:#P #[fg=#2f334d,bg=#1e2030]"
+set -g status-right "#[fg=#2f334d,bg=#1e2030]#[fg=#c8d3f5,bg=#2f334d] %H:%M #[fg=#3c414c,bg=#2f334d]#[fg=#c3e88d,bg=#3c414c] %d-%b #[fg=#82aaff,bg=#3c414c]#[fg=#1e2030,bg=#82aaff] #(whoami)@#h #{?client_prefix,#[fg=#ff757f] ●,}"
 
-# Window status
-setw -g window-status-format "#[fg=#545c7e,bg=#1e2030] #I:#W "
-setw -g window-status-current-format "#[fg=#1e2030,bg=#82aaff,bold] #I:#W #[fg=#82aaff,bg=#1e2030]"
+# Window status with slanted design
+setw -g window-status-format "#[fg=#1e2030,bg=#3c414c]#[fg=#626b7e,bg=#3c414c] #I:#W #[fg=#3c414c,bg=#1e2030]"
+setw -g window-status-current-format "#[fg=#1e2030,bg=#82aaff]#[fg=#1e2030,bg=#82aaff,bold] #I:#W #[fg=#82aaff,bg=#1e2030]"
 setw -g monitor-activity on
 set -g visual-activity off
 setw -g window-status-activity-style "fg=#ff757f,bg=#1e2030,bold"

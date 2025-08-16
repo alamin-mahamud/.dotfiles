@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a comprehensive, modular dotfiles repository for automated development environment setup across Ubuntu Desktop, Ubuntu Server, and macOS. The repository features enhanced installation scripts, comprehensive documentation, and support for multiple environment types.
+This is a comprehensive, modular dotfiles repository optimized for DevOps professionals working with Linux servers. The repository features standalone installation scripts, embedded configurations, and specialized DevOps tooling focused on Zsh + Tmux + LazyVim + Kitty environments.
 
 ## Key Commands
 
@@ -12,26 +12,23 @@ This is a comprehensive, modular dotfiles repository for automated development e
 - `./bootstrap.sh` - Enhanced main entry point with interactive menu and environment detection
 - `chmod +x ./bootstrap.sh` - Make bootstrap script executable before running
 
-### DRY Standalone Installers (can be run independently via curl)
-- `./scripts/ubuntu-server-setup.sh` - DRY Ubuntu Server setup orchestrator
-- `./scripts/install-shell.sh` - Enhanced shell environment (Zsh + Oh My Zsh + plugins + Tmux with Tokyo Night Moon theme)
-- `./scripts/vim-installer.sh` - Enhanced vim configuration with plugins
-- `./scripts/install-dev-tools.sh` - Development tools installation (Git, Docker, Node.js, Python, Rust, Go, etc.)
+### DevOps Standalone Installers (can be run independently via curl)
+- `./scripts/devops-shell.sh` - Complete DevOps shell environment (Zsh + Tmux + Kitty + modern CLI tools)
+- `./scripts/devops-tools.sh` - DevOps tools (Docker + Kubernetes + Terraform + AWS CLI + Python + Node.js)
+- `./scripts/ubuntu-server-setup.sh` - Ubuntu Server setup orchestrator
+- `./scripts/install-dev-tools.sh` - Development tools installation
 - `./scripts/custom-install.sh` - Component-based custom installation
-- `./scripts/tmux-installer.sh` - (Deprecated - now integrated into install-shell.sh)
 
-### One-liner Installation (DRY approach)
+### One-liner Installation (DevOps-focused)
 ```bash
-# Ubuntu Server (calls individual component installers)
+# Complete DevOps shell environment
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/devops-shell.sh | bash
+
+# DevOps tools and infrastructure
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/devops-tools.sh | bash
+
+# Ubuntu Server complete setup
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/ubuntu-server-setup.sh | bash
-
-# Individual components (idempotent, standalone)
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash  # Includes tmux
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/vim-installer.sh | bash
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash
-
-# Development tools - install all
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash -s -- --all
 ```
 
 ### Platform-Specific Setup (DRY orchestrators)

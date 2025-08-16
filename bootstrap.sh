@@ -148,9 +148,10 @@ show_installation_menu() {
         linux)
             echo "  1) Full Installation (Desktop with GUI)"
             echo "  2) Server Installation (Minimal, no GUI)"
-            echo "  3) Development Tools Only"
-            echo "  4) Shell Configuration Only (Zsh + Tmux)"
-            echo "  5) Custom Installation"
+            echo "  3) DevOps Shell Environment (Zsh + Tmux + Kitty)"
+            echo "  4) DevOps Tools (Docker + K8s + Terraform + AWS)"
+            echo "  5) Development Tools Only"
+            echo "  6) Custom Installation"
             ;;
         macos)
             echo "  1) Full Installation"
@@ -189,18 +190,28 @@ run_installation() {
                     ;;
                 2)
                     print_status "Starting Linux server installation..."
-                    # Ubuntu server setup script is in the root directory
-                    if [[ -f "$SCRIPT_DIR/ubuntu-server-setup.sh" ]]; then
-                        bash "$SCRIPT_DIR/ubuntu-server-setup.sh"
+                    if [[ -f "$SCRIPT_DIR/scripts/ubuntu-server-setup.sh" ]]; then
+                        bash "$SCRIPT_DIR/scripts/ubuntu-server-setup.sh"
                     else
-                        print_error "Server setup script not found at $SCRIPT_DIR/ubuntu-server-setup.sh"
-                        print_status "Please ensure ubuntu-server-setup.sh is in the repository root"
+                        print_error "Server setup script not found"
                         exit 1
                     fi
                     ;;
                 3)
-                    print_status "Installing shell configuration only..."
-                    source "$SCRIPT_DIR/scripts/install-shell.sh"
+                    print_status "Installing DevOps shell environment..."
+                    bash "$SCRIPT_DIR/scripts/devops-shell.sh"
+                    ;;
+                4)
+                    print_status "Installing DevOps tools..."
+                    bash "$SCRIPT_DIR/scripts/devops-tools.sh"
+                    ;;
+                5)
+                    print_status "Installing development tools only..."
+                    bash "$SCRIPT_DIR/scripts/install-dev-tools.sh"
+                    ;;
+                6)
+                    print_status "Starting custom installation..."
+                    bash "$SCRIPT_DIR/scripts/custom-install.sh"
                     ;;
                 *)
                     print_error "Invalid choice"

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Enhanced Shell Environment Standalone Installer
-# DRY orchestrator that installs and configures Zsh, Oh My Zsh, and shell tools
-# This script provides a modern shell environment with productivity enhancements
+# DevOps Shell Environment Standalone Installer
+# Installs Zsh + Oh My Zsh + Tmux + Kitty + modern CLI tools for DevOps workflows
+# Embedded configurations - no external dependencies
 # Usage: curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash
 
 set -euo pipefail

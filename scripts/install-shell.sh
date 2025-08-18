@@ -2108,6 +2108,7 @@ plugins=(
     kubectl
     terraform
     aws
+    vi-mode
     zsh-autosuggestions
     zsh-syntax-highlighting
     zsh-completions
@@ -2115,6 +2116,93 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
+
+# Vim Mode Configuration
+# Enable vim mode
+bindkey -v
+
+# Reduce key timeout for mode switching (default is 0.4s)
+export KEYTIMEOUT=1
+
+# Better searching in vim mode
+bindkey -M vicmd '/' history-incremental-search-backward
+bindkey -M vicmd '?' history-incremental-search-forward
+
+# Use vim keys in tab complete menu
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+
+# Edit line in vim with ctrl-e
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^e' edit-command-line
+bindkey -M vicmd '^e' edit-command-line
+
+# Common emacs-style keybindings in insert mode
+bindkey -M viins '^a' beginning-of-line
+bindkey -M viins '^e' end-of-line
+bindkey -M viins '^k' kill-line
+bindkey -M viins '^r' history-incremental-search-backward
+bindkey -M viins '^s' history-incremental-search-forward
+bindkey -M viins '^p' up-line-or-history
+bindkey -M viins '^n' down-line-or-history
+bindkey -M viins '^y' yank
+bindkey -M viins '^w' backward-kill-word
+bindkey -M viins '^u' backward-kill-line
+bindkey -M viins '^h' backward-delete-char
+bindkey -M viins '^?' backward-delete-char
+bindkey -M viins '^_' undo
+bindkey -M viins '^x^r' redisplay
+bindkey -M viins '\eOH' beginning-of-line  # Home
+bindkey -M viins '\eOF' end-of-line        # End
+bindkey -M viins '\e[H' beginning-of-line   # Home
+bindkey -M viins '\e[F' end-of-line         # End
+
+# Better undo/redo
+bindkey -M vicmd 'u' undo
+bindkey -M vicmd '^r' redo
+
+# Backspace and Delete keys
+bindkey -M viins '^?' backward-delete-char
+bindkey -M viins "^[[3~" delete-char
+
+# Visual mode indicator in prompt (if not using Powerlevel10k)
+# Powerlevel10k already shows vim mode, so this is optional
+# function zle-keymap-select {
+#   if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+#     echo -ne '\e[1 q'  # Block cursor
+#   elif [[ ${KEYMAP} == main ]] || [[ ${KEYMAP} == viins ]] || [[ ${KEYMAP} = '' ]] || [[ $1 = 'beam' ]]; then
+#     echo -ne '\e[5 q'  # Beam cursor
+#   fi
+# }
+# zle -N zle-keymap-select
+
+# Start in insert mode with beam cursor
+# echo -ne '\e[5 q'
+
+# Use beam cursor on startup
+# preexec() { echo -ne '\e[5 q' }
+
+# Change cursor shape for different vi modes
+function zle-keymap-select {
+  if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+    echo -ne '\e[1 q'
+  elif [[ ${KEYMAP} == main ]] || [[ ${KEYMAP} == viins ]] || [[ ${KEYMAP} = '' ]] || [[ $1 = 'beam' ]]; then
+    echo -ne '\e[5 q'
+  fi
+}
+zle -N zle-keymap-select
+
+# Use beam cursor on startup and after each command
+function zle-line-init {
+  echo -ne '\e[5 q'
+}
+zle -N zle-line-init
+
+echo -ne '\e[5 q' # Use beam cursor on startup
+preexec() { echo -ne '\e[5 q' } # Use beam cursor for each new prompt
 
 # Python environment
 export PYENV_ROOT="$HOME/.pyenv"
@@ -2284,6 +2372,8 @@ tm() {
 }
 
 # Vim function - prefer nvim if available
+# Remove any existing vim alias first
+unalias vim 2>/dev/null || true
 vim() {
     if command -v nvim &> /dev/null; then
         nvim "$@"

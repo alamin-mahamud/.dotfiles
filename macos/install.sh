@@ -203,8 +203,9 @@ main() {
     echo "macOS Development Environment DRY Installer"
     echo "=========================================================="
     echo "Installs essential tools and calls specialized installers:"
-    echo "• Enhanced Shell (Zsh, Neovim, LazyVim, Kitty)"
-    echo "• Enhanced Tmux & Vim configurations"
+    echo "• Server-focused Shell (Zsh, Neovim, LazyVim, Tmux)"
+    echo "• Kitty terminal with dynamic display detection"
+    echo "• Enhanced Vim configurations"
     echo "• Optional development tools & GUI apps"
     echo "=========================================================="
     echo
@@ -222,8 +223,11 @@ main() {
     install_gui_applications
     
     # Core components via specialized installers (DRY approach)
-    print_status "Installing enhanced shell environment (includes Neovim, Kitty, LazyVim, and Tmux)..."
-    run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
+    print_status "Installing server-focused shell environment (Zsh, Neovim, LazyVim, Tmux)..."
+    run_installer "install-shell.sh" || print_warning "Shell environment installation failed, continuing..."
+    
+    print_status "Installing Kitty terminal with display detection..."
+    run_installer "kitty-installer.sh" || print_warning "Kitty installation failed, continuing..."
     
     # Tmux is now included in install-shell.sh
     # print_status "Installing enhanced tmux configuration..."
@@ -254,8 +258,8 @@ main() {
     echo "  • Xcode Command Line Tools: ✓ Installed"
     echo "  • Homebrew: ✓ Installed"  
     echo "  • Essential packages: ✓ Installed"
-    echo "  • Enhanced shell (Zsh, Neovim, LazyVim, Kitty): ✓ Installed"
-    echo "  • Enhanced tmux: ✓ Installed"
+    echo "  • Server-focused shell (Zsh, Neovim, LazyVim, Tmux): ✓ Installed"
+    echo "  • Kitty terminal with display detection: ✓ Installed"
     echo "  • Enhanced vim: ✓ Installed"
     echo "  • Development tools: Installed if selected"
     echo "  • GUI apps: Installed if selected"
@@ -267,9 +271,11 @@ main() {
     echo "  1. Restart your terminal for shell changes"
     echo "  2. Run 'p10k configure' to set up Powerlevel10k theme"
     echo "  3. Open Kitty terminal and run 'nvim' to complete LazyVim setup"
-    echo "  4. Run 'kitty +kitten themes' to browse terminal themes"
-    echo "  5. Sign in to GUI applications if installed"
-    echo "  6. Configure Git credentials"
+    echo "  4. Test display detection: kitty-detect"
+    echo "  5. Configure display-specific fonts using aliases (kitty-laptop, kitty-external, etc.)"
+    echo "  6. Run 'kitty +kitten themes' to browse terminal themes"
+    echo "  7. Sign in to GUI applications if installed"
+    echo "  8. Configure Git credentials"
     echo
     print_status "🍎 Your macOS development environment is ready!"
 }

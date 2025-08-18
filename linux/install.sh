@@ -183,8 +183,9 @@ main() {
     echo "Linux Development Environment DRY Installer"
     echo "=========================================================="
     echo "Installs essential tools and calls specialized installers:"
-    echo "• Enhanced Shell (Zsh, Neovim, LazyVim, Kitty)"
-    echo "• Enhanced Tmux & Vim configurations"
+    echo "• Server-focused Shell (Zsh, Neovim, LazyVim, Tmux)"
+    echo "• Kitty terminal with dynamic display detection"
+    echo "• Enhanced Vim configurations"
     echo "• Optional development tools"
     echo "=========================================================="
     echo
@@ -197,8 +198,11 @@ main() {
     install_essentials
     
     # Core components via specialized installers (DRY approach)
-    print_status "Installing enhanced shell environment (includes Neovim, Kitty, LazyVim, and Tmux)..."
-    run_installer "install-shell.sh" || print_warning "Enhanced shell installation failed, continuing..."
+    print_status "Installing server-focused shell environment (Zsh, Neovim, LazyVim, Tmux)..."
+    run_installer "install-shell.sh" || print_warning "Shell environment installation failed, continuing..."
+    
+    print_status "Installing Kitty terminal with display detection..."
+    run_installer "kitty-installer.sh" || print_warning "Kitty installation failed, continuing..."
     
     # Tmux is now included in install-shell.sh
     # print_status "Installing enhanced tmux configuration..."
@@ -223,8 +227,8 @@ main() {
     echo
     print_status "📋 Installation Summary:"
     echo "  • Essential packages: ✓ Installed"  
-    echo "  • Enhanced shell (Zsh, Neovim, LazyVim, Kitty): ✓ Installed"
-    echo "  • Enhanced tmux: ✓ Installed"
+    echo "  • Server-focused shell (Zsh, Neovim, LazyVim, Tmux): ✓ Installed"
+    echo "  • Kitty terminal with display detection: ✓ Installed"
     echo "  • Enhanced vim: ✓ Installed"
     echo "  • Development tools: Installed if selected"
     echo "  • Configuration symlinks: Created if repo available"
@@ -235,8 +239,10 @@ main() {
     echo "  1. Log out and back in to apply shell changes"
     echo "  2. Run 'p10k configure' to set up Powerlevel10k theme"
     echo "  3. Open Kitty terminal and run 'nvim' to complete LazyVim setup"
-    echo "  4. Run 'kitty +kitten themes' to browse terminal themes"
-    echo "  5. Install additional desktop packages as needed"
+    echo "  4. Test display detection: kitty-detect"
+    echo "  5. Configure display-specific fonts using aliases (kitty-laptop, kitty-external, etc.)"
+    echo "  6. Run 'kitty +kitten themes' to browse terminal themes"
+    echo "  7. Install additional desktop packages as needed"
     echo
     print_status "🚀 Your Linux desktop is ready for development!"
 }

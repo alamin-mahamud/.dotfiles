@@ -2947,204 +2947,8 @@ install_lazyvim() {
   print_success "LazyVim installed. Run 'nvim' to complete setup."
 }
 
-# Install Kitty terminal (idempotent)
-install_kitty() {
-  print_status "Installing Kitty terminal..."
-
-  if command -v kitty &>/dev/null; then
-    print_success "Kitty is already installed ($(kitty --version))"
-    return 0
-  fi
-
-  case "$OS" in
-  ubuntu | debian)
-    # Install via official binary
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-
-    # Create desktop integration
-    sudo ln -sf ~/.local/kitty.app/bin/kitty /usr/local/bin/
-    sudo ln -sf ~/.local/kitty.app/bin/kitten /usr/local/bin/
-
-    # Create desktop entry
-    cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
-    cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
-
-    # Update icon cache
-    sed -i "s|Icon=kitty|Icon=$HOME/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" \
-      ~/.local/share/applications/kitty*.desktop
-    ;;
-  fedora | centos | rhel | rocky | almalinux)
-    sudo dnf install -y kitty || {
-      # Fallback to official installer
-      curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-      sudo ln -sf ~/.local/kitty.app/bin/kitty /usr/local/bin/
-      sudo ln -sf ~/.local/kitty.app/bin/kitten /usr/local/bin/
-    }
-    ;;
-  arch | manjaro)
-    sudo pacman -S --noconfirm kitty
-    ;;
-  macos)
-    brew install --cask kitty
-    ;;
-  *)
-    print_error "Unsupported OS for Kitty installation: $OS"
-    return 1
-    ;;
-  esac
-
-  print_success "Kitty terminal installed"
-}
-
-# Configure Kitty (idempotent)
-configure_kitty() {
-  print_status "Configuring Kitty terminal..."
-
-  # Create kitty config directory
-  mkdir -p "$HOME/.config/kitty"
-
-  # Backup existing config
-  if [[ -f "$HOME/.config/kitty/kitty.conf" ]] && [[ ! -L "$HOME/.config/kitty/kitty.conf" ]]; then
-    cp "$HOME/.config/kitty/kitty.conf" "$BACKUP_DIR/kitty.conf" 2>/dev/null || true
-    print_status "Backed up existing kitty.conf"
-  fi
-
-  # Create kitty configuration
-  cat >"$HOME/.config/kitty/kitty.conf" <<'KITTY_EOF'
-# ───────────────────────────────────────────────────────────────
-# Theme support via built-in kitten
-# First time: run `kitty +kitten themes` and choose a theme.
-# Kitten will manage theme inclusion to current-theme.conf
-# include current-theme.conf
-
-# OS-specific overrides (optional per sytranvn.dev approach)
-# include ${KITTY_OS}.conf
-
-# ─── Appearance ────────────────────────────────────────────────
-# font_family      FiraCode Nerd Font
-# bold_font        auto
-# italic_font      auto
-# bold_italic_font auto
-font_size        18.0
-background #1d1f21
-foreground #c5c8c6
-
-background_opacity 0.95
-
-# macOS does not support blur natively
-background_blur    0
-
-enable_audio_bell no
-
-cursor_shape block
-cursor_blink_interval 0
-cursor_stop_blinking_after 0
-
-# ─── Window & Layout ───────────────────────────────────────────
-window_padding_width 10
-window_margin_width 2
-hide_window_decorations no
-
-remember_window_size no
-initial_window_width  1800
-initial_window_height 1100
-
-tab_bar_edge bottom
-tab_bar_align left
-tab_bar_style powerline
-tab_powerline_style slanted
-active_tab_font_style bold
-inactive_tab_font_style normal
-
-# ─── Scrolling & History ───────────────────────────────────────
-scrollback_lines     10000
-wheel_scroll_multiplier 3.0
-scrollback_pager bash -c 'less -R'
-
-# ─── Mouse & URL handling ─────────────────────────────────────
-mouse_hide_wait -1
-map ctrl+left click open_url
-mouse_map ctrl+left press ungrabbed,grabbed mouse_click_url  # Mac reverse link-click
-
-# ─── Keyboard Shortcuts (macOS + Linux) ───────────────────────
-map ctrl+shift+enter launch --cwd=current          # open new window
-map cmd+enter       launch --cwd=current           # macOS-specific
-map ctrl+shift+t     new_tab_with_cwd
-map ctrl+shift+q     close_window
-map ctrl+shift+]     next_window
-map ctrl+shift+[     previous_window
-map ctrl+shift+l     next_layout
-
-# ─── Clipboard & Copy/Paste ──────────────────────────────────
-map ctrl+shift+c   copy_to_clipboard
-map ctrl+shift+v   paste_from_clipboard
-
-# ─── Remote control (optional) ───────────────────────────────
-# enables `kitty @` commands
-allow_remote_control yes
-
-# ───────────────────────────────────────────────────────────────
-
-# BEGIN_KITTY_THEME
-# Tokyo Night Moon
-include current-theme.conf
-# END_KITTY_THEME
-
-# BEGIN_KITTY_FONTS
-font_family      family='MesloLGL Nerd Font Mono' postscript_name=MesloLGLNFM-Regular
-bold_font        auto
-italic_font      auto
-bold_italic_font auto
-# END_KITTY_FONTS
-KITTY_EOF
-
-  # Create a default theme file (Catppuccin Frappe)
-  cat >"$HOME/.config/kitty/current-theme.conf" <<'THEME_EOF'
-# Catppuccin Frappe theme for Kitty
-# Based on Catppuccin color scheme
-
-background #303446
-foreground #c6d0f5
-selection_background #626880
-selection_foreground #c6d0f5
-url_color #85c1dc
-cursor #f2d5cf
-cursor_text_color #303446
-
-# Tabs
-active_tab_background #8caaee
-active_tab_foreground #232634
-inactive_tab_background #414559
-inactive_tab_foreground #737994
-tab_bar_background #232634
-
-# Normal colors
-color0 #51576d
-color1 #e78284
-color2 #a6d189
-color3 #e5c890
-color4 #8caaee
-color5 #f4b8e4
-color6 #81c8be
-color7 #b5bfe2
-
-# Bright colors
-color8 #626880
-color9 #e78284
-color10 #a6d189
-color11 #e5c890
-color12 #8caaee
-color13 #f4b8e4
-color14 #81c8be
-color15 #a5adce
-
-# Extended colors
-color16 #ef9f76
-color17 #f2d5cf
-THEME_EOF
-
-  print_success "Kitty configuration created"
-}
+# Kitty installation moved to separate kitty-installer.sh script
+# This keeps install-shell.sh lightweight and server-focused
 
 # Install shell tools (idempotent)
 install_shell_tools() {
@@ -3511,7 +3315,7 @@ show_summary() {
   print_success "✓ Z directory jumper installed"
   print_success "✓ Additional shell tools installed"
   print_success "✓ Nerd Fonts installed"
-  print_success "✓ Kitty terminal installed and configured"
+  print_success "✓ Server-optimized shell environment (no GUI terminal)"
   print_success "✓ Neovim installed with LazyVim"
   print_success "✓ Tmux installed with Catppuccin Frappe theme"
   echo
@@ -3519,7 +3323,7 @@ show_summary() {
   echo "  • ~/.zshrc - Main configuration"
   echo "  • ~/.zsh_functions - Custom functions"
   echo "  • ~/.z.sh - Directory jumper"
-  echo "  • ~/.config/kitty/kitty.conf - Kitty terminal config (Catppuccin Frappe theme)"
+  echo "  • Terminal: Use kitty-installer.sh for GUI terminal setup"
   echo "  • ~/.config/nvim/ - Neovim/LazyVim configuration"
   echo "  • ~/.tmux.conf - Tmux config (Catppuccin Frappe theme, matching Kitty)"
   echo
@@ -3527,7 +3331,7 @@ show_summary() {
   echo
   print_warning "📝 Next Steps:"
   echo "  1. Restart your terminal or run: source ~/.zshrc"
-  echo "  2. Open a new Kitty terminal window"
+  echo "  2. For GUI terminal: Run kitty-installer.sh script"
   echo "  3. Start tmux with: tmux (Catppuccin Frappe theme pre-configured)"
   echo "  4. Run 'nvim' to complete LazyVim setup"
   echo "  5. Run 'kitty +kitten themes' to browse more themes (Catppuccin Frappe is default)"
@@ -3565,8 +3369,9 @@ show_summary() {
 main() {
   clear
   echo "========================================"
-  echo "Enhanced Shell Environment Installer"
+  echo "Server-Focused Shell Environment Installer"
   echo "========================================"
+  echo "Lightweight setup without GUI components"
   echo
 
   # Pre-flight checks
@@ -3590,9 +3395,7 @@ main() {
   install_shell_tools
   install_fonts
 
-  # Terminal and editor
-  install_kitty
-  configure_kitty
+  # Editor only (Kitty moved to separate kitty-installer.sh)
   install_neovim
   install_lazyvim
 

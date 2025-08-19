@@ -7,13 +7,13 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../scripts/lib/common.sh"
-source "$SCRIPT_DIR/../scripts/lib/package-managers.sh"
+LINUX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$LINUX_SCRIPT_DIR/../scripts/lib/common.sh"
+source "$LINUX_SCRIPT_DIR/../scripts/lib/package-managers.sh"
 
 # Configuration
-COMPONENTS_DIR="$SCRIPT_DIR/../scripts/components"
-DESKTOP_DIR="$SCRIPT_DIR/../scripts/desktop"
+COMPONENTS_DIR="$LINUX_SCRIPT_DIR/../scripts/components"
+DESKTOP_DIR="$LINUX_SCRIPT_DIR/../scripts/desktop"
 
 install_system_packages() {
     info "Installing system packages for Linux desktop..."

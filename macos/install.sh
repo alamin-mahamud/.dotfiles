@@ -7,13 +7,13 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../scripts/lib/common.sh"
-source "$SCRIPT_DIR/../scripts/lib/package-managers.sh"
+MACOS_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$MACOS_SCRIPT_DIR/../scripts/lib/common.sh"
+source "$MACOS_SCRIPT_DIR/../scripts/lib/package-managers.sh"
 
 # Configuration
-COMPONENTS_DIR="$SCRIPT_DIR/../scripts/components"
-DESKTOP_DIR="$SCRIPT_DIR/../scripts/desktop"
+COMPONENTS_DIR="$MACOS_SCRIPT_DIR/../scripts/components"
+DESKTOP_DIR="$MACOS_SCRIPT_DIR/../scripts/desktop"
 
 install_xcode_cli_tools() {
     info "Installing Xcode Command Line Tools..."

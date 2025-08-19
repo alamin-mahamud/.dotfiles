@@ -5,15 +5,20 @@
 
 set -euo pipefail
 
-# Colors for output
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly BLUE='\033[0;34m'
-readonly PURPLE='\033[0;35m'
-readonly CYAN='\033[0;36m'
-readonly WHITE='\033[1;37m'
-readonly NC='\033[0m' # No Color
+# Prevent multiple sourcing
+export DOTFILES_COMMON_LOADED=1
+
+# Colors for output (only define if not already defined)
+if [[ -z "${RED:-}" ]]; then
+    readonly RED='\033[0;31m'
+    readonly GREEN='\033[0;32m'
+    readonly YELLOW='\033[1;33m'
+    readonly BLUE='\033[0;34m'
+    readonly PURPLE='\033[0;35m'
+    readonly CYAN='\033[0;36m'
+    readonly WHITE='\033[1;37m'
+    readonly NC='\033[0m' # No Color
+fi
 
 # Global variables
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -221,7 +226,9 @@ ask_yes_no() {
     
     while true; do
         read -r -p "$question" response
-        case "${response,,}" in
+        # Convert to lowercase - compatible with older bash
+        response=$(echo "$response" | tr '[:upper:]' '[:lower:]')
+        case "$response" in
             y|yes) return 0 ;;
             n|no) return 1 ;;
             "") 

@@ -1,321 +1,307 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Enhanced Bootstrap Script for Dotfiles
-# Supports: Ubuntu Desktop, Ubuntu Server, macOS
-# Author: dotfiles repository
-# Version: 2.0
+# Bootstrap Script for Dotfiles
+# Enhanced modular installation with DRY architecture
+# Supports: Linux Desktop, macOS, Server environments
+# Version: 3.0
 
 set -euo pipefail
-
-# Color codes for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
 
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export DOTFILES_ROOT="$SCRIPT_DIR"
 
-# Log file
-LOG_FILE="/tmp/dotfiles-bootstrap-$(date +%Y%m%d-%H%M%S).log"
-exec > >(tee -a "$LOG_FILE") 2>&1
+# Load shared libraries
+source "$SCRIPT_DIR/scripts/lib/common.sh"
+source "$SCRIPT_DIR/scripts/lib/package-managers.sh"
 
-# Print functions
+# Configuration
+ORCHESTRATORS_DIR="$SCRIPT_DIR"
+COMPONENTS_DIR="$SCRIPT_DIR/scripts/components"
+DESKTOP_DIR="$SCRIPT_DIR/scripts/desktop"
+
 print_banner() {
-  echo -e "${CYAN}"
-  echo "╔═══════════════════════════════════════════════════╗"
-  echo "║           Dotfiles Installation Script            ║"
-  echo "║                   Version 2.0                     ║"
-  echo "╚═══════════════════════════════════════════════════╝"
-  echo -e "${NC}"
+    echo -e "${CYAN}"
+    echo "╔═══════════════════════════════════════════════════╗"
+    echo "║          Dotfiles Bootstrap Script v3.0          ║"
+    echo "║         DRY Architecture • Modular Design        ║"
+    echo "╚═══════════════════════════════════════════════════╝"
+    echo -e "${NC}"
 }
 
-print_status() {
-  echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
+show_system_info() {
+    print_header "System Information"
+    info "Operating System: ${DOTFILES_OS}"
+    info "Distribution: ${DOTFILES_DISTRO}"
+    info "Architecture: ${DOTFILES_ARCH}"
+    info "Environment: ${DOTFILES_ENV}"
+    info "Display Server: ${DOTFILES_DISPLAY}"
+    info "Package Manager: $(detect_package_manager)"
+    
+    if is_wsl; then
+        info "WSL Environment detected"
+    fi
+    
+    if is_ssh_session; then
+        info "SSH Session detected"
+    fi
 }
 
-print_success() {
-  echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ✓ $1"
+show_main_menu() {
+    print_header "Installation Options"
+    
+    case "${DOTFILES_OS}" in
+        linux)
+            if is_desktop_environment; then
+                show_linux_desktop_menu
+            else
+                show_linux_server_menu
+            fi
+            ;;
+        macos)
+            show_macos_menu
+            ;;
+        *)
+            error "Unsupported operating system: ${DOTFILES_OS}"
+            ;;
+    esac
 }
 
-print_error() {
-  echo -e "${RED}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ✗ $1"
+show_linux_desktop_menu() {
+    echo "Linux Desktop Installation Options:"
+    echo "1) Full Desktop Installation"
+    echo "2) Shell Environment Only"
+    echo "3) Python Development Environment"
+    echo "4) Individual Component Selection"
+    echo "5) Keyboard Setup (Caps Lock to Escape)"
+    echo "q) Quit"
+    echo
+    read -p "Choose an option [1-5, q]: " choice
+    
+    case $choice in
+        1) run_orchestrator "linux/install.sh" ;;
+        2) run_component "shell-env.sh" ;;
+        3) run_component "python-env.sh" ;;
+        4) show_component_menu ;;
+        5) run_desktop_feature "keyboard-setup.sh" ;;
+        q|Q) exit 0 ;;
+        *) warning "Invalid option. Please try again." ; show_main_menu ;;
+    esac
 }
 
-print_warning() {
-  echo -e "${YELLOW}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ⚠ $1"
+show_linux_server_menu() {
+    echo "Linux Server Installation Options:"
+    echo "1) Essential Server Setup"
+    echo "2) Shell Environment Only" 
+    echo "3) Python Development Environment"
+    echo "4) Individual Component Selection"
+    echo "q) Quit"
+    echo
+    read -p "Choose an option [1-4, q]: " choice
+    
+    case $choice in
+        1) run_server_essentials ;;
+        2) run_component "shell-env.sh" ;;
+        3) run_component "python-env.sh" ;;
+        4) show_component_menu ;;
+        q|Q) exit 0 ;;
+        *) warning "Invalid option. Please try again." ; show_main_menu ;;
+    esac
 }
 
-# Detect environment type
-detect_environment() {
-  local os_type=""
-  local env_type=""
-  local distro=""
-  local version=""
+show_macos_menu() {
+    echo "macOS Installation Options:"
+    echo "1) Full macOS Development Environment"
+    echo "2) Shell Environment Only"
+    echo "3) Python Development Environment" 
+    echo "4) Individual Component Selection"
+    echo "5) Keyboard Setup (Caps Lock to Escape)"
+    echo "q) Quit"
+    echo
+    read -p "Choose an option [1-5, q]: " choice
+    
+    case $choice in
+        1) run_orchestrator "macos/install.sh" ;;
+        2) run_component "shell-env.sh" ;;
+        3) run_component "python-env.sh" ;;
+        4) show_component_menu ;;
+        5) run_desktop_feature "keyboard-setup.sh" ;;
+        q|Q) exit 0 ;;
+        *) warning "Invalid option. Please try again." ; show_main_menu ;;
+    esac
+}
 
-  # Detect OS
-  case "$OSTYPE" in
-  linux-gnu*)
-    os_type="linux"
+show_component_menu() {
+    print_header "Individual Components"
+    echo "Available components:"
+    echo "1) Shell Environment (Zsh + Oh My Zsh + Tmux + CLI tools)"
+    echo "2) Python Environment (pyenv + poetry + pipx)"
+    echo "3) Keyboard Setup (Caps Lock to Escape)"
+    echo "b) Back to main menu"
+    echo "q) Quit"
+    echo
+    read -p "Choose a component [1-3, b, q]: " choice
+    
+    case $choice in
+        1) run_component "shell-env.sh" ;;
+        2) run_component "python-env.sh" ;;
+        3) run_desktop_feature "keyboard-setup.sh" ;;
+        b|B) show_main_menu ;;
+        q|Q) exit 0 ;;
+        *) warning "Invalid option. Please try again." ; show_component_menu ;;
+    esac
+}
 
-    # Check if it's WSL
-    if grep -qEi "(Microsoft|WSL)" /proc/version &>/dev/null; then
-      env_type="wsl"
+run_orchestrator() {
+    local orchestrator="$1"
+    local script_path="$ORCHESTRATORS_DIR/$orchestrator"
+    
+    if [[ -x "$script_path" ]]; then
+        info "Running orchestrator: $orchestrator"
+        if "$script_path"; then
+            success "Completed: $orchestrator"
+            show_completion_message
+        else
+            error "Failed: $orchestrator"
+        fi
     else
-      # Check for desktop environment
-      if [[ -n "${XDG_CURRENT_DESKTOP:-}" ]] || [[ -n "${DESKTOP_SESSION:-}" ]]; then
-        env_type="desktop"
-      else
-        env_type="server"
-      fi
+        error "Orchestrator not found or not executable: $orchestrator"
     fi
-
-    # Get distribution info
-    if [[ -f /etc/os-release ]]; then
-      source /etc/os-release
-      distro="$ID"
-      version="$VERSION_ID"
-    fi
-    ;;
-  darwin*)
-    os_type="macos"
-    env_type="desktop"
-    version="$(sw_vers -productVersion)"
-    ;;
-  *)
-    print_error "Unsupported OS: $OSTYPE"
-    exit 1
-    ;;
-  esac
-
-  # Export environment variables
-  export DOTFILES_OS="$os_type"
-  export DOTFILES_ENV="$env_type"
-  export DOTFILES_DISTRO="${distro:-unknown}"
-  export DOTFILES_VERSION="${version:-unknown}"
-
-  print_success "Detected environment:"
-  echo "  OS: $DOTFILES_OS"
-  echo "  Environment: $DOTFILES_ENV"
-  [[ -n "$distro" ]] && echo "  Distribution: $DOTFILES_DISTRO $DOTFILES_VERSION"
-  [[ "$os_type" == "macos" ]] && echo "  macOS Version: $version"
 }
 
-# Check prerequisites
+run_component() {
+    local component="$1"
+    local script_path="$COMPONENTS_DIR/$component"
+    
+    if [[ -x "$script_path" ]]; then
+        info "Running component: $component"
+        if "$script_path"; then
+            success "Completed: $component"
+            show_completion_message
+        else
+            error "Failed: $component"
+        fi
+    else
+        error "Component not found or not executable: $component"
+    fi
+}
+
+run_desktop_feature() {
+    local feature="$1"
+    local script_path="$DESKTOP_DIR/$feature"
+    
+    if [[ -x "$script_path" ]]; then
+        info "Running desktop feature: $feature"
+        if "$script_path"; then
+            success "Completed: $feature"
+            show_completion_message
+        else
+            error "Failed: $feature"
+        fi
+    else
+        error "Desktop feature not found or not executable: $feature"
+    fi
+}
+
+run_server_essentials() {
+    info "Installing server essentials..."
+    
+    # Install minimal server components
+    run_component "shell-env.sh"
+    
+    # Basic security setup for servers
+    if [[ "${DOTFILES_DISTRO}" == "ubuntu" ]]; then
+        info "Setting up basic server security..."
+        setup_package_manager
+        update_package_lists
+        install_packages ufw fail2ban htop iotop nethogs
+        
+        # Configure UFW
+        if command_exists ufw; then
+            sudo ufw --force enable >/dev/null 2>&1 || true
+            success "UFW firewall enabled"
+        fi
+    fi
+    
+    success "Server essentials installation complete"
+}
+
+show_completion_message() {
+    print_header "Installation Complete!"
+    
+    case "${DOTFILES_OS}" in
+        linux|macos)
+            info "Next steps:"
+            info "1. Restart your terminal or run: exec zsh"
+            info "2. Run 'p10k configure' to set up your prompt theme"
+            info "3. Open tmux and press Ctrl-a + I to install plugins"
+            ;;
+    esac
+    
+    info ""
+    info "Log file: $LOG_FILE"
+    info ""
+    
+    if ask_yes_no "Run another installation?" "no"; then
+        show_main_menu
+    else
+        info "Thank you for using the dotfiles installer!"
+        exit 0
+    fi
+}
+
 check_prerequisites() {
-  print_status "Checking prerequisites..."
-
-  # Check for required commands
-  local required_commands=("git" "curl")
-  local missing_commands=()
-
-  for cmd in "${required_commands[@]}"; do
-    if ! command -v "$cmd" &>/dev/null; then
-      missing_commands+=("$cmd")
-    fi
-  done
-
-  if [[ ${#missing_commands[@]} -gt 0 ]]; then
-    print_error "Missing required commands: ${missing_commands[*]}"
-    print_status "Please install them before running this script."
-    exit 1
-  fi
-
-  # Check if running as root
-  if [[ $EUID -eq 0 ]]; then
-    print_warning "Running as root is not recommended."
-    print_status "Continue anyway? (y/N)"
-    read -r response
-    if [[ ! "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-      exit 0
-    fi
-  fi
-
-  print_success "Prerequisites check passed"
-}
-
-# Installation menu
-show_installation_menu() {
-  echo
-  echo -e "${MAGENTA}Select installation type:${NC}"
-  echo
-
-  case "$DOTFILES_OS" in
-  linux)
-    echo "  1) Ubuntu Desktop (Full GUI environment)"
-    echo "  2) Ubuntu Server (Minimal, no GUI)"
-    echo "  3) Shell (Zsh + Tmux + Modern CLI tools)"
-    echo "  4) DevOps Tools (Docker + K8s + Terraform + AWS)"
-    echo "  5) Custom Installation"
-    ;;
-  macos)
-    echo "  1) Mac Complete Install (Full environment)"
-    echo "  2) Shell (Zsh + Tmux + Modern CLI tools)"
-    echo "  3) DevOps Tools (Docker + K8s + Terraform + AWS)"
-    echo "  4) Custom Installation"
-    ;;
-  esac
-
-  echo "  q) Quit"
-  echo
-  read -rp "Enter your choice: " choice
-  echo
-
-  case "$choice" in
-  q | Q)
-    print_status "Installation cancelled."
-    exit 0
-    ;;
-  *)
-    return "$choice"
-    ;;
-  esac
-}
-
-# Run installation based on selection
-run_installation() {
-  local choice=$1
-
-  case "$DOTFILES_OS" in
-  linux)
-    case "$choice" in
-    1)
-      print_status "Starting Ubuntu Desktop installation..."
-      source "$SCRIPT_DIR/linux/install.sh"
-      ;;
-    2)
-      print_status "Starting Ubuntu Server installation..."
-      if [[ -f "$SCRIPT_DIR/scripts/ubuntu-server-setup.sh" ]]; then
-        bash "$SCRIPT_DIR/scripts/ubuntu-server-setup.sh"
-      else
-        print_error "Server setup script not found"
-        exit 1
-      fi
-      ;;
-    3)
-      print_status "Installing Shell environment..."
-      bash "$SCRIPT_DIR/scripts/install-shell.sh"
-      ;;
-    4)
-      print_status "Installing DevOps tools..."
-      bash "$SCRIPT_DIR/scripts/devops-tools.sh"
-      ;;
-    5)
-      print_status "Starting custom installation..."
-      bash "$SCRIPT_DIR/scripts/custom-install.sh"
-      ;;
-    *)
-      print_error "Invalid choice"
-      exit 1
-      ;;
-    esac
-    ;;
-  macos)
-    case "$choice" in
-    1)
-      print_status "Starting Mac Complete Install..."
-      source "$SCRIPT_DIR/macos/install.sh"
-      ;;
-    2)
-      print_status "Installing Shell environment..."
-      bash "$SCRIPT_DIR/scripts/install-shell.sh"
-      ;;
-    3)
-      print_status "Installing DevOps tools..."
-      bash "$SCRIPT_DIR/scripts/devops-tools.sh"
-      ;;
-    4)
-      print_status "Starting custom installation..."
-      bash "$SCRIPT_DIR/scripts/custom-install.sh"
-      ;;
-    *)
-      print_error "Invalid choice"
-      exit 1
-      ;;
-    esac
-    ;;
-  esac
-}
-
-# Create backup of existing dotfiles
-backup_existing_dotfiles() {
-  print_status "Would you like to backup existing dotfiles? (Y/n)"
-  read -r response
-  if [[ ! "$response" =~ ^([nN][oO]|[nN])$ ]]; then
-    local backup_dir="$HOME/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
-    mkdir -p "$backup_dir"
-
-    local dotfiles=(
-      ".bashrc" ".zshrc" ".vimrc" ".tmux.conf"
-      ".gitconfig" ".config/nvim" ".config/kitty"
-    )
-
-    for file in "${dotfiles[@]}"; do
-      if [[ -e "$HOME/$file" ]]; then
-        print_status "Backing up $file..."
-        cp -r "$HOME/$file" "$backup_dir/" 2>/dev/null || true
-      fi
+    info "Checking prerequisites..."
+    
+    # Check for required commands
+    local required_commands=("git" "curl")
+    for cmd in "${required_commands[@]}"; do
+        if ! command_exists "$cmd"; then
+            warning "$cmd not found, installing..."
+            case "${DOTFILES_OS}" in
+                linux)
+                    setup_package_manager
+                    update_package_lists
+                    install_packages "$cmd"
+                    ;;
+                macos)
+                    if [[ "$cmd" == "git" ]] && ! command_exists xcode-select; then
+                        info "Installing Xcode Command Line Tools..."
+                        xcode-select --install
+                        info "Please complete Xcode installation and run this script again"
+                        exit 1
+                    fi
+                    ;;
+            esac
+        fi
     done
-
-    print_success "Backup created at: $backup_dir"
-  fi
+    
+    # Check internet connectivity
+    if ! check_internet; then
+        error "Internet connection required for installation"
+    fi
+    
+    success "Prerequisites check passed"
 }
 
-# Post-installation summary
-show_summary() {
-  echo
-  echo -e "${GREEN}╔═══════════════════════════════════════════════════╗"
-  echo -e "║         Installation Completed Successfully!       ║"
-  echo -e "╚═══════════════════════════════════════════════════╝${NC}"
-  echo
-  print_status "Installation log saved to: $LOG_FILE"
-  echo
-  print_status "Next steps:"
-  echo "  1. Review the installation log for any warnings"
-  echo "  2. Restart your shell or run: source ~/.zshrc"
-  echo "  3. Check the README for usage instructions"
-  echo
-
-  if [[ "$DOTFILES_ENV" == "server" ]]; then
-    print_warning "Server installation notes:"
-    echo "  - Remember to set up SSH keys"
-    echo "  - Configure firewall rules as needed"
-    echo "  - Review security settings"
-  fi
-}
-
-# Main execution
 main() {
-  # Clear screen and show banner
-  clear
-  print_banner
-
-  # Detect environment
-  detect_environment
-
-  # Check prerequisites
-  check_prerequisites
-
-  # Backup existing dotfiles
-  backup_existing_dotfiles
-
-  # Show installation menu and get choice
-  show_installation_menu
-  local choice=$?
-
-  # Run selected installation
-  run_installation "$choice"
-
-  # Show summary
-  show_summary
+    # Initialize
+    init_script "Dotfiles Bootstrap"
+    
+    print_banner
+    
+    # Show system information
+    show_system_info
+    
+    # Check prerequisites
+    check_prerequisites
+    
+    # Show installation options
+    show_main_menu
 }
 
-# Trap errors
-trap 'print_error "An error occurred on line $LINENO. Check the log file: $LOG_FILE"' ERR
+# Handle script interruption
+trap 'echo; warning "Installation interrupted"; exit 1' INT TERM
 
 # Run main function
 main "$@"

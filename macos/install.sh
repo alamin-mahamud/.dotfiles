@@ -1,286 +1,345 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# DRY macOS Installation Orchestrator
-# Calls individual component installers from GitHub to avoid code duplication
-# Features: Homebrew, development tools, modern shell, productivity apps
-# Usage: ./install.sh or curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/macos/install.sh | bash
+# macOS Installation Orchestrator - Apple Silicon Optimized
+# Comprehensive macOS development environment setup using modular components
+# Automatically detects architecture (Apple Silicon vs Intel)
+# Usage: ./install.sh
 
 set -euo pipefail
 
-# Configuration
-GITHUB_RAW_BASE="https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTFILES_ROOT="$(dirname "$SCRIPT_DIR")"
-TEMP_DIR="/tmp/dotfiles-macos-install-$$"
-LOG_FILE="/tmp/macos-setup.log"
+source "$SCRIPT_DIR/../scripts/lib/common.sh"
+source "$SCRIPT_DIR/../scripts/lib/package-managers.sh"
 
-# Cleanup on exit
-cleanup() {
-    rm -rf "$TEMP_DIR"
-}
-trap cleanup EXIT
+# Configuration
+COMPONENTS_DIR="$SCRIPT_DIR/../scripts/components"
+DESKTOP_DIR="$SCRIPT_DIR/../scripts/desktop"
 
-# Create temp directory
-mkdir -p "$TEMP_DIR"
-
-# Logging
-exec > >(tee -a "$LOG_FILE") 2>&1
-
-# Color codes
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m'
-
-# Print functions
-print_status() {
-    echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
-}
-
-print_success() {
-    echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ✓ $1"
-}
-
-print_error() {
-    echo -e "${RED}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ✗ $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} ⚠ $1"
-}
-
-# Download and execute script from GitHub
-run_installer() {
-    local script_name="$1"
-    local script_url="$GITHUB_RAW_BASE/$script_name"
-    local script_path="$TEMP_DIR/$script_name"
+install_xcode_cli_tools() {
+    info "Installing Xcode Command Line Tools..."
     
-    print_status "Downloading and running $script_name..."
-    
-    # Download the script
-    if curl -fsSL "$script_url" -o "$script_path"; then
-        chmod +x "$script_path"
-        print_success "Downloaded $script_name"
-        
-        # Execute the script
-        if bash "$script_path"; then
-            print_success "Successfully ran $script_name"
-        else
-            print_error "Failed to run $script_name"
-            return 1
-        fi
-    else
-        print_error "Failed to download $script_name from $script_url"
-        return 1
-    fi
-}
-
-# Prompt for optional component installation
-prompt_install() {
-    local component="$1"
-    local description="$2"
-    local default="${3:-N}"
-    
-    print_status "Would you like to install $description? (y/N)"
-    read -r response
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    if xcode-select --print-path &> /dev/null; then
+        success "Xcode Command Line Tools already installed"
         return 0
-    else
-        return 1
     fi
+    
+    info "Installing Xcode Command Line Tools (this may take a while)..."
+    xcode-select --install
+    
+    # Wait for installation to complete
+    info "Waiting for Xcode Command Line Tools installation to complete..."
+    until xcode-select --print-path &> /dev/null; do
+        sleep 5
+    done
+    
+    success "Xcode Command Line Tools installed"
 }
 
-# Check if command exists
-command_exists() {
-    command -v "$1" &> /dev/null
-}
-
-# Install Xcode Command Line Tools
-install_xcode_cli() {
-    if ! xcode-select -p &> /dev/null; then
-        print_status "Installing Xcode Command Line Tools..."
-        xcode-select --install
-        
-        # Wait for installation to complete
-        print_status "Please follow the installation prompts..."
-        until xcode-select -p &> /dev/null; do
-            sleep 5
-        done
-        
-        print_success "Xcode Command Line Tools installed"
-    else
-        print_success "Xcode Command Line Tools already installed"
-    fi
-}
-
-# Install Homebrew
-install_homebrew() {
+setup_homebrew() {
+    info "Setting up Homebrew..."
+    
     if ! command_exists brew; then
-        print_status "Installing Homebrew..."
+        info "Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         
-        # Add Homebrew to PATH for Apple Silicon Macs
-        if [[ -f /opt/homebrew/bin/brew ]]; then
-            echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
+        # Add Homebrew to PATH
+        if [[ "${DOTFILES_ARCH}" == "arm64" ]]; then
             eval "$(/opt/homebrew/bin/brew shellenv)"
+        else
+            eval "$(/usr/local/bin/brew shellenv)"
         fi
         
-        print_success "Homebrew installed"
+        success "Homebrew installed"
     else
-        print_success "Homebrew already installed"
+        info "Homebrew already installed, updating..."
         brew update
+        success "Homebrew updated"
     fi
 }
 
-# Install essential macOS packages via Homebrew
 install_essential_packages() {
-    print_status "Installing essential macOS packages..."
+    info "Installing essential macOS packages..."
     
-    # Essential CLI tools (DRY approach - let specialized installers handle specific tools)
-    local packages="coreutils findutils gnu-tar gnu-sed git wget curl"
+    local packages=(
+        # Development tools
+        "git" "curl" "wget" "jq" "tree" "htop"
+        
+        # Modern CLI tools
+        "ripgrep" "fd" "bat" "exa" "fzf" "tmux" "neovim"
+        
+        # Terminal emulators
+        "kitty" "alacritty"
+        
+        # Media and productivity
+        "firefox" "google-chrome" "visual-studio-code"
+        "vlc" "the-unarchiver" "rectangle"
+        
+        # Development applications
+        "docker" "docker-compose" "postman"
+    )
     
-    brew install $packages || {
-        print_warning "Some packages may have failed to install"
-        print_status "Continuing with setup..."
-    }
-    
-    print_success "Essential macOS packages installed"
+    install_packages "${packages[@]}"
 }
 
-# Install essential macOS GUI applications
-install_gui_applications() {
-    if prompt_install "gui-apps" "essential GUI applications (browsers, productivity tools)"; then
-        print_status "Installing GUI applications..."
-        
-        # Essential GUI apps via Homebrew cask  
-        local apps="google-chrome firefox rectangle the-unarchiver"
-        
-        brew install --cask $apps || {
-            print_warning "Some GUI applications may have failed to install"
-            print_status "Continuing with setup..."
-        }
-        
-        print_success "GUI applications installed"
+install_mac_app_store_apps() {
+    if ! command_exists mas; then
+        install_packages mas
+    fi
+    
+    info "Installing Mac App Store applications..."
+    
+    # Common useful apps
+    local apps=(
+        "497799835"  # Xcode (for iOS development)
+        "1278508951" # Trello
+        "1440147259" # AdGuard for Safari
+        "1295203466" # Microsoft Remote Desktop
+    )
+    
+    for app_id in "${apps[@]}"; do
+        mas install "$app_id" 2>/dev/null || warning "Failed to install app ID: $app_id"
+    done
+}
+
+configure_macos_settings() {
+    info "Configuring macOS system settings..."
+    
+    # Dock settings
+    defaults write com.apple.dock autohide -bool true
+    defaults write com.apple.dock tilesize -int 48
+    defaults write com.apple.dock show-recents -bool false
+    
+    # Finder settings
+    defaults write com.apple.finder AppleShowAllFiles -bool true
+    defaults write com.apple.finder ShowPathbar -bool true
+    defaults write com.apple.finder ShowStatusBar -bool true
+    defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+    
+    # Screenshots location
+    local screenshots_dir="$HOME/Pictures/Screenshots"
+    mkdir -p "$screenshots_dir"
+    defaults write com.apple.screencapture location "$screenshots_dir"
+    
+    # Keyboard settings
+    defaults write NSGlobalDomain KeyRepeat -int 2
+    defaults write NSGlobalDomain InitialKeyRepeat -int 15
+    
+    # Trackpad settings
+    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+    defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+    
+    # Menu bar settings
+    defaults write com.apple.menuextra.clock DateFormat -string "EEE MMM d  h:mm:ss a"
+    
+    # Energy settings
+    sudo pmset -a standby 0
+    sudo pmset -a autopoweroff 0
+    
+    success "macOS settings configured"
+}
+
+setup_directories() {
+    info "Setting up directory structure..."
+    
+    local dirs=(
+        "$HOME/Work"
+        "$HOME/Projects"
+        "$HOME/Pictures/Screenshots"
+        "$HOME/.config"
+        "$HOME/.local/bin"
+    )
+    
+    for dir in "${dirs[@]}"; do
+        mkdir -p "$dir"
+        debug "Created directory: $dir"
+    done
+}
+
+clone_dotfiles() {
+    if [[ -d "$HOME/Work/.dotfiles" ]]; then
+        info "Dotfiles already cloned, updating..."
+        cd "$HOME/Work/.dotfiles" && git pull
+    else
+        info "Cloning dotfiles repository..."
+        git clone https://github.com/alamin-mahamud/.dotfiles.git "$HOME/Work/.dotfiles"
     fi
 }
 
-# Configure basic macOS preferences
-configure_macos_preferences() {
-    if prompt_install "macos-prefs" "macOS system preferences tweaks (Finder, Dock, etc.)"; then
-        print_status "Configuring macOS preferences..."
-        
-        # Show hidden files and improve Finder
-        defaults write com.apple.finder AppleShowAllFiles -bool true
-        defaults write com.apple.finder ShowPathbar -bool true
-        defaults write com.apple.finder ShowStatusBar -bool true
-        defaults write com.apple.finder _FXSortFoldersFirst -bool true
-        
-        # System improvements
-        defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
-        defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
-        defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-        
-        # Show Library folder
-        chflags nohidden ~/Library
-        
-        # Remap Caps Lock to Escape
-        hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}'
-        
-        # Restart Finder
-        killall Finder 2>/dev/null || true
-        
-        print_success "macOS preferences configured"
+run_component_installer() {
+    local component="$1"
+    local script_path="$COMPONENTS_DIR/$component"
+    
+    if [[ -x "$script_path" ]]; then
+        info "Running component installer: $component"
+        if "$script_path"; then
+            success "Completed: $component"
+        else
+            error "Failed: $component"
+        fi
+    else
+        warning "Component installer not found or not executable: $component"
     fi
 }
 
-# Main DRY orchestrator for macOS
+run_desktop_installer() {
+    local installer="$1"
+    local script_path="$DESKTOP_DIR/$installer"
+    
+    if [[ -x "$script_path" ]]; then
+        info "Running desktop installer: $installer"
+        if "$script_path"; then
+            success "Completed: $installer"
+        else
+            error "Failed: $installer"
+        fi
+    else
+        warning "Desktop installer not found or not executable: $installer"
+    fi
+}
+
+setup_symlinks() {
+    info "Setting up configuration symlinks..."
+    
+    local dotfiles_dir="$HOME/Work/.dotfiles"
+    
+    # Zsh configuration
+    safe_symlink "$dotfiles_dir/zsh/.zshrc" "$HOME/.zshrc"
+    
+    # Git configuration
+    safe_symlink "$dotfiles_dir/git/.gitconfig" "$HOME/.gitconfig"
+    
+    # Tmux configuration
+    safe_symlink "$dotfiles_dir/configs/tmux/.tmux.conf" "$HOME/.tmux.conf"
+    
+    # Vim configuration
+    if [[ -f "$dotfiles_dir/vim/.vimrc" ]]; then
+        safe_symlink "$dotfiles_dir/vim/.vimrc" "$HOME/.vimrc"
+    fi
+    
+    # Neovim configuration
+    if [[ -d "$dotfiles_dir/nvim" ]]; then
+        safe_symlink "$dotfiles_dir/nvim" "$HOME/.config/nvim"
+    fi
+    
+    # macOS-specific configurations
+    if [[ -d "$dotfiles_dir/macos/.config" ]]; then
+        local config_dirs
+        config_dirs=($(ls "$dotfiles_dir/macos/.config" 2>/dev/null || true))
+        for config in "${config_dirs[@]}"; do
+            if [[ -d "$dotfiles_dir/macos/.config/$config" ]]; then
+                safe_symlink "$dotfiles_dir/macos/.config/$config" "$HOME/.config/$config"
+            fi
+        done
+    fi
+    
+    # iTerm2 configuration
+    if [[ -f "$dotfiles_dir/macos/iterm/com.googlecode.iterm2.plist" ]]; then
+        local iterm_dir="$HOME/Library/Preferences"
+        safe_symlink "$dotfiles_dir/macos/iterm/com.googlecode.iterm2.plist" "$iterm_dir/com.googlecode.iterm2.plist"
+    fi
+    
+    success "Symlinks created"
+}
+
+install_fonts() {
+    info "Installing fonts..."
+    
+    local fonts_dir="$HOME/Library/Fonts"
+    local nerd_fonts=("FiraCode" "JetBrainsMono" "Iosevka")
+    
+    for font in "${nerd_fonts[@]}"; do
+        if [[ ! -f "$fonts_dir/${font}NerdFont-Regular.ttf" ]]; then
+            info "Installing $font Nerd Font..."
+            local font_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${font}.zip"
+            local temp_file="/tmp/${font}.zip"
+            local temp_dir="/tmp/${font}"
+            
+            if download_file "$font_url" "$temp_file"; then
+                mkdir -p "$temp_dir"
+                unzip -q "$temp_file" -d "$temp_dir"
+                cp "$temp_dir"/*.ttf "$fonts_dir/" 2>/dev/null || true
+                cp "$temp_dir"/*.otf "$fonts_dir/" 2>/dev/null || true
+                rm -rf "$temp_file" "$temp_dir"
+                success "Installed $font font"
+            else
+                warning "Failed to download $font font"
+            fi
+        fi
+    done
+    
+    success "Font installation complete"
+}
+
+restart_affected_services() {
+    info "Restarting affected services..."
+    
+    # Restart Dock to apply changes
+    killall Dock 2>/dev/null || true
+    
+    # Restart Finder to apply changes
+    killall Finder 2>/dev/null || true
+    
+    # Restart SystemUIServer for menu bar changes
+    killall SystemUIServer 2>/dev/null || true
+    
+    success "Services restarted"
+}
+
 main() {
-    clear
-    echo "=========================================================="
-    echo "macOS Development Environment DRY Installer"
-    echo "=========================================================="
-    echo "Installs essential tools and calls specialized installers:"
-    echo "• Server-focused Shell (Zsh, Neovim, LazyVim, Tmux)"
-    echo "• Kitty terminal with dynamic display detection"
-    echo "• Enhanced Vim configurations"
-    echo "• Optional development tools & GUI apps"
-    echo "=========================================================="
-    echo
+    init_script "macOS Installation"
     
-    # Check macOS version
-    local macos_version=$(sw_vers -productVersion)
-    print_status "Detected macOS $macos_version"
+    # Verify we're on macOS
+    if [[ "${DOTFILES_OS}" != "macos" ]]; then
+        error "This script is only for macOS systems"
+    fi
+    
+    print_header "macOS Development Environment Setup"
+    info "This will install a comprehensive macOS development environment"
+    info "Architecture: ${DOTFILES_ARCH}"
+    info "Components: Homebrew, Shell, Python, Development tools, Applications"
+    
+    if ! ask_yes_no "Continue with installation?" "yes"; then
+        info "Installation cancelled"
+        exit 0
+    fi
     
     # Core setup
-    install_xcode_cli
-    install_homebrew
+    install_xcode_cli_tools
+    setup_homebrew
+    setup_directories
+    clone_dotfiles
+    
+    # Package installation
     install_essential_packages
+    install_mac_app_store_apps
     
-    # Optional GUI applications
-    install_gui_applications
+    # Component installations
+    run_component_installer "shell-env.sh"
+    run_component_installer "python-env.sh"
     
-    # Core components via specialized installers (DRY approach)
-    print_status "Installing server-focused shell environment (Zsh, Neovim, LazyVim, Tmux)..."
-    run_installer "install-shell.sh" || print_warning "Shell environment installation failed, continuing..."
+    # Desktop-specific installations
+    run_desktop_installer "keyboard-setup.sh"
     
-    print_status "Installing Kitty terminal with display detection..."
-    run_installer "kitty-installer.sh" || print_warning "Kitty installation failed, continuing..."
+    # Configuration
+    setup_symlinks
+    install_fonts
+    configure_macos_settings
+    restart_affected_services
     
-    # Tmux is now included in install-shell.sh
-    # print_status "Installing enhanced tmux configuration..."
-    # run_installer "tmux-installer.sh" || print_warning "Enhanced tmux installation failed, continuing..."
+    success "macOS development environment setup complete!"
     
-    print_status "Installing enhanced vim configuration..."
-    run_installer "vim-installer.sh" || print_warning "Enhanced vim installation failed, continuing..."
-    
-    # Optional development tools
-    if prompt_install "dev-tools" "development tools and programming languages"; then
-        run_installer "install-dev-tools.sh" || print_warning "Development tools installation failed, continuing..."
-    fi
-    
-    # macOS-specific configuration
-    configure_macos_preferences
-    
-    # Create basic symlinks if running from repo
-    if [[ -d "$DOTFILES_ROOT/macos" ]]; then
-        print_status "Creating configuration symlinks from repository..."
-        [[ -f "$DOTFILES_ROOT/git/.gitconfig" ]] && ln -sf "$DOTFILES_ROOT/git/.gitconfig" "$HOME/.gitconfig"
-        [[ -f "$DOTFILES_ROOT/.tmux.conf" ]] && ln -sf "$DOTFILES_ROOT/.tmux.conf" "$HOME/.tmux.conf"
-    fi
-    
-    echo
-    print_success "macOS setup completed!"
-    echo
-    print_status "📋 Installation Summary:"
-    echo "  • Xcode Command Line Tools: ✓ Installed"
-    echo "  • Homebrew: ✓ Installed"  
-    echo "  • Essential packages: ✓ Installed"
-    echo "  • Server-focused shell (Zsh, Neovim, LazyVim, Tmux): ✓ Installed"
-    echo "  • Kitty terminal with display detection: ✓ Installed"
-    echo "  • Enhanced vim: ✓ Installed"
-    echo "  • Development tools: Installed if selected"
-    echo "  • GUI apps: Installed if selected"
-    echo "  • macOS preferences: Configured if selected"
-    echo
-    print_status "📁 Log file saved to: $LOG_FILE"
-    echo
-    print_warning "📝 Next Steps:"
-    echo "  1. Restart your terminal for shell changes"
-    echo "  2. Run 'p10k configure' to set up Powerlevel10k theme"
-    echo "  3. Open Kitty terminal and run 'nvim' to complete LazyVim setup"
-    echo "  4. Test display detection: kitty-detect"
-    echo "  5. Configure display-specific fonts using aliases (kitty-laptop, kitty-external, etc.)"
-    echo "  6. Run 'kitty +kitten themes' to browse terminal themes"
-    echo "  7. Sign in to GUI applications if installed"
-    echo "  8. Configure Git credentials"
-    echo
-    print_status "🍎 Your macOS development environment is ready!"
+    print_header "Next Steps"
+    info "1. Restart your terminal or run: exec zsh"
+    info "2. Run 'p10k configure' to set up your prompt"
+    info "3. Open tmux and press Ctrl-a + I to install plugins"
+    info "4. Configure your applications (VS Code, browsers, etc.)"
+    info "5. Sign in to your accounts (iCloud, GitHub, etc.)"
+    info ""
+    info "Log file: $LOG_FILE"
+    info "Some settings require a restart to take full effect"
 }
 
-# Run main function if executed directly
+# Run main function if script is executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

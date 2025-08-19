@@ -1,0 +1,5 @@
+{
+    /* Map Caps Lock to Escape - Note: This requires system-level configuration */
+    /* Use System Preferences > Keyboard > Modifier Keys to map Caps Lock to Escape */
+    /* This file handles additional key bindings */
+}

@@ -65,40 +65,19 @@ install_essential_packages() {
         "git" "curl" "wget" "jq" "tree" "htop"
         
         # Modern CLI tools
-        "ripgrep" "fd" "bat" "exa" "fzf" "tmux" "neovim"
-        
-        # Terminal emulators
-        "kitty" "alacritty"
-        
-        # Media and productivity
-        "firefox" "google-chrome" "visual-studio-code"
-        "vlc" "the-unarchiver" "rectangle"
+        "ripgrep" "fd" "bat" "eza" "fzf" "tmux" "neovim"
         
         # Development applications
-        "docker" "docker-compose" "postman"
+        "docker"
     )
     
     install_packages "${packages[@]}"
 }
 
 install_mac_app_store_apps() {
-    if ! command_exists mas; then
-        install_packages mas
-    fi
-    
-    info "Installing Mac App Store applications..."
-    
-    # Common useful apps
-    local apps=(
-        "497799835"  # Xcode (for iOS development)
-        "1278508951" # Trello
-        "1440147259" # AdGuard for Safari
-        "1295203466" # Microsoft Remote Desktop
-    )
-    
-    for app_id in "${apps[@]}"; do
-        mas install "$app_id" 2>/dev/null || warning "Failed to install app ID: $app_id"
-    done
+    info "Skipping Mac App Store apps (can be installed manually if needed)"
+    # Uncomment below to install specific apps:
+    # mas install 497799835  # Xcode
 }
 
 configure_macos_settings() {

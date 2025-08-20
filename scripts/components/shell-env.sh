@@ -289,21 +289,13 @@ fi
 # Theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# Plugins
+# Plugins - Essential only, add more as needed
 plugins=(
     git
     zsh-autosuggestions
     zsh-syntax-highlighting
     zsh-completions
     docker
-    kubectl
-    aws
-    python
-    node
-    rust
-    golang
-    terraform
-    ansible
     sudo
     history-substring-search
     colored-man-pages

@@ -16,28 +16,22 @@ COMPONENTS_DIR="$LINUX_SCRIPT_DIR/../scripts/components"
 DESKTOP_DIR="$LINUX_SCRIPT_DIR/../scripts/desktop"
 
 install_system_packages() {
-    info "Installing system packages for Linux desktop..."
+    info "Installing essential system packages for Linux..."
     
     case "$(detect_package_manager)" in
         apt)
             install_packages \
                 curl wget git build-essential software-properties-common \
                 apt-transport-https ca-certificates gnupg lsb-release \
-                ubuntu-restricted-extras fonts-noto-color-emoji \
-                firefox chromium-browser vlc gimp libreoffice \
-                code terminator kitty
+                fonts-noto-color-emoji
             ;;
         dnf)
             install_packages \
-                curl wget git @development-tools \
-                firefox chromium vlc gimp libreoffice \
-                code terminator kitty
+                curl wget git @development-tools
             ;;
         pacman)
             install_packages \
-                curl wget git base-devel \
-                firefox chromium vlc gimp libreoffice \
-                code terminator kitty
+                curl wget git base-devel
             ;;
         *)
             warning "Unknown package manager, skipping system packages"

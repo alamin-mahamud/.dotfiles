@@ -172,24 +172,24 @@ install_linux_cli_tools() {
     case "$pm" in
         apt)
             install_packages \
-                ripgrep fd-find bat exa tree jq htop curl wget git \
+                ripgrep fd-find bat eza tree jq htop curl wget git \
                 tmux neovim fzf
             ;;
         dnf|yum)
             install_packages \
-                ripgrep fd-find bat exa tree jq htop curl wget git \
+                ripgrep fd-find bat eza tree jq htop curl wget git \
                 tmux neovim fzf
             ;;
         pacman)
             install_packages \
-                ripgrep fd bat exa tree jq htop curl wget git \
+                ripgrep fd bat eza tree jq htop curl wget git \
                 tmux neovim fzf
             ;;
         apk)
             install_packages \
                 ripgrep fd bat tree jq htop curl wget git \
                 tmux neovim fzf
-            # exa not available in Alpine, will install via cargo
+            # eza not available in Alpine, will install via cargo
             ;;
     esac
     
@@ -199,15 +199,15 @@ install_linux_cli_tools() {
 
 install_macos_cli_tools() {
     install_packages \
-        ripgrep fd bat exa tree jq htop curl wget git \
+        ripgrep fd bat eza tree jq htop curl wget git \
         tmux neovim fzf
     
     install_additional_tools
 }
 
 install_additional_tools() {
-    # Install eza if exa is not available
-    if ! command_exists exa && ! command_exists eza; then
+    # Install eza if not available
+    if ! command_exists eza; then
         info "Installing eza (modern ls replacement)..."
         if command_exists cargo; then
             cargo install eza
@@ -237,8 +237,33 @@ install_additional_tools() {
     fi
 }
 
+cleanup_zsh_completions() {
+    info "Cleaning up Zsh completions..."
+    
+    # Remove broken symlinks from zsh site-functions directories
+    local dirs=(
+        "/usr/local/share/zsh/site-functions"
+        "/opt/homebrew/share/zsh/site-functions"
+    )
+    
+    for dir in "${dirs[@]}"; do
+        if [[ -d "$dir" ]]; then
+            # Find and remove broken symlinks
+            find "$dir" -type l ! -exec test -e {} \; -delete 2>/dev/null || true
+        fi
+    done
+    
+    # Clean up zcompdump files
+    rm -rf "$HOME"/.zcompdump* 2>/dev/null || true
+    
+    success "Cleaned up Zsh completions"
+}
+
 configure_zsh() {
     info "Configuring Zsh..."
+    
+    # Clean up any broken completions first
+    cleanup_zsh_completions
     
     backup_file "$HOME/.zshrc"
     
@@ -248,6 +273,18 @@ configure_zsh() {
 
 # Path to oh-my-zsh installation
 export ZSH="$HOME/.oh-my-zsh"
+
+# Add zsh-completions to fpath before oh-my-zsh loads
+if [[ -d "$HOME/.oh-my-zsh/custom/plugins/zsh-completions/src" ]]; then
+    fpath=($HOME/.oh-my-zsh/custom/plugins/zsh-completions/src $fpath)
+fi
+
+# Add Homebrew completions to fpath
+if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
+    fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
+elif [[ -d "/usr/local/share/zsh/site-functions" ]]; then
+    fpath=(/usr/local/share/zsh/site-functions $fpath)
+fi
 
 # Theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -305,7 +342,9 @@ setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_SILENT
 
 # Completion
-autoload -Uz compinit && compinit
+autoload -Uz compinit
+# Ignore insecure directories and suppress errors from broken symlinks
+compinit -i 2>/dev/null || compinit -u
 setopt COMPLETE_ALIASES
 setopt GLOB_COMPLETE
 setopt MENU_COMPLETE
@@ -326,11 +365,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # Modern CLI tool aliases
-if command -v exa >/dev/null 2>&1; then
-    alias ls='exa'
-    alias ll='exa -la'
-    alias tree='exa --tree'
-elif command -v eza >/dev/null 2>&1; then
+if command -v eza >/dev/null 2>&1; then
     alias ls='eza'
     alias ll='eza -la'
     alias tree='eza --tree'
@@ -673,7 +708,7 @@ verify_installation() {
     fi
     
     # Check modern CLI tools
-    local tools=("rg" "fd" "bat" "exa" "eza" "fzf" "jq")
+    local tools=("rg" "fd" "bat" "eza" "fzf" "jq")
     for tool in "${tools[@]}"; do
         if command_exists "$tool"; then
             debug "$tool: ✓"

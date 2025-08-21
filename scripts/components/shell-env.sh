@@ -709,28 +709,58 @@ verify_installation() {
 }
 
 main() {
+    local marker="shell-env-$(date +%Y%m%d)"
+    
+    if is_completed "$marker"; then
+        info "Shell environment already set up today"
+        return 0
+    fi
+    
     init_script "Shell Environment Installer"
     
     # Check for required tools
     require_command git
     require_command curl
     
-    install_shell_dependencies
-    install_zsh
-    install_oh_my_zsh
-    install_zsh_plugins
-    install_powerlevel10k
-    install_cli_tools
-    configure_zsh
-    install_tmux
-    configure_fzf
-    create_shell_aliases
-    verify_installation
+    # Planning phase
+    reset_installation_state
+    add_to_plan "Install shell dependencies (zsh, git, curl, build tools)"
+    add_to_plan "Configure Zsh as default shell"
+    add_to_plan "Install Oh My Zsh framework"
+    add_to_plan "Install Zsh plugins (autosuggestions, syntax-highlighting)"
+    add_to_plan "Install Powerlevel10k theme"
+    add_to_plan "Install modern CLI tools (fzf, ripgrep, fd, bat, eza)"
+    add_to_plan "Create comprehensive .zshrc configuration"
+    add_to_plan "Configure Tmux with Tokyo Night theme and plugins"
+    add_to_plan "Configure FZF key bindings and fuzzy search"
+    add_to_plan "Create local shell aliases and functions"
+    add_to_plan "Verify installation and functionality"
     
-    success "Shell environment setup complete!"
-    info "Please restart your terminal or run: exec zsh"
-    info "Run 'p10k configure' to set up Powerlevel10k theme"
-    info "Tmux prefix key is Ctrl-a"
+    show_installation_plan "Shell Environment"
+    
+    # Execution phase with enhanced logging
+    execute_step "Install shell dependencies" "install_shell_dependencies"
+    execute_step "Configure Zsh as default shell" "install_zsh"
+    execute_step "Install Oh My Zsh framework" "install_oh_my_zsh"
+    execute_step "Install Zsh plugins" "install_zsh_plugins"
+    execute_step "Install Powerlevel10k theme" "install_powerlevel10k"
+    execute_step "Install modern CLI tools" "install_cli_tools"
+    execute_step "Create comprehensive .zshrc configuration" "configure_zsh"
+    execute_step "Configure Tmux with plugins" "install_tmux"
+    execute_step "Configure FZF key bindings" "configure_fzf"
+    execute_step "Create local shell aliases and functions" "create_shell_aliases"
+    execute_step "Verify installation" "verify_installation"
+    
+    mark_completed "$marker"
+    
+    show_installation_summary "Shell Environment"
+    
+    print_header "Shell Environment Setup Complete!"
+    info "Next steps:"
+    info "1. Restart your terminal or run: exec zsh"
+    info "2. Run 'p10k configure' to set up Powerlevel10k theme"
+    info "3. Tmux prefix key is Ctrl-a"
+    info "4. Use 'fzf' for interactive file search"
     
     if [[ "$SHELL" != *zsh* ]]; then
         warning "Default shell is not Zsh. Please log out and log back in."

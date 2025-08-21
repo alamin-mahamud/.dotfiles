@@ -9,7 +9,7 @@ This is a comprehensive, modular dotfiles repository optimized for DevOps profes
 ## Key Commands
 
 ### Main Installation
-- `./bootstrap.sh` - Main entry point with interactive menu and environment detection
+- `./bootstrap.sh` - Interactive menu with enhanced planning and logging
 - `chmod +x ./bootstrap.sh` - Make bootstrap script executable before running
 
 ### Platform-Specific Orchestrators
@@ -31,7 +31,7 @@ This is a comprehensive, modular dotfiles repository optimized for DevOps profes
 - `./scripts/components/python-env.sh` - Python development environment (pyenv + poetry + pipx)
 
 ### Desktop Features
-- `./scripts/desktop/keyboard-setup.sh` - Keyboard configuration including Caps Lock to Escape
+- Keyboard configuration (Caps Lock → Escape) is integrated into the Neovim component
 
 ### One-liner Installation
 ```bash

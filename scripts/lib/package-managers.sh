@@ -43,33 +43,48 @@ detect_package_manager() {
     esac
 }
 
-# Update package lists
+# Update package lists (with frequency check to avoid excessive updates)
 update_package_lists() {
     local pm="${1:-$(detect_package_manager)}"
+    local update_marker="${HOME}/.dotfiles-markers/package-lists-updated"
+    local update_threshold=3600  # 1 hour in seconds
+    
+    # Check if recently updated
+    if [[ -f "$update_marker" ]]; then
+        local last_update=$(stat -f %m "$update_marker" 2>/dev/null || stat -c %Y "$update_marker" 2>/dev/null || echo 0)
+        local current_time=$(date +%s)
+        local time_diff=$((current_time - last_update))
+        
+        if [[ $time_diff -lt $update_threshold ]]; then
+            debug "Package lists recently updated (${time_diff}s ago), skipping"
+            return 0
+        fi
+    fi
     
     info "Updating package lists..."
+    ensure_directory "$(dirname "$update_marker")"
     
     case "$pm" in
         apt)
-            sudo apt-get update -qq
+            sudo apt-get update -qq && touch "$update_marker"
             ;;
         dnf)
-            sudo dnf check-update -q || true
+            (sudo dnf check-update -q || true) && touch "$update_marker"
             ;;
         yum)
-            sudo yum check-update -q || true
+            (sudo yum check-update -q || true) && touch "$update_marker"
             ;;
         pacman)
-            sudo pacman -Sy --noconfirm
+            sudo pacman -Sy --noconfirm && touch "$update_marker"
             ;;
         zypper)
-            sudo zypper refresh -q
+            sudo zypper refresh -q && touch "$update_marker"
             ;;
         apk)
-            sudo apk update
+            sudo apk update && touch "$update_marker"
             ;;
         brew)
-            brew update
+            brew update && touch "$update_marker"
             ;;
         *)
             warning "Unknown package manager: $pm"
@@ -78,39 +93,54 @@ update_package_lists() {
     esac
 }
 
-# Install packages
+# Install packages (idempotent)
 install_packages() {
     local packages=("$@")
     local pm="${PM:-$(detect_package_manager)}"
+    local packages_to_install=()
     
     if [[ ${#packages[@]} -eq 0 ]]; then
         warning "No packages specified for installation"
         return 0
     fi
     
-    info "Installing packages: ${packages[*]} (using $pm)"
+    # Filter out already installed packages
+    for package in "${packages[@]}"; do
+        if ! is_package_installed "$package"; then
+            packages_to_install+=("$package")
+        else
+            debug "Package already installed: $package"
+        fi
+    done
+    
+    if [[ ${#packages_to_install[@]} -eq 0 ]]; then
+        info "All packages already installed: ${packages[*]}"
+        return 0
+    fi
+    
+    info "Installing packages: ${packages_to_install[*]} (using $pm)"
     
     case "$pm" in
         apt)
-            sudo apt-get install -y "${packages[@]}"
+            sudo apt-get install -y "${packages_to_install[@]}"
             ;;
         dnf)
-            sudo dnf install -y "${packages[@]}"
+            sudo dnf install -y "${packages_to_install[@]}"
             ;;
         yum)
-            sudo yum install -y "${packages[@]}"
+            sudo yum install -y "${packages_to_install[@]}"
             ;;
         pacman)
-            sudo pacman -S --noconfirm "${packages[@]}"
+            sudo pacman -S --noconfirm "${packages_to_install[@]}"
             ;;
         zypper)
-            sudo zypper install -y "${packages[@]}"
+            sudo zypper install -y "${packages_to_install[@]}"
             ;;
         apk)
-            sudo apk add "${packages[@]}"
+            sudo apk add "${packages_to_install[@]}"
             ;;
         brew)
-            brew install "${packages[@]}"
+            brew install "${packages_to_install[@]}"
             ;;
         *)
             error "Cannot install packages: unknown package manager '$pm'"
@@ -352,7 +382,7 @@ install_package_from_url() {
     rm -f "$temp_file"
 }
 
-# Setup package manager (install if needed)
+# Setup package manager (install if needed) - idempotent
 setup_package_manager() {
     local os="${DOTFILES_OS:-$(detect_os)}"
     
@@ -368,6 +398,9 @@ setup_package_manager() {
                 elif [[ -x "/usr/local/bin/brew" ]]; then
                     eval "$(/usr/local/bin/brew shellenv)"
                 fi
+                success "Homebrew installed"
+            else
+                debug "Homebrew already installed"
             fi
             ;;
         linux)
@@ -375,6 +408,8 @@ setup_package_manager() {
             local pm="$(detect_package_manager)"
             if [[ "$pm" == "unknown" ]]; then
                 error "No supported package manager found"
+            else
+                debug "Package manager available: $pm"
             fi
             ;;
     esac

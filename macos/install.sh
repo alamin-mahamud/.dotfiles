@@ -16,10 +16,8 @@ COMPONENTS_DIR="$MACOS_SCRIPT_DIR/../scripts/components"
 DESKTOP_DIR="$MACOS_SCRIPT_DIR/../scripts/desktop"
 
 install_xcode_cli_tools() {
-    info "Installing Xcode Command Line Tools..."
-    
     if xcode-select --print-path &> /dev/null; then
-        success "Xcode Command Line Tools already installed"
+        debug "Xcode Command Line Tools already installed"
         return 0
     fi
     
@@ -36,8 +34,6 @@ install_xcode_cli_tools() {
 }
 
 setup_homebrew() {
-    info "Setting up Homebrew..."
-    
     if ! command_exists brew; then
         info "Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -51,9 +47,9 @@ setup_homebrew() {
         
         success "Homebrew installed"
     else
-        info "Homebrew already installed, updating..."
-        brew update
-        success "Homebrew updated"
+        debug "Homebrew already installed"
+        # Update only if package lists haven't been updated recently
+        update_package_lists
     fi
 }
 
@@ -81,6 +77,11 @@ install_mac_app_store_apps() {
 }
 
 configure_macos_settings() {
+    if is_completed "macos-settings-configured"; then
+        debug "macOS settings already configured"
+        return 0
+    fi
+    
     info "Configuring macOS system settings..."
     
     # Dock settings
@@ -96,7 +97,7 @@ configure_macos_settings() {
     
     # Screenshots location
     local screenshots_dir="$HOME/Pictures/Screenshots"
-    mkdir -p "$screenshots_dir"
+    ensure_directory "$screenshots_dir"
     defaults write com.apple.screencapture location "$screenshots_dir"
     
     # Keyboard settings
@@ -114,6 +115,7 @@ configure_macos_settings() {
     sudo pmset -a standby 0
     sudo pmset -a autopoweroff 0
     
+    mark_completed "macos-settings-configured"
     success "macOS settings configured"
 }
 
@@ -129,19 +131,12 @@ setup_directories() {
     )
     
     for dir in "${dirs[@]}"; do
-        mkdir -p "$dir"
-        debug "Created directory: $dir"
+        ensure_directory "$dir"
     done
 }
 
 clone_dotfiles() {
-    if [[ -d "$HOME/Work/.dotfiles" ]]; then
-        info "Dotfiles already cloned, updating..."
-        cd "$HOME/Work/.dotfiles" && git pull
-    else
-        info "Cloning dotfiles repository..."
-        git clone https://github.com/alamin-mahamud/.dotfiles.git "$HOME/Work/.dotfiles"
-    fi
+    install_or_update_git_repo "https://github.com/alamin-mahamud/.dotfiles.git" "$HOME/Work/.dotfiles" "master"
 }
 
 run_component_installer() {
@@ -221,6 +216,11 @@ setup_symlinks() {
 }
 
 install_fonts() {
+    if is_completed "fonts-installed"; then
+        debug "Fonts already installed"
+        return 0
+    fi
+    
     info "Installing fonts..."
     
     local fonts_dir="$HOME/Library/Fonts"
@@ -243,9 +243,12 @@ install_fonts() {
             else
                 warning "Failed to download $font font"
             fi
+        else
+            debug "$font font already installed"
         fi
     done
     
+    mark_completed "fonts-installed"
     success "Font installation complete"
 }
 

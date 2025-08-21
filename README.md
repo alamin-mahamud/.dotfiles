@@ -1,67 +1,140 @@
-# DevOps-Focused Dotfiles
+# .dotfiles
 
-Standalone scripts for DevOps professionals. Optimized for Linux servers with Zsh + Tmux + LazyVim + Kitty.
+Modular dotfiles for DevOps professionals. Pure shell-based architecture with enhanced logging, planning, and modular components.
 
-## Quick Setup
+## Quick Install
 
-### DevOps Shell Environment
 ```bash
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/devops-shell.sh | bash
-```
-Installs: Zsh + Oh My Zsh + Powerlevel10k + Tmux + Kitty + modern CLI tools
+# Clone
+git clone https://github.com/alamin-mahamud/.dotfiles.git ~/Work/.dotfiles
+cd ~/Work/.dotfiles
 
-### DevOps Tools
-```bash  
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/devops-tools.sh | bash
-```
-Installs: Docker + Kubernetes + Terraform + AWS CLI + Python + Node.js + GitHub CLI
+# Interactive installer with planning and progress tracking
+./bootstrap.sh
 
-### Complete Interactive Setup
+# Component-specific installations
+./scripts/components/shell-env.sh      # Shell environment only
+./scripts/components/neovim-env.sh     # Neovim + LazyVim
+./scripts/components/python-env.sh     # Python development environment
+```
+
+## Commands
+
+### Main Scripts
 ```bash
-git clone https://github.com/alamin-mahamud/.dotfiles.git ~/.dotfiles
-cd ~/.dotfiles && chmod +x bootstrap.sh && ./bootstrap.sh
+./bootstrap.sh              # Interactive menu with component selection
+./linux/install.sh          # Complete Linux desktop environment
+./macos/install.sh           # Complete macOS development environment
 ```
 
-## What's Included
-
-**Shell Environment:**
-- Zsh with Oh My Zsh framework
-- Powerlevel10k theme
-- Essential plugins (autosuggestions, syntax-highlighting)
-- Tmux with Tokyo Night Moon theme
-- Kitty terminal with optimized config
-- Modern CLI tools: ripgrep, fd, bat, eza, fzf, jq
-
-**DevOps Tools:**
-- Docker & Docker Compose
-- Kubernetes (kubectl, helm)  
-- Terraform
-- AWS CLI v2
-- Python (pip, pipenv, poetry, ansible)
-- Node.js (npm, yarn, pnpm)
-- GitHub CLI
-
-**Key Aliases:**
+### Component Installers (Modular)
 ```bash
-# Docker: d, dc, dps, dexec, dlogs, dclean
-# Kubernetes: k, kgp, kgs, kgd, kdesc, klogs, kexec  
-# Git: g, gs, ga, gc, gp, gl, glog, gd
-# Modern tools: ll/la/ls (eza), cat (bat), grep (rg), find (fd)
-# Tmux: t, ta, ts, tl
+./scripts/components/shell-env.sh      # Zsh + Tmux + CLI tools + Planning
+./scripts/components/neovim-env.sh     # Neovim + LazyVim + Keyboard Setup
+./scripts/components/python-env.sh     # Python development environment
 ```
 
-## Post-Setup
+### Component Installers
+```bash
+./scripts/install-shell.sh                    # Zsh + Tmux + CLI tools
+./scripts/install-desktop-terminal.sh         # Fonts + Kitty terminal
+./scripts/vim-installer.sh                    # Vim + plugins
+./scripts/install-dev-tools.sh                # Dev tools (Git, Docker, Node, Python, etc.)
+./scripts/components/shell-env.sh             # Shell environment only
+./scripts/components/python-env.sh            # Python environment
+./scripts/desktop/keyboard-setup.sh           # Caps Lock → Escape
+```
 
-1. Restart shell: `exec zsh`
-2. Configure Powerlevel10k: `p10k configure`  
-3. Install Tmux plugins: `tmux` → `Ctrl-a + I`
-4. Setup Neovim: `nvim` (LazyVim auto-installs)
-5. Configure tools: `aws configure`, `gh auth login`
+### One-liner Components
+```bash
+# Shell environment (server-friendly)
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash
+
+# Desktop terminal setup
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-desktop-terminal.sh | bash
+
+# Vim configuration
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/vim-installer.sh | bash
+
+# All dev tools
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash
+
+# Shell environment only
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/shell-env.sh | bash
+```
+
+### Dev Tools Options
+```bash
+./scripts/install-dev-tools.sh --all           # Install everything
+./scripts/install-dev-tools.sh --docker        # Docker only
+./scripts/install-dev-tools.sh --node          # Node.js only
+./scripts/install-dev-tools.sh --python        # Python only
+./scripts/install-dev-tools.sh --rust          # Rust only
+./scripts/install-dev-tools.sh --go            # Go only
+```
+
+## What Gets Installed
+
+**Shell Environment**: 
+- Zsh + Oh My Zsh + Powerlevel10k theme
+- Tmux with Tokyo Night theme and plugin manager
+- Modern CLI tools: fzf, ripgrep, fd, bat, eza, jq
+
+**Neovim Environment**:
+- Latest Neovim with LazyVim configuration framework
+- Language servers for multiple languages
+- Formatters, linters, and development tools
+- Custom keybindings and configurations
+- Integrated keyboard setup (Caps Lock → Escape)
+
+**Development Tools**:
+- Python environment (pyenv + poetry + pipx)
+- Git configuration with enhanced settings
+- Build tools and dependencies
+
+**Desktop Features** (Linux/macOS):
+- Terminal emulator setup (Kitty/Alacritty)
+- System-specific optimizations
+- Keyboard optimizations (integrated with Neovim setup)
+
+## Features
+
+✅ **Enhanced Logging**: Detailed installation plans and execution summaries  
+✅ **Progress Tracking**: Step-by-step progress with timing and status  
+✅ **Modular Architecture**: Install only what you need  
+✅ **Idempotent Scripts**: Safe to run multiple times  
+✅ **Cross-Platform**: Linux, macOS, and server support  
+✅ **v1.0.0 Compatible**: Preserves existing configurations  
+
+## Architecture Highlights
+
+- **DRY Principles**: No code duplication, shared libraries
+- **Planning Phase**: Shows what will be changed before execution
+- **Execution Tracking**: Real-time progress with detailed logging
+- **Summary Reports**: Comprehensive installation summaries
+- **Modular Components**: Mix and match components as needed
+
+## Usage
+
+```bash
+# Interactive installation with planning
+./bootstrap.sh
+
+# Direct component installation
+./scripts/components/shell-env.sh      # Shows plan, then installs
+./scripts/components/neovim-env.sh     # Shows plan, then installs
+
+# Enable debug logging for detailed execution info
+DEBUG=1 ./bootstrap.sh
+```
+
+All scripts are idempotent - safe to run multiple times.  
+Repository expects to be at `~/Work/.dotfiles`.  
+Configurations are symlinked from the repository.
 
 ## Requirements
 
-- Ubuntu 20.04+ or similar Linux distribution
-- Sudo privileges
+- Git
+- Curl  
 - Internet connection
-
-Built for DevOps engineers who live in the terminal.
+- Admin/sudo access (for package installation)

@@ -20,7 +20,6 @@ source "$BOOTSTRAP_SCRIPT_DIR/scripts/lib/package-managers.sh"
 # Configuration - use BOOTSTRAP_SCRIPT_DIR instead of SCRIPT_DIR which gets overwritten
 ORCHESTRATORS_DIR="$BOOTSTRAP_SCRIPT_DIR"
 COMPONENTS_DIR="$BOOTSTRAP_SCRIPT_DIR/scripts/components"
-DESKTOP_DIR="$BOOTSTRAP_SCRIPT_DIR/scripts/desktop"
 
 print_banner() {
   echo -e "${CYAN}"
@@ -50,7 +49,7 @@ show_system_info() {
 }
 
 show_main_menu() {
-  print_header "Installation Options"
+  print_header "Dotfiles Installation Options"
 
   case "${DOTFILES_OS}" in
   linux)
@@ -71,11 +70,11 @@ show_main_menu() {
 
 show_linux_desktop_menu() {
   echo "Linux Desktop Installation Options:"
-  echo "1) Full Desktop Installation"
-  echo "2) Shell Environment Only"
-  echo "3) Python Development Environment"
-  echo "4) Individual Component Selection"
-  echo "5) Keyboard Setup (Caps Lock to Escape)"
+  echo "1) Full Desktop Installation (Everything)"
+  echo "2) Shell Environment (Zsh + Tmux + CLI tools)"
+  echo "3) Neovim + LazyVim + Keyboard Setup (Caps Lock → Escape)"
+  echo "4) Python Development Environment"
+  echo "5) Individual Component Selection"
   echo "q) Quit"
   echo
   read -p "Choose an option [1-5, q]: " choice
@@ -83,9 +82,9 @@ show_linux_desktop_menu() {
   case $choice in
   1) run_orchestrator "linux/install.sh" ;;
   2) run_component "shell-env.sh" ;;
-  3) run_component "python-env.sh" ;;
-  4) show_component_menu ;;
-  5) run_desktop_feature "keyboard-setup.sh" ;;
+  3) run_component "neovim-env.sh" ;;
+  4) run_component "python-env.sh" ;;
+  5) show_component_menu ;;
   q | Q) exit 0 ;;
   *)
     warning "Invalid option. Please try again."
@@ -97,18 +96,20 @@ show_linux_desktop_menu() {
 show_linux_server_menu() {
   echo "Linux Server Installation Options:"
   echo "1) Essential Server Setup"
-  echo "2) Shell Environment Only"
-  echo "3) Python Development Environment"
-  echo "4) Individual Component Selection"
+  echo "2) Shell Environment (Zsh + Tmux + CLI tools)"
+  echo "3) Neovim + LazyVim + Keyboard Setup (Console/SSH optimized)"
+  echo "4) Python Development Environment"
+  echo "5) Individual Component Selection"
   echo "q) Quit"
   echo
-  read -p "Choose an option [1-4, q]: " choice
+  read -p "Choose an option [1-5, q]: " choice
 
   case $choice in
   1) run_server_essentials ;;
   2) run_component "shell-env.sh" ;;
-  3) run_component "python-env.sh" ;;
-  4) show_component_menu ;;
+  3) run_component "neovim-env.sh" ;;
+  4) run_component "python-env.sh" ;;
+  5) show_component_menu ;;
   q | Q) exit 0 ;;
   *)
     warning "Invalid option. Please try again."
@@ -120,10 +121,10 @@ show_linux_server_menu() {
 show_macos_menu() {
   echo "macOS Installation Options:"
   echo "1) Full macOS Development Environment"
-  echo "2) Shell Environment Only"
-  echo "3) Python Development Environment"
-  echo "4) Individual Component Selection"
-  echo "5) Keyboard Setup (Caps Lock to Escape)"
+  echo "2) Shell Environment (Zsh + Tmux + CLI tools)"
+  echo "3) Neovim + LazyVim + Keyboard Setup (Caps Lock → Escape)"
+  echo "4) Python Development Environment"
+  echo "5) Individual Component Selection"
   echo "q) Quit"
   echo
   read -p "Choose an option [1-5, q]: " choice
@@ -131,9 +132,9 @@ show_macos_menu() {
   case $choice in
   1) run_orchestrator "macos/install.sh" ;;
   2) run_component "shell-env.sh" ;;
-  3) run_component "python-env.sh" ;;
-  4) show_component_menu ;;
-  5) run_desktop_feature "keyboard-setup.sh" ;;
+  3) run_component "neovim-env.sh" ;;
+  4) run_component "python-env.sh" ;;
+  5) show_component_menu ;;
   q | Q) exit 0 ;;
   *)
     warning "Invalid option. Please try again."
@@ -146,8 +147,8 @@ show_component_menu() {
   print_header "Individual Components"
   echo "Available components:"
   echo "1) Shell Environment (Zsh + Oh My Zsh + Tmux + CLI tools)"
-  echo "2) Python Environment (pyenv + poetry + pipx)"
-  echo "3) Keyboard Setup (Caps Lock to Escape)"
+  echo "2) Neovim + LazyVim + Keyboard Setup (Editor + Caps Lock → Escape)"
+  echo "3) Python Environment (pyenv + poetry + pipx)"
   echo "b) Back to main menu"
   echo "q) Quit"
   echo
@@ -155,8 +156,8 @@ show_component_menu() {
 
   case $choice in
   1) run_component "shell-env.sh" ;;
-  2) run_component "python-env.sh" ;;
-  3) run_desktop_feature "keyboard-setup.sh" ;;
+  2) run_component "neovim-env.sh" ;;
+  3) run_component "python-env.sh" ;;
   b | B) show_main_menu ;;
   q | Q) exit 0 ;;
   *)
@@ -169,6 +170,7 @@ show_component_menu() {
 run_orchestrator() {
   local orchestrator="$1"
   local script_path="$ORCHESTRATORS_DIR/$orchestrator"
+  local title="${orchestrator%.*}"
 
   if [[ -x "$script_path" ]]; then
     info "Running orchestrator: $orchestrator"
@@ -200,24 +202,15 @@ run_component() {
   fi
 }
 
-run_desktop_feature() {
-  local feature="$1"
-  local script_path="$DESKTOP_DIR/$feature"
-
-  if [[ -x "$script_path" ]]; then
-    info "Running desktop feature: $feature"
-    if "$script_path"; then
-      success "Completed: $feature"
-      show_completion_message
-    else
-      error "Failed: $feature"
-    fi
-  else
-    error "Desktop feature not found or not executable: $feature"
-  fi
-}
 
 run_server_essentials() {
+  local marker="server-essentials-$(date +%Y%m%d)"
+  
+  if is_completed "$marker"; then
+    info "Server essentials already installed today"
+    return 0
+  fi
+  
   info "Installing server essentials..."
 
   # Install minimal server components
@@ -230,13 +223,18 @@ run_server_essentials() {
     update_package_lists
     install_packages ufw fail2ban htop iotop nethogs
 
-    # Configure UFW
+    # Configure UFW (idempotent)
     if command_exists ufw; then
-      sudo ufw --force enable >/dev/null 2>&1 || true
-      success "UFW firewall enabled"
+      if ! sudo ufw status | grep -q "Status: active"; then
+        sudo ufw --force enable >/dev/null 2>&1 || true
+        success "UFW firewall enabled"
+      else
+        debug "UFW firewall already enabled"
+      fi
     fi
   fi
 
+  mark_completed "$marker"
   success "Server essentials installation complete"
 }
 
@@ -264,31 +262,42 @@ show_completion_message() {
   fi
 }
 
+
 check_prerequisites() {
   info "Checking prerequisites..."
 
   # Check for required commands
   local required_commands=("git" "curl")
+  local missing_commands=()
+  
   for cmd in "${required_commands[@]}"; do
     if ! command_exists "$cmd"; then
-      warning "$cmd not found, installing..."
-      case "${DOTFILES_OS}" in
-      linux)
-        setup_package_manager
-        update_package_lists
-        install_packages "$cmd"
-        ;;
-      macos)
+      missing_commands+=("$cmd")
+    fi
+  done
+  
+  if [[ ${#missing_commands[@]} -gt 0 ]]; then
+    info "Installing missing prerequisites: ${missing_commands[*]}"
+    case "${DOTFILES_OS}" in
+    linux)
+      setup_package_manager
+      update_package_lists
+      install_packages "${missing_commands[@]}"
+      ;;
+    macos)
+      for cmd in "${missing_commands[@]}"; do
         if [[ "$cmd" == "git" ]] && ! command_exists xcode-select; then
           info "Installing Xcode Command Line Tools..."
           xcode-select --install
           info "Please complete Xcode installation and run this script again"
           exit 1
         fi
-        ;;
-      esac
-    fi
-  done
+      done
+      ;;
+    esac
+  else
+    debug "All prerequisites already available"
+  fi
 
   # Check internet connectivity
   if ! check_internet; then

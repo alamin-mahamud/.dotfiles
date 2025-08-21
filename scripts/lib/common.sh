@@ -151,8 +151,13 @@ backup_file() {
     
     if [[ -e "$file" ]] && [[ ! -L "$file" ]]; then
         local backup_file="${file}${backup_suffix}"
-        cp "$file" "$backup_file"
-        info "Backed up $file to $backup_file"
+        # Only backup if backup doesn't already exist
+        if [[ ! -e "$backup_file" ]]; then
+            cp "$file" "$backup_file"
+            info "Backed up $file to $backup_file"
+        else
+            debug "Backup already exists: $backup_file"
+        fi
     fi
 }
 
@@ -160,6 +165,12 @@ safe_symlink() {
     local source="$1"
     local target="$2"
     local backup="${3:-true}"
+    
+    # Check if symlink already exists and points to correct target
+    if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$source" ]]; then
+        debug "Symlink already exists and is correct: $target -> $source"
+        return 0
+    fi
     
     # Create parent directory if needed
     mkdir -p "$(dirname "$target")"
@@ -322,6 +333,327 @@ cleanup_and_exit() {
     local exit_code="${1:-0}"
     info "Script finished at $(date)"
     exit "$exit_code"
+}
+
+# Idempotent utilities
+is_already_installed() {
+    local check_type="$1"
+    local identifier="$2"
+    
+    case "$check_type" in
+        command)
+            command_exists "$identifier"
+            ;;
+        directory)
+            [[ -d "$identifier" ]]
+            ;;
+        file)
+            [[ -f "$identifier" ]]
+            ;;
+        symlink)
+            [[ -L "$identifier" ]]
+            ;;
+        git_repo)
+            [[ -d "$identifier/.git" ]]
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+# Check if configuration is already applied
+is_config_applied() {
+    local config_file="$1"
+    local pattern="$2"
+    
+    [[ -f "$config_file" ]] && grep -q "$pattern" "$config_file"
+}
+
+# Install or update git repository
+install_or_update_git_repo() {
+    local repo_url="$1"
+    local target_dir="$2"
+    local branch="${3:-master}"
+    
+    if [[ -d "$target_dir/.git" ]]; then
+        info "Updating existing repository: $target_dir"
+        cd "$target_dir" && git pull origin "$branch"
+    else
+        info "Cloning repository: $repo_url"
+        git clone --depth=1 -b "$branch" "$repo_url" "$target_dir"
+    fi
+}
+
+# Add line to file if not present
+add_line_to_file() {
+    local file="$1"
+    local line="$2"
+    local create_if_missing="${3:-true}"
+    
+    if [[ ! -f "$file" ]]; then
+        if [[ "$create_if_missing" == "true" ]]; then
+            mkdir -p "$(dirname "$file")"
+            touch "$file"
+        else
+            return 1
+        fi
+    fi
+    
+    if ! grep -Fxq "$line" "$file"; then
+        echo "$line" >> "$file"
+        debug "Added line to $file: $line"
+        return 0
+    else
+        debug "Line already exists in $file: $line"
+        return 1
+    fi
+}
+
+# Remove line from file if present
+remove_line_from_file() {
+    local file="$1"
+    local line="$2"
+    
+    if [[ -f "$file" ]] && grep -Fxq "$line" "$file"; then
+        # Use sed to remove the exact line
+        sed -i.bak "/^$(printf '%s\n' "$line" | sed 's/[[]]/\\&/g')$/d" "$file"
+        rm -f "$file.bak"
+        debug "Removed line from $file: $line"
+        return 0
+    else
+        debug "Line not found in $file: $line"
+        return 1
+    fi
+}
+
+# Ensure directory exists with proper permissions
+ensure_directory() {
+    local dir="$1"
+    local mode="${2:-755}"
+    
+    if [[ ! -d "$dir" ]]; then
+        mkdir -p "$dir"
+        chmod "$mode" "$dir"
+        debug "Created directory: $dir (mode: $mode)"
+    else
+        debug "Directory already exists: $dir"
+    fi
+}
+
+# Check if service is running
+is_service_running() {
+    local service="$1"
+    
+    if command_exists systemctl; then
+        systemctl is-active --quiet "$service"
+    elif command_exists service; then
+        service "$service" status >/dev/null 2>&1
+    else
+        pgrep -x "$service" >/dev/null 2>&1
+    fi
+}
+
+# Start service if not running
+ensure_service_running() {
+    local service="$1"
+    
+    if is_service_running "$service"; then
+        debug "Service already running: $service"
+        return 0
+    fi
+    
+    info "Starting service: $service"
+    if command_exists systemctl; then
+        sudo systemctl start "$service"
+    elif command_exists service; then
+        sudo service "$service" start
+    else
+        warning "Cannot start service $service - no service manager found"
+        return 1
+    fi
+}
+
+# Enable service for auto-start
+ensure_service_enabled() {
+    local service="$1"
+    
+    if command_exists systemctl; then
+        if systemctl is-enabled --quiet "$service"; then
+            debug "Service already enabled: $service"
+            return 0
+        fi
+        
+        info "Enabling service: $service"
+        sudo systemctl enable "$service"
+    else
+        warning "Cannot enable service $service - systemctl not found"
+        return 1
+    fi
+}
+
+# Skip if already completed (using marker files)
+mark_completed() {
+    local marker_name="$1"
+    local marker_dir="${HOME}/.dotfiles-markers"
+    local marker_file="${marker_dir}/${marker_name}"
+    
+    ensure_directory "$marker_dir"
+    touch "$marker_file"
+    debug "Marked as completed: $marker_name"
+}
+
+is_completed() {
+    local marker_name="$1"
+    local marker_dir="${HOME}/.dotfiles-markers"
+    local marker_file="${marker_dir}/${marker_name}"
+    
+    [[ -f "$marker_file" ]]
+}
+
+clear_marker() {
+    local marker_name="$1"
+    local marker_dir="${HOME}/.dotfiles-markers"
+    local marker_file="${marker_dir}/${marker_name}"
+    
+    [[ -f "$marker_file" ]] && rm -f "$marker_file"
+    debug "Cleared marker: $marker_name"
+}
+
+# Enhanced Installation Planning and Execution Tracking
+declare -a INSTALLATION_PLAN=()
+declare -a INSTALLATION_SUMMARY=()
+declare -a EXECUTION_LOG=()
+
+# Progress tracking
+CURRENT_STEP=0
+TOTAL_STEPS=0
+
+# Enhanced logging with execution details
+log_execution() {
+    local step="$1"
+    local details="$2"
+    local timestamp=$(date '+%H:%M:%S')
+    
+    EXECUTION_LOG+=("[$timestamp] $step: $details")
+    debug "EXEC: $step - $details"
+}
+
+# Planning functions
+show_installation_plan() {
+    local title="$1"
+    
+    if [[ ${#INSTALLATION_PLAN[@]} -eq 0 ]]; then
+        return
+    fi
+    
+    print_header "INSTALLATION PLAN: $title"
+    info "The following changes will be made:"
+    echo
+    
+    local step_num=1
+    for item in "${INSTALLATION_PLAN[@]}"; do
+        printf "  %2d. %s\n" "$step_num" "$item"
+        ((step_num++))
+    done
+    
+    TOTAL_STEPS=${#INSTALLATION_PLAN[@]}
+    echo
+    info "Total steps: $TOTAL_STEPS"
+    echo
+    
+    if ! ask_yes_no "Proceed with installation?" "yes"; then
+        info "Installation cancelled by user"
+        exit 0
+    fi
+    echo
+}
+
+add_to_plan() {
+    local description="$1"
+    INSTALLATION_PLAN+=("$description")
+}
+
+add_to_summary() {
+    local description="$1"
+    INSTALLATION_SUMMARY+=("$description")
+}
+
+# Enhanced step execution with progress
+execute_step() {
+    local step_description="$1"
+    local command="$2"
+    
+    ((CURRENT_STEP++))
+    
+    info "Step $CURRENT_STEP/$TOTAL_STEPS: $step_description"
+    
+    local start_time=$(date +%s)
+    local result=0
+    
+    if [[ -n "$command" ]]; then
+        log_execution "$step_description" "Started"
+        if eval "$command"; then
+            log_execution "$step_description" "Completed successfully"
+            add_to_summary "$step_description"
+        else
+            result=$?
+            log_execution "$step_description" "Failed with exit code $result"
+            error "Step failed: $step_description"
+        fi
+    else
+        log_execution "$step_description" "Manual step completed"
+        add_to_summary "$step_description"
+    fi
+    
+    local end_time=$(date +%s)
+    local duration=$((end_time - start_time))
+    debug "Step duration: ${duration}s"
+    
+    return $result
+}
+
+show_installation_summary() {
+    local title="$1"
+    
+    print_header "INSTALLATION SUMMARY: $title"
+    
+    if [[ ${#INSTALLATION_SUMMARY[@]} -gt 0 ]]; then
+        success "Successfully completed $CURRENT_STEP/$TOTAL_STEPS steps:"
+        echo
+        
+        local step_num=1
+        for item in "${INSTALLATION_SUMMARY[@]}"; do
+            printf "  %s %2d. %s\n" "✓" "$step_num" "$item"
+            ((step_num++))
+        done
+        echo
+    fi
+    
+    if [[ $CURRENT_STEP -lt $TOTAL_STEPS ]]; then
+        warning "Some steps were not completed ($((TOTAL_STEPS - CURRENT_STEP)) remaining)"
+    fi
+    
+    info "Installation log: $LOG_FILE"
+    
+    if [[ "${DEBUG:-}" == "1" ]] && [[ ${#EXECUTION_LOG[@]} -gt 0 ]]; then
+        echo
+        info "Execution timeline:"
+        for entry in "${EXECUTION_LOG[@]}"; do
+            echo "    $entry"
+        done
+    fi
+    
+    echo
+}
+
+# Reset planning state for new installation
+reset_installation_state() {
+    INSTALLATION_PLAN=()
+    INSTALLATION_SUMMARY=()
+    EXECUTION_LOG=()
+    CURRENT_STEP=0
+    TOTAL_STEPS=0
 }
 
 # Trap cleanup on script exit

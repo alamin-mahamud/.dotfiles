@@ -1,3 +1,0 @@
-! Caps Lock to Escape mapping
-clear Lock
-keycode 66 = Escape

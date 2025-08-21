@@ -1,1 +1,16 @@
+# macOS
 .DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Python (if any temporary files are created)
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Logs
+*.log
+/tmp/dotfiles_*.log

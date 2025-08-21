@@ -307,6 +307,13 @@ verify_installation() {
 }
 
 main() {
+    local marker="python-env-$(date +%Y%m%d)"
+    
+    if is_completed "$marker"; then
+        info "Python environment already set up today"
+        return 0
+    fi
+    
     init_script "Python Environment Installer"
     
     # Check if running on supported OS
@@ -323,6 +330,7 @@ main() {
     create_python_aliases
     verify_installation
     
+    mark_completed "$marker"
     success "Python environment setup complete!"
     info "Please restart your shell or run: source ~/.${SHELL##*/}rc"
     info "Available Python versions: ${PYTHON_VERSIONS[*]}"

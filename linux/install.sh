@@ -51,19 +51,12 @@ setup_directories() {
     )
     
     for dir in "${dirs[@]}"; do
-        mkdir -p "$dir"
-        debug "Created directory: $dir"
+        ensure_directory "$dir"
     done
 }
 
 clone_dotfiles() {
-    if [[ -d "$HOME/Work/.dotfiles" ]]; then
-        info "Dotfiles already cloned, updating..."
-        cd "$HOME/Work/.dotfiles" && git pull
-    else
-        info "Cloning dotfiles repository..."
-        git clone https://github.com/alamin-mahamud/.dotfiles.git "$HOME/Work/.dotfiles"
-    fi
+    install_or_update_git_repo "https://github.com/alamin-mahamud/.dotfiles.git" "$HOME/Work/.dotfiles" "master"
 }
 
 run_component_installer() {
@@ -134,9 +127,15 @@ setup_symlinks() {
 }
 
 install_fonts() {
+    if is_completed "fonts-installed"; then
+        debug "Fonts already installed"
+        return 0
+    fi
+    
     info "Installing fonts..."
     
     local fonts_dir="$HOME/.local/share/fonts"
+    ensure_directory "$fonts_dir"
     local nerd_fonts=("FiraCode" "JetBrainsMono" "Iosevka")
     
     for font in "${nerd_fonts[@]}"; do
@@ -154,6 +153,8 @@ install_fonts() {
             else
                 warning "Failed to download $font font"
             fi
+        else
+            debug "$font font already installed"
         fi
     done
     
@@ -162,9 +163,16 @@ install_fonts() {
         fc-cache -fv >/dev/null 2>&1
         success "Font cache updated"
     fi
+    
+    mark_completed "fonts-installed"
 }
 
 configure_desktop_environment() {
+    if is_completed "desktop-configured"; then
+        debug "Desktop environment already configured"
+        return 0
+    fi
+    
     info "Configuring desktop environment..."
     
     # Set default browser if firefox is installed
@@ -177,7 +185,7 @@ configure_desktop_environment() {
         # Create desktop entry for kitty if it doesn't exist
         local desktop_file="$HOME/.local/share/applications/kitty.desktop"
         if [[ ! -f "$desktop_file" ]]; then
-            mkdir -p "$(dirname "$desktop_file")"
+            ensure_directory "$(dirname "$desktop_file")"
             cat > "$desktop_file" << 'EOF'
 [Desktop Entry]
 Version=1.0
@@ -188,9 +196,11 @@ Exec=kitty
 Icon=kitty
 Categories=System;TerminalEmulator;
 EOF
+            debug "Created kitty desktop entry"
         fi
     fi
     
+    mark_completed "desktop-configured"
     success "Desktop environment configured"
 }
 

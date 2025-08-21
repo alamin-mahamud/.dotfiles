@@ -59,13 +59,15 @@ install_zsh() {
     zsh_path=$(which zsh)
     
     if ! grep -q "$zsh_path" /etc/shells 2>/dev/null; then
-        echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+        echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null 2>&1 || true
         success "Added $zsh_path to /etc/shells"
     fi
     
     # Change default shell
     if [[ "$SHELL" != "$zsh_path" ]]; then
-        chsh -s "$zsh_path"
+        chsh -s "$zsh_path" 2>/dev/null || {
+            warning "Could not change shell automatically. Please run: chsh -s $zsh_path"
+        }
         success "Changed default shell to Zsh"
         info "Please log out and log back in for the shell change to take effect"
     fi
@@ -76,7 +78,7 @@ install_oh_my_zsh() {
     
     if [[ -d "$oh_my_zsh_dir" ]]; then
         info "Oh My Zsh already installed, updating..."
-        cd "$oh_my_zsh_dir" && git pull origin master
+        cd "$oh_my_zsh_dir" && git pull origin master 2>/dev/null || true
         success "Updated Oh My Zsh"
         return 0
     fi
@@ -84,7 +86,10 @@ install_oh_my_zsh() {
     info "Installing Oh My Zsh..."
     
     # Download and install Oh My Zsh
-    RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" 2>/dev/null || {
+        error "Failed to install Oh My Zsh"
+        return 1
+    }
     
     success "Oh My Zsh installed"
 }
@@ -97,30 +102,39 @@ install_zsh_plugins() {
     # zsh-autosuggestions
     local autosuggestions_dir="$oh_my_zsh_custom/plugins/zsh-autosuggestions"
     if [[ ! -d "$autosuggestions_dir" ]]; then
-        git clone https://github.com/zsh-users/zsh-autosuggestions "$autosuggestions_dir"
+        git clone https://github.com/zsh-users/zsh-autosuggestions "$autosuggestions_dir" 2>/dev/null || {
+            warning "Failed to clone zsh-autosuggestions"
+            return 0
+        }
         success "Installed zsh-autosuggestions"
     else
-        cd "$autosuggestions_dir" && git pull
+        cd "$autosuggestions_dir" && git pull 2>/dev/null || true
         info "Updated zsh-autosuggestions"
     fi
     
     # zsh-syntax-highlighting
     local highlighting_dir="$oh_my_zsh_custom/plugins/zsh-syntax-highlighting"
     if [[ ! -d "$highlighting_dir" ]]; then
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting "$highlighting_dir"
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting "$highlighting_dir" 2>/dev/null || {
+            warning "Failed to clone zsh-syntax-highlighting"
+            return 0
+        }
         success "Installed zsh-syntax-highlighting"
     else
-        cd "$highlighting_dir" && git pull
+        cd "$highlighting_dir" && git pull 2>/dev/null || true
         info "Updated zsh-syntax-highlighting"
     fi
     
     # zsh-completions
     local completions_dir="$oh_my_zsh_custom/plugins/zsh-completions"
     if [[ ! -d "$completions_dir" ]]; then
-        git clone https://github.com/zsh-users/zsh-completions "$completions_dir"
+        git clone https://github.com/zsh-users/zsh-completions "$completions_dir" 2>/dev/null || {
+            warning "Failed to clone zsh-completions"
+            return 0
+        }
         success "Installed zsh-completions"
     else
-        cd "$completions_dir" && git pull
+        cd "$completions_dir" && git pull 2>/dev/null || true
         info "Updated zsh-completions"
     fi
     
@@ -128,10 +142,13 @@ install_zsh_plugins() {
     if is_desktop_environment; then
         local fzf_tab_dir="$oh_my_zsh_custom/plugins/fzf-tab"
         if [[ ! -d "$fzf_tab_dir" ]]; then
-            git clone https://github.com/Aloxaf/fzf-tab "$fzf_tab_dir"
+            git clone https://github.com/Aloxaf/fzf-tab "$fzf_tab_dir" 2>/dev/null || {
+                warning "Failed to clone fzf-tab"
+                return 0
+            }
             success "Installed fzf-tab"
         else
-            cd "$fzf_tab_dir" && git pull
+            cd "$fzf_tab_dir" && git pull 2>/dev/null || true
             info "Updated fzf-tab"
         fi
     fi
@@ -142,13 +159,16 @@ install_powerlevel10k() {
     
     if [[ -d "$p10k_dir" ]]; then
         info "Powerlevel10k already installed, updating..."
-        cd "$p10k_dir" && git pull
+        cd "$p10k_dir" && git pull 2>/dev/null || true
         success "Updated Powerlevel10k"
         return 0
     fi
     
     info "Installing Powerlevel10k theme..."
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir" 2>/dev/null || {
+        warning "Failed to clone Powerlevel10k"
+        return 0
+    }
     success "Powerlevel10k installed"
 }
 
@@ -210,7 +230,9 @@ install_additional_tools() {
     if ! command_exists eza; then
         info "Installing eza (modern ls replacement)..."
         if command_exists cargo; then
-            cargo install eza
+            cargo install eza 2>/dev/null || {
+                warning "Failed to install eza via cargo"
+            }
         else
             warning "eza requires Rust. Install Rust first or use ls"
         fi
@@ -227,7 +249,9 @@ install_additional_tools() {
                 local delta_url="https://github.com/dandavison/delta/releases/download/${delta_version}/git-delta_${delta_version}_${arch}.deb"
                 
                 if [[ "$(detect_package_manager)" == "apt" ]]; then
-                    install_package_from_url "$delta_url"
+                    install_package_from_url "$delta_url" 2>/dev/null || {
+                        warning "Failed to install delta from URL"
+                    }
                 fi
                 ;;
             macos)

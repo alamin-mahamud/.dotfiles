@@ -43,7 +43,7 @@ setup_directories() {
     info "Setting up directory structure..."
     
     local dirs=(
-        "$HOME/Work"
+        "$HOME/Projects"
         "$HOME/.config"
         "$HOME/.local/bin"
         "$HOME/Pictures/Screenshots"
@@ -56,7 +56,7 @@ setup_directories() {
 }
 
 clone_dotfiles() {
-    install_or_update_git_repo "https://github.com/alamin-mahamud/.dotfiles.git" "$HOME/Work/.dotfiles" "master"
+    install_or_update_git_repo "https://github.com/alamin-mahamud/.dotfiles.git" "$HOME/.dotfiles" "master"
 }
 
 run_component_installer() {
@@ -94,7 +94,7 @@ run_desktop_installer() {
 setup_symlinks() {
     info "Setting up configuration symlinks..."
     
-    local dotfiles_dir="$HOME/Work/.dotfiles"
+    local dotfiles_dir="$HOME/.dotfiles"
     
     # Zsh configuration
     safe_symlink "$dotfiles_dir/zsh/.zshrc" "$HOME/.zshrc"

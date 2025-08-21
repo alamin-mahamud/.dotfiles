@@ -60,7 +60,7 @@ install_pyenv() {
     if command_exists pyenv; then
         info "pyenv already installed, updating..."
         if [[ -d "$HOME/.pyenv/.git" ]]; then
-            cd "$HOME/.pyenv" && git pull
+            cd "$HOME/.pyenv" && git pull 2>/dev/null || true
         fi
         return 0
     fi
@@ -68,7 +68,10 @@ install_pyenv() {
     info "Installing pyenv..."
     
     # Install pyenv
-    curl https://pyenv.run | bash
+    curl https://pyenv.run | bash 2>/dev/null || {
+        error "Failed to install pyenv"
+        return 1
+    }
     
     # Add to shell configuration
     local shell_config=""

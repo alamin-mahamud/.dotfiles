@@ -26,8 +26,10 @@ install_neovim_dependencies() {
                 apt)
                     packages=(git curl unzip tar gzip wget build-essential)
                     # Add newer Neovim PPA for Ubuntu/Debian
-                    if ! apt-cache policy neovim | grep -q "neovim-ppa"; then
-                        add_repository ppa:neovim-ppa/unstable
+                    if ! apt-cache policy neovim 2>/dev/null | grep -q "neovim-ppa"; then
+                        add_repository ppa:neovim-ppa/unstable 2>/dev/null || {
+                            warning "Could not add neovim PPA, using system version"
+                        }
                     fi
                     packages+=(neovim)
                     ;;
@@ -97,7 +99,10 @@ install_neovim_from_source() {
     temp_dir=$(mktemp -d)
     
     info "Downloading Neovim..."
-    download_file "$download_url" "$temp_dir/nvim.tar.gz"
+    if ! download_file "$download_url" "$temp_dir/nvim.tar.gz"; then
+        error "Failed to download Neovim"
+        return 1
+    fi
     
     info "Installing Neovim to $nvim_dir..."
     sudo mkdir -p "$nvim_dir"

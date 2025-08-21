@@ -195,7 +195,7 @@ This repository follows strict DRY (Don't Repeat Yourself) principles with a cle
 
 ## Important Notes
 
-- The repository expects to be cloned to `$HOME/Work/.dotfiles`
+- The repository expects to be cloned to `$HOME/.dotfiles`
 - Linux scripts include sudoers configuration for passwordless package management
 - Font installation includes Nerd Fonts (FiraCode, JetBrainsMono, Iosevka)
 - Zsh configuration depends on Oh My Zsh framework

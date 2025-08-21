@@ -6,8 +6,8 @@ Modular dotfiles for DevOps professionals. Pure shell-based architecture with en
 
 ```bash
 # Clone
-git clone https://github.com/alamin-mahamud/.dotfiles.git ~/Work/.dotfiles
-cd ~/Work/.dotfiles
+git clone https://github.com/alamin-mahamud/.dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
 
 # Interactive installer with planning and progress tracking
 ./bootstrap.sh
@@ -129,7 +129,7 @@ DEBUG=1 ./bootstrap.sh
 ```
 
 All scripts are idempotent - safe to run multiple times.  
-Repository expects to be at `~/Work/.dotfiles`.  
+Repository expects to be at `~/.dotfiles`.  
 Configurations are symlinked from the repository.
 
 ## Requirements

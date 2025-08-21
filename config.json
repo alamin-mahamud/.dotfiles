@@ -1,5 +1,5 @@
 {
-    "dotfiles_root": "~/Work/.dotfiles",
+    "dotfiles_root": "~/.dotfiles",
     "backup_dir": "~/.dotfiles-backup",
     "shell": {
         "default": "zsh",
@@ -34,7 +34,6 @@
     "fonts": [
         "FiraCode",
         "JetBrainsMono",
-        "Iosevka"
     ],
     "python": {
         "versions": ["3.11", "3.12"],

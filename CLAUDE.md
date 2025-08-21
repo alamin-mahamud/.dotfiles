@@ -17,6 +17,15 @@ This is a comprehensive, modular dotfiles repository optimized for DevOps profes
 - **macOS**: `./macos/install.sh` - Complete macOS development environment
 - **Server**: Use component installers directly for minimal installations
 
+### DRY Standalone Installers (can be run independently via curl)
+- `./scripts/ubuntu-server-setup.sh` - DRY Ubuntu Server setup orchestrator
+- `./scripts/install-shell.sh` - Server-focused shell environment (Zsh + Oh My Zsh + plugins + Tmux)
+- `./scripts/install-desktop-terminal.sh` - Desktop terminal environment (Nerd Fonts + Kitty terminal)
+- `./scripts/vim-installer.sh` - Enhanced vim configuration with plugins
+- `./scripts/install-dev-tools.sh` - Development tools installation (Git, Docker, Node.js, Python, Rust, Go, etc.)
+- `./scripts/custom-install.sh` - Component-based custom installation
+- `./scripts/tmux-installer.sh` - (Deprecated - now integrated into install-shell.sh)
+
 ### Component Installers (Standalone)
 - `./scripts/components/shell-env.sh` - Shell environment (Zsh + Oh My Zsh + Tmux + CLI tools)
 - `./scripts/components/python-env.sh` - Python development environment (pyenv + poetry + pipx)
@@ -32,6 +41,15 @@ curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/lin
 # macOS Desktop
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/macos/install.sh | bash
 
+# Individual components (idempotent, standalone)
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash  # Server shell environment
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-desktop-terminal.sh | bash  # Desktop fonts & terminal
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/vim-installer.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash
+
+# Development tools - install all
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash -s -- --all
+
 # Shell environment only
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/shell-env.sh | bash
 ```
@@ -42,26 +60,6 @@ curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scr
 ```
 .dotfiles/
 ├── bootstrap.sh                    # Main entry point with environment detection
-├── scripts/                        # Organized installation scripts
-│   ├── lib/                        # Shared libraries (DRY principle)
-│   │   ├── common.sh              # Common utilities, logging, OS detection
-│   │   └── package-managers.sh    # Unified package management
-│   ├── components/                 # Component-specific installers
-│   │   ├── shell-env.sh           # Shell environment (Zsh + Tmux + CLI tools)
-│   │   └── python-env.sh          # Python development environment
-│   ├── desktop/                   # Desktop-specific features
-│   │   └── keyboard-setup.sh      # Keyboard configuration
-│   └── features/                  # Feature-specific installers
-├── configs/                       # Shared configuration files
-│   ├── xmodmap/                   # X11 keyboard configurations
-│   ├── keyd/                      # Wayland keyboard configurations
-│   └── tmux/                      # Tmux configurations
-├── linux/                         # Linux-specific configurations
-│   ├── install.sh                 # Linux desktop orchestrator
-│   └── .config/                   # Application configuration files
-├── macos/                         # macOS-specific configurations
-│   ├── install.sh                 # macOS orchestrator
-│   ├── DefaultKeyBinding.dict     # macOS keyboard bindings
 │   └── iterm/                     # iTerm2 configurations
 ├── zsh/                           # Zsh shell configuration
 │   └── .zshrc                     # Main zsh configuration
@@ -107,12 +105,6 @@ This repository follows strict DRY (Don't Repeat Yourself) principles with a cle
 - **Configuration**: Comprehensive .zshrc with aliases and functions
 - **Tmux Integration**: Full tmux setup with TPM and Tokyo Night theme
 
-#### Python Environment (`components/python-env.sh`)
-- **Version Management**: pyenv with multiple Python versions
-- **Package Managers**: pip, pipx, poetry, pipenv
-- **Development Tools**: black, isort, flake8, mypy, pytest
-- **Virtual Environments**: Automated setup and configuration
-- **Shell Integration**: Aliases and completions
 
 #### Desktop Features (`desktop/keyboard-setup.sh`)
 - **Caps Lock to Escape**: Universal mapping across X11, Wayland, macOS

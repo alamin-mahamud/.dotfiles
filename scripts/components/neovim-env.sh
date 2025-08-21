@@ -147,28 +147,76 @@ setup_lazyvim() {
 }
 
 install_language_servers() {
-    info "Installing language servers and tools..."
+    info "Installing language servers and tools for Python & DevOps..."
     
-    local tools=(
-        # Language servers
-        "lua-language-server"
-        "bash-language-server"
-        "typescript-language-server"
-        "pyright"
-        "rust-analyzer"
-        
-        # Formatters and linters
-        "prettier"
-        "eslint_d"
-        "stylua"
-        "shfmt"
-        "shellcheck"
-    )
+    # Python Development Tools
+    info "Installing Python development tools..."
+    if command_exists pip3; then
+        pip3 install --user --upgrade \
+            pyright \
+            pylsp-mypy \
+            python-lsp-server[all] \
+            pylint \
+            black \
+            isort \
+            flake8 \
+            mypy \
+            debugpy \
+            pynvim \
+            ruff \
+            ruff-lsp 2>/dev/null || true
+    fi
     
-    # Install Node.js tools via npm/yarn if available
+    # Node.js tools (for general development and some DevOps tools)
     if command_exists npm; then
         info "Installing Node.js-based tools..."
-        npm install -g typescript-language-server bash-language-server prettier eslint_d 2>/dev/null || true
+        npm install -g \
+            typescript-language-server \
+            bash-language-server \
+            yaml-language-server \
+            dockerfile-language-server-nodejs \
+            vscode-langservers-extracted \
+            prettier \
+            eslint_d \
+            pyright 2>/dev/null || true
+    fi
+    
+    # DevOps and Infrastructure Tools
+    info "Installing DevOps language servers..."
+    
+    # Terraform LSP
+    if ! command_exists terraform-ls; then
+        info "Installing Terraform Language Server..."
+        local tf_ls_version="0.32.3"
+        local tf_ls_url=""
+        case "${DOTFILES_OS}" in
+            linux)
+                tf_ls_url="https://github.com/hashicorp/terraform-ls/releases/download/v${tf_ls_version}/terraform-ls_${tf_ls_version}_linux_${DOTFILES_ARCH}.zip"
+                ;;
+            macos)
+                tf_ls_url="https://github.com/hashicorp/terraform-ls/releases/download/v${tf_ls_version}/terraform-ls_${tf_ls_version}_darwin_${DOTFILES_ARCH}.zip"
+                ;;
+        esac
+        if [[ -n "$tf_ls_url" ]]; then
+            local temp_dir=$(mktemp -d)
+            download_file "$tf_ls_url" "$temp_dir/terraform-ls.zip" && \
+            unzip -q "$temp_dir/terraform-ls.zip" -d "$temp_dir" && \
+            sudo mv "$temp_dir/terraform-ls" /usr/local/bin/ && \
+            sudo chmod +x /usr/local/bin/terraform-ls
+            rm -rf "$temp_dir"
+        fi
+    fi
+    
+    # Ansible LSP
+    if command_exists pip3; then
+        pip3 install --user ansible-lint ansible-language-server 2>/dev/null || true
+    fi
+    
+    # Go tools (for K8s and cloud-native development)
+    if command_exists go; then
+        info "Installing Go development tools..."
+        go install golang.org/x/tools/gopls@latest 2>/dev/null || true
+        go install github.com/go-delve/delve/cmd/dlv@latest 2>/dev/null || true
     fi
     
     # Install via package manager if available
@@ -176,16 +224,16 @@ install_language_servers() {
         linux)
             case "$(detect_package_manager)" in
                 apt)
-                    install_packages shellcheck || true
+                    install_packages shellcheck yamllint hadolint || true
                     ;;
                 pacman)
-                    install_packages shellcheck shfmt || true
+                    install_packages shellcheck shfmt yamllint hadolint || true
                     ;;
             esac
             ;;
         macos)
             if command_exists brew; then
-                brew install shellcheck shfmt lua-language-server || true
+                brew install shellcheck shfmt lua-language-server yamllint hadolint || true
             fi
             ;;
     esac
@@ -230,17 +278,19 @@ configure_neovim_integration() {
 }
 
 create_custom_lazyvim_config() {
-    info "Creating custom LazyVim configuration..."
+    info "Creating custom LazyVim configuration for Python & DevOps..."
     
     # Create custom configuration files
     local lua_dir="$NVIM_CONFIG_DIR/lua"
     local config_dir="$lua_dir/config"
+    local plugins_dir="$lua_dir/plugins"
     
     ensure_directory "$config_dir"
+    ensure_directory "$plugins_dir"
     
-    # Create options.lua with sensible defaults
+    # Create options.lua with Python/DevOps optimized defaults
     cat > "$lua_dir/config/options.lua" << 'EOF'
--- Custom options for LazyVim
+-- Custom options for LazyVim - Python & DevOps optimized
 local opt = vim.opt
 
 -- Better defaults
@@ -254,7 +304,7 @@ opt.colorcolumn = "80,120"
 opt.ignorecase = true
 opt.smartcase = true
 
--- Better formatting
+-- Python PEP8 compliant formatting
 opt.tabstop = 4
 opt.shiftwidth = 4
 opt.expandtab = true
@@ -272,11 +322,42 @@ opt.signcolumn = "yes"
 opt.cmdheight = 1
 opt.updatetime = 300
 opt.timeoutlen = 500
+
+-- Python specific
+vim.g.python3_host_prog = vim.fn.expand("~/.pyenv/shims/python3")
+
+-- File type specific settings
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "yaml", "yml" },
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "json", "jsonc" },
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "terraform", "hcl" },
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+  end,
+})
 EOF
     
-    # Create keymaps.lua with additional key bindings
+    # Create keymaps.lua with Python/DevOps specific bindings
     cat > "$lua_dir/config/keymaps.lua" << 'EOF'
--- Custom keymaps for LazyVim
+-- Custom keymaps for LazyVim - Python & DevOps focused
 local map = vim.keymap.set
 
 -- Better window navigation
@@ -303,10 +384,324 @@ map("n", "<Esc>", "<cmd>nohlsearch<cr>")
 -- Quick save
 map("n", "<leader>w", "<cmd>write<cr>", { desc = "Save file" })
 map("n", "<leader>q", "<cmd>quit<cr>", { desc = "Quit" })
+
+-- Python specific
+map("n", "<leader>pr", "<cmd>!python3 %<cr>", { desc = "Run Python file" })
+map("n", "<leader>pd", "<cmd>lua require('dap-python').test_method()<cr>", { desc = "Debug Python method" })
+map("n", "<leader>pf", "<cmd>lua require('dap-python').test_class()<cr>", { desc = "Debug Python class" })
+map("n", "<leader>ps", "<cmd>lua require('dap-python').debug_selection()<cr>", { desc = "Debug Python selection" })
+
+-- Docker/K8s
+map("n", "<leader>dk", "<cmd>!kubectl apply -f %<cr>", { desc = "Apply K8s manifest" })
+map("n", "<leader>dd", "<cmd>!docker build .<cr>", { desc = "Docker build" })
+
+-- Terraform
+map("n", "<leader>ti", "<cmd>!terraform init<cr>", { desc = "Terraform init" })
+map("n", "<leader>tp", "<cmd>!terraform plan<cr>", { desc = "Terraform plan" })
+map("n", "<leader>tf", "<cmd>!terraform fmt %<cr>", { desc = "Terraform format" })
+map("n", "<leader>tv", "<cmd>!terraform validate<cr>", { desc = "Terraform validate" })
+
+-- Git (enhanced)
+map("n", "<leader>gp", "<cmd>!git push<cr>", { desc = "Git push" })
+map("n", "<leader>gpu", "<cmd>!git pull<cr>", { desc = "Git pull" })
+map("n", "<leader>gc", "<cmd>!git commit -m "<cr>", { desc = "Git commit" })
 EOF
+    
+    
+    # Create Python & DevOps specific plugin configurations
+    create_devops_plugins
     
     success "Custom LazyVim configuration created"
     log_execution "Create custom LazyVim config" "Completed"
+}
+
+create_devops_plugins() {
+    info "Creating Python & DevOps plugin configurations..."
+    
+    local plugins_dir="$NVIM_CONFIG_DIR/lua/plugins"
+    ensure_directory "$plugins_dir"
+    
+    # Python development plugins
+    cat > "$plugins_dir/python.lua" << 'EOF'
+return {
+  -- Python specific plugins
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      vim.list_extend(opts.ensure_installed, {
+        "python",
+        "rst",
+        "toml",
+        "ninja",
+      })
+    end,
+  },
+  
+  -- Enhanced Python LSP
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        pyright = {
+          settings = {
+            python = {
+              analysis = {
+                autoSearchPaths = true,
+                typeCheckingMode = "strict",
+                diagnosticMode = "workspace",
+                useLibraryCodeForTypes = true,
+              },
+            },
+          },
+        },
+        ruff_lsp = {},
+        pylsp = {
+          settings = {
+            pylsp = {
+              plugins = {
+                pycodestyle = { enabled = false },
+                pyflakes = { enabled = false },
+                pylint = { enabled = true },
+                flake8 = { enabled = false },
+                mypy = { enabled = true },
+                isort = { enabled = true },
+                black = { enabled = true },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  
+  -- Python debugging
+  {
+    "mfussenegger/nvim-dap",
+    dependencies = {
+      "mfussenegger/nvim-dap-python",
+    },
+    config = function()
+      require("dap-python").setup("~/.pyenv/shims/python")
+    end,
+  },
+  
+  -- Python testing
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/neotest-python",
+    },
+    opts = {
+      adapters = {
+        ["neotest-python"] = {
+          dap = { justMyCode = false },
+          runner = "pytest",
+        },
+      },
+    },
+  },
+  
+  -- Virtual environment selector
+  {
+    "linux-cultist/venv-selector.nvim",
+    dependencies = {
+      "neovim/nvim-lspconfig",
+      "nvim-telescope/telescope.nvim",
+    },
+    opts = {
+      name = { "venv", ".venv", "env", ".env" },
+    },
+    keys = {
+      { "<leader>pv", "<cmd>VenvSelect<cr>", desc = "Select Python venv" },
+    },
+  },
+}
+EOF
+    
+    # DevOps and Infrastructure plugins
+    cat > "$plugins_dir/devops.lua" << 'EOF'
+return {
+  -- DevOps language support
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      vim.list_extend(opts.ensure_installed, {
+        "yaml",
+        "json",
+        "jsonc",
+        "dockerfile",
+        "terraform",
+        "hcl",
+        "go",
+        "gomod",
+        "gowork",
+        "bash",
+        "make",
+        "markdown",
+        "markdown_inline",
+      })
+    end,
+  },
+  
+  -- Terraform/HCL support
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        terraformls = {},
+        tflint = {},
+      },
+    },
+  },
+  
+  -- Ansible support
+  {
+    "pearofducks/ansible-vim",
+    ft = { "yaml.ansible", "ansible" },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        ansiblels = {},
+      },
+    },
+  },
+  
+  -- Docker support
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        dockerls = {},
+        docker_compose_language_service = {},
+      },
+    },
+  },
+  
+  -- Kubernetes support
+  {
+    "someone-stole-my-name/yaml-companion.nvim",
+    dependencies = {
+      "neovim/nvim-lspconfig",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    config = function()
+      require("telescope").load_extension("yaml_schema")
+      local cfg = require("yaml-companion").setup({
+        schemas = {
+          {
+            name = "Kubernetes",
+            uri = "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.0/all.json",
+          },
+        },
+      })
+      require("lspconfig")["yamlls"].setup(cfg)
+    end,
+    keys = {
+      { "<leader>ys", "<cmd>Telescope yaml_schema<cr>", desc = "Select YAML schema" },
+    },
+  },
+  
+  -- Git integration (enhanced)
+  {
+    "tpope/vim-fugitive",
+    cmd = { "Git", "Gstatus", "Gblame", "Gpush", "Gpull" },
+  },
+  {
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles" },
+  },
+  
+  -- REST client for API testing
+  {
+    "rest-nvim/rest.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    ft = "http",
+    config = function()
+      require("rest-nvim").setup({})
+    end,
+    keys = {
+      { "<leader>rr", "<Plug>RestNvim", desc = "Run REST request" },
+      { "<leader>rp", "<Plug>RestNvimPreview", desc = "Preview REST request" },
+      { "<leader>rl", "<Plug>RestNvimLast", desc = "Run last REST request" },
+    },
+  },
+  
+  -- JSON/YAML utilities
+  {
+    "gennaro-tedesco/nvim-jqx",
+    ft = { "json", "yaml" },
+  },
+}
+EOF
+    
+    # Additional productivity plugins
+    cat > "$plugins_dir/productivity.lua" << 'EOF'
+return {
+  -- GitHub Copilot (optional, comment out if not needed)
+  {
+    "github/copilot.vim",
+    event = "InsertEnter",
+    config = function()
+      vim.g.copilot_no_tab_map = true
+      vim.g.copilot_assume_mapped = true
+      vim.api.nvim_set_keymap("i", "<C-j>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+    end,
+  },
+  
+  -- Better terminal integration
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    opts = {
+      open_mapping = [[<c-\>]],
+      direction = "horizontal",
+      size = 20,
+    },
+  },
+  
+  -- Project management
+  {
+    "ahmedkhalf/project.nvim",
+    config = function()
+      require("project_nvim").setup({
+        patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json", "pyproject.toml", "requirements.txt", "go.mod", "Cargo.toml" },
+      })
+    end,
+  },
+  
+  -- Better code folding
+  {
+    "kevinhwang91/nvim-ufo",
+    dependencies = "kevinhwang91/promise-async",
+    config = function()
+      require("ufo").setup()
+    end,
+  },
+  
+  -- Database client
+  {
+    "kristijanhusak/vim-dadbod-ui",
+    dependencies = {
+      { "tpope/vim-dadbod", lazy = true },
+      { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+    },
+    cmd = {
+      "DBUI",
+      "DBUIToggle",
+      "DBUIAddConnection",
+      "DBUIFindBuffer",
+    },
+    init = function()
+      vim.g.db_ui_use_nerd_fonts = 1
+    end,
+  },
+}
+EOF
+    
+    success "DevOps plugin configurations created"
 }
 
 # ============================================================================
@@ -674,6 +1069,22 @@ show_neovim_next_steps() {
     info "  <leader>/ = Toggle comment"
     
     echo
+    info "Python Development:"
+    info "  <leader>pr = Run Python file"
+    info "  <leader>pv = Select Python venv"
+    info "  <leader>pd = Debug Python method"
+    info "  <F5> = Start/Continue debugging"
+    info "  <leader>db = Toggle breakpoint"
+    
+    echo
+    info "DevOps Tools:"
+    info "  <leader>ti = Terraform init"
+    info "  <leader>tp = Terraform plan"
+    info "  <leader>dk = Apply K8s manifest"
+    info "  <leader>ys = Select YAML schema"
+    info "  <leader>rr = Run REST request"
+    
+    echo
     success "Neovim with LazyVim and optimized keyboard layout is ready!"
 }
 
@@ -714,6 +1125,7 @@ main() {
     execute_step "Install language servers" "install_language_servers"  
     execute_step "Configure shell integration" "configure_neovim_integration"
     execute_step "Create custom configuration" "create_custom_lazyvim_config"
+    execute_step "Install Python debugger" "install_python_debugger"
     execute_step "Install keyboard dependencies" "install_keyboard_dependencies"
     execute_step "Setup Caps Lock → Escape mapping" "setup_caps_to_escape"
     execute_step "Optimize keyboard for vim" "optimize_keyboard_for_vim"
@@ -723,6 +1135,43 @@ main() {
     
     show_installation_summary "Neovim + LazyVim + Keyboard Environment"
     show_neovim_next_steps
+}
+
+install_python_debugger() {
+    info "Setting up Python debugging support..."
+    
+    # Install debugpy if not already installed
+    if command_exists pip3; then
+        pip3 install --user debugpy 2>/dev/null || true
+    fi
+    
+    # Create debug configuration
+    local dap_config_dir="$NVIM_CONFIG_DIR/lua/plugins"
+    ensure_directory "$dap_config_dir"
+    
+    cat > "$dap_config_dir/dap-config.lua" << 'EOF'
+return {
+  {
+    "mfussenegger/nvim-dap",
+    keys = {
+      { "<F5>", function() require("dap").continue() end, desc = "Debug: Start/Continue" },
+      { "<F10>", function() require("dap").step_over() end, desc = "Debug: Step Over" },
+      { "<F11>", function() require("dap").step_into() end, desc = "Debug: Step Into" },
+      { "<F12>", function() require("dap").step_out() end, desc = "Debug: Step Out" },
+      { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Debug: Toggle Breakpoint" },
+      { "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: ")) end, desc = "Debug: Set Conditional Breakpoint" },
+      { "<leader>dr", function() require("dap").repl.open() end, desc = "Debug: Open REPL" },
+      { "<leader>dl", function() require("dap").run_last() end, desc = "Debug: Run Last" },
+      { "<leader>dh", function() require("dap.ui.widgets").hover() end, desc = "Debug: Hover" },
+      { "<leader>dp", function() require("dap.ui.widgets").preview() end, desc = "Debug: Preview" },
+      { "<leader>df", function() require("dap.ui.widgets").centered_float(require("dap.ui.widgets").frames) end, desc = "Debug: Frames" },
+      { "<leader>ds", function() require("dap.ui.widgets").centered_float(require("dap.ui.widgets").scopes) end, desc = "Debug: Scopes" },
+    },
+  },
+}
+EOF
+    
+    success "Python debugging support configured"
 }
 
 # Run main function if script is executed directly

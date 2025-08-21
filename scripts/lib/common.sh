@@ -562,7 +562,7 @@ show_installation_plan() {
     info "Total steps: $TOTAL_STEPS"
     echo
     
-    if ! ask_yes_no "Proceed with installation?" "yes"; then
+    if [[ "${DOTFILES_AUTO_CONFIRM:-}" != "1" ]] && ! ask_yes_no "Proceed with installation?" "yes"; then
         info "Installation cancelled by user"
         exit 0
     fi

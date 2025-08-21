@@ -80,10 +80,10 @@ show_linux_desktop_menu() {
   read -p "Choose an option [1-5, q]: " choice
 
   case $choice in
-  1) run_orchestrator "linux/install.sh" ;;
-  2) run_component "shell-env.sh" ;;
-  3) run_component "neovim-env.sh" ;;
-  4) run_component "python-env.sh" ;;
+  1) run_orchestrator "linux/install.sh" && show_completion_message ;;
+  2) run_component "shell-env.sh" && show_completion_message ;;
+  3) run_component "neovim-env.sh" && show_completion_message ;;
+  4) run_component "python-env.sh" && show_completion_message ;;
   5) show_component_menu ;;
   q | Q) exit 0 ;;
   *)
@@ -105,10 +105,10 @@ show_linux_server_menu() {
   read -p "Choose an option [1-5, q]: " choice
 
   case $choice in
-  1) run_server_essentials ;;
-  2) run_component "shell-env.sh" ;;
-  3) run_component "neovim-env.sh" ;;
-  4) run_component "python-env.sh" ;;
+  1) run_server_essentials && show_completion_message ;;
+  2) run_component "shell-env.sh" && show_completion_message ;;
+  3) run_component "neovim-env.sh" && show_completion_message ;;
+  4) run_component "python-env.sh" && show_completion_message ;;
   5) show_component_menu ;;
   q | Q) exit 0 ;;
   *)
@@ -130,10 +130,10 @@ show_macos_menu() {
   read -p "Choose an option [1-5, q]: " choice
 
   case $choice in
-  1) run_orchestrator "macos/install.sh" ;;
-  2) run_component "shell-env.sh" ;;
-  3) run_component "neovim-env.sh" ;;
-  4) run_component "python-env.sh" ;;
+  1) run_orchestrator "macos/install.sh" && show_completion_message ;;
+  2) run_component "shell-env.sh" && show_completion_message ;;
+  3) run_component "neovim-env.sh" && show_completion_message ;;
+  4) run_component "python-env.sh" && show_completion_message ;;
   5) show_component_menu ;;
   q | Q) exit 0 ;;
   *)
@@ -155,9 +155,9 @@ show_component_menu() {
   read -p "Choose a component [1-3, b, q]: " choice
 
   case $choice in
-  1) run_component "shell-env.sh" ;;
-  2) run_component "neovim-env.sh" ;;
-  3) run_component "python-env.sh" ;;
+  1) run_component "shell-env.sh" && show_completion_message ;;
+  2) run_component "neovim-env.sh" && show_completion_message ;;
+  3) run_component "python-env.sh" && show_completion_message ;;
   b | B) show_main_menu ;;
   q | Q) exit 0 ;;
   *)
@@ -191,9 +191,8 @@ run_component() {
 
   if [[ -x "$script_path" ]]; then
     info "Running component: $component"
-    if "$script_path"; then
+    if DOTFILES_AUTO_CONFIRM=1 "$script_path"; then
       success "Completed: $component"
-      show_completion_message
     else
       error "Failed: $component"
     fi

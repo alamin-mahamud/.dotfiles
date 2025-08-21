@@ -191,7 +191,7 @@ class Config:
             'theme': 'powerlevel10k'
         },
         'tools': [
-            'ripgrep', 'fd', 'bat', 'exa', 'fzf',
+            'ripgrep', 'fd', 'bat', 'eza', 'fzf',
             'tmux', 'neovim', 'htop', 'jq', 'tldr'
         ],
         'fonts': [
@@ -459,7 +459,7 @@ class ShellEnvironment:
         
         # Map tool names to package names per OS/distro
         tool_map = {
-            'exa': 'eza' if self.pm.manager in ['apt', 'dnf'] else 'exa',
+            'eza': 'eza',  # eza is the modern replacement for exa
             'fd': 'fd-find' if self.pm.manager == 'apt' else 'fd'
         }
         
@@ -529,11 +529,34 @@ class PythonEnvironment:
         """Install Poetry for dependency management."""
         self.logger.info("Installing Poetry")
         
-        installer_url = 'https://install.python-poetry.org'
-        with tempfile.NamedTemporaryFile(suffix='.py', delete=False) as f:
-            urllib.request.urlretrieve(installer_url, f.name)
-            run_command(['python3', f.name])
-            Path(f.name).unlink()
+        # Check if poetry is already installed
+        if command_exists('poetry'):
+            self.logger.info("Poetry already installed")
+            return
+        
+        try:
+            # Try pipx installation first (more reliable)
+            if command_exists('pipx'):
+                run_command(['pipx', 'install', 'poetry'])
+                self.logger.success("Poetry installed via pipx")
+                return
+            
+            # Fallback to official installer with symlinks enabled
+            installer_url = 'https://install.python-poetry.org'
+            with tempfile.NamedTemporaryFile(suffix='.py', delete=False) as f:
+                urllib.request.urlretrieve(installer_url, f.name)
+                # Set environment variable to enable symlinks
+                env = os.environ.copy()
+                env['POETRY_VENV_SYMLINKS'] = '1'
+                result = subprocess.run(['python3', f.name], env=env, capture_output=True, text=True)
+                Path(f.name).unlink()
+                if result.returncode != 0:
+                    raise subprocess.CalledProcessError(result.returncode, ['python3', f.name])
+                
+        except subprocess.CalledProcessError as e:
+            self.logger.warning(f"Poetry installation failed: {e}")
+            self.logger.info("You can install Poetry manually later with: curl -sSL https://install.python-poetry.org | python3 -")
+            return
         
         self.logger.success("Poetry installed")
     
@@ -684,12 +707,46 @@ class DotfilesInstaller:
         dotfiles_root = self.config.get('dotfiles_root')
         
         if dotfiles_root.exists():
-            self.logger.info("Updating dotfiles repository")
-            run_command(['git', 'pull'], cwd=dotfiles_root)
+            self.logger.info("Checking dotfiles repository status")
+            try:
+                # Check if we're in a git repository
+                run_command(['git', 'rev-parse', '--git-dir'], cwd=dotfiles_root, capture_output=True)
+                
+                # Check for uncommitted changes
+                status_result = run_command(['git', 'status', '--porcelain'], cwd=dotfiles_root, capture_output=True)
+                if status_result.stdout.strip():
+                    self.logger.warning("Uncommitted changes detected in dotfiles repository")
+                    self.logger.info("Stashing local changes...")
+                    run_command(['git', 'stash', 'push', '-m', 'Auto-stash before pull'], cwd=dotfiles_root)
+                    
+                    # Pull latest changes
+                    self.logger.info("Pulling latest changes")
+                    run_command(['git', 'pull', '--rebase'], cwd=dotfiles_root)
+                    
+                    # Pop stash if we stashed anything
+                    stash_list = run_command(['git', 'stash', 'list'], cwd=dotfiles_root, capture_output=True)
+                    if 'Auto-stash before pull' in stash_list.stdout:
+                        self.logger.info("Reapplying stashed changes")
+                        try:
+                            run_command(['git', 'stash', 'pop'], cwd=dotfiles_root)
+                        except subprocess.CalledProcessError:
+                            self.logger.warning("Conflicts detected when applying stash. Please resolve manually.")
+                            self.logger.info("Run 'git stash pop' in the dotfiles directory to apply changes")
+                else:
+                    # No local changes, safe to pull
+                    self.logger.info("Updating dotfiles repository")
+                    run_command(['git', 'pull'], cwd=dotfiles_root)
+            except subprocess.CalledProcessError as e:
+                self.logger.error(f"Failed to update repository: {e}")
+                self.logger.info("Continuing with existing dotfiles...")
         else:
             self.logger.info("Cloning dotfiles repository")
             repo_url = 'https://github.com/alamin-mahamud/.dotfiles.git'
-            run_command(['git', 'clone', repo_url, str(dotfiles_root)])
+            try:
+                run_command(['git', 'clone', repo_url, str(dotfiles_root)])
+            except subprocess.CalledProcessError as e:
+                self.logger.error(f"Failed to clone repository: {e}")
+                raise
         
         self.logger.success("Dotfiles repository ready")
     
@@ -793,14 +850,28 @@ def command_exists(command: str) -> bool:
 
 def run_command(cmd: List[str], check: bool = True, capture_output: bool = True, 
                 text: bool = True, input: str = None, cwd: Path = None) -> subprocess.CompletedProcess:
-    """Run shell command."""
+    """Run shell command with detailed error reporting."""
     try:
-        return subprocess.run(cmd, check=check, capture_output=capture_output, 
-                            text=text, input=input, cwd=cwd)
+        result = subprocess.run(cmd, check=check, capture_output=capture_output, 
+                              text=text, input=input, cwd=cwd)
+        return result
     except subprocess.CalledProcessError as e:
-        Logger().error(f"Command failed: {' '.join(cmd)}\n{e}")
+        error_msg = f"Command failed: {' '.join(cmd)}"
+        if cwd:
+            error_msg += f"\nWorking directory: {cwd}"
+        error_msg += f"\nReturn code: {e.returncode}"
+        if e.stdout:
+            error_msg += f"\nStdout: {e.stdout}"
+        if e.stderr:
+            error_msg += f"\nStderr: {e.stderr}"
+        Logger().error(error_msg)
+        raise
+    except FileNotFoundError as e:
+        Logger().error(f"Command not found: {cmd[0]}\nFull command: {' '.join(cmd)}")
+        raise
     except Exception as e:
-        Logger().error(f"Error running command: {e}")
+        Logger().error(f"Unexpected error running command: {' '.join(cmd)}\nError: {e}")
+        raise
 
 
 def ask_yes_no(prompt: str, default: bool = True) -> bool:
@@ -812,6 +883,44 @@ def ask_yes_no(prompt: str, default: bool = True) -> bool:
         return default
     
     return response[0] == 'y'
+
+
+def safe_git_pull(repo_path: Path, repo_name: str = "repository") -> bool:
+    """Safely pull git repository, handling uncommitted changes."""
+    logger = Logger()
+    try:
+        # Check if it's a git repository
+        run_command(['git', 'rev-parse', '--git-dir'], cwd=repo_path, capture_output=True)
+        
+        # Check for uncommitted changes
+        status = run_command(['git', 'status', '--porcelain'], cwd=repo_path, capture_output=True)
+        if status.stdout.strip():
+            logger.warning(f"Uncommitted changes in {repo_name}")
+            # Try to stash changes
+            try:
+                run_command(['git', 'stash', 'push', '-m', f'Auto-stash for {repo_name}'], cwd=repo_path)
+                logger.info(f"Stashed local changes in {repo_name}")
+                # Pull with rebase
+                run_command(['git', 'pull', '--rebase'], cwd=repo_path)
+                # Try to pop stash
+                try:
+                    run_command(['git', 'stash', 'pop'], cwd=repo_path)
+                    logger.info(f"Reapplied stashed changes in {repo_name}")
+                except subprocess.CalledProcessError:
+                    logger.warning(f"Conflicts in {repo_name}. Run 'git stash pop' manually to resolve.")
+            except subprocess.CalledProcessError as e:
+                logger.error(f"Failed to update {repo_name}: {e}")
+                return False
+        else:
+            # No local changes, safe to pull
+            run_command(['git', 'pull'], cwd=repo_path)
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Git operation failed for {repo_name}: {e}")
+        return False
+    except Exception as e:
+        logger.error(f"Unexpected error updating {repo_name}: {e}")
+        return False
 
 
 def check_internet() -> bool:

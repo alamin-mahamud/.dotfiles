@@ -1,0 +1,56 @@
+{
+    "dotfiles_root": "~/Work/.dotfiles",
+    "backup_dir": "~/.dotfiles-backup",
+    "shell": {
+        "default": "zsh",
+        "theme": "powerlevel10k",
+        "plugins": [
+            "git",
+            "docker",
+            "kubectl",
+            "aws",
+            "terraform",
+            "zsh-autosuggestions",
+            "zsh-syntax-highlighting",
+            "zsh-completions",
+            "fzf-tab"
+        ]
+    },
+    "tools": [
+        "ripgrep",
+        "fd",
+        "bat",
+        "exa",
+        "fzf",
+        "tmux",
+        "neovim",
+        "htop",
+        "jq",
+        "tldr",
+        "tree",
+        "ncdu",
+        "duf"
+    ],
+    "fonts": [
+        "FiraCode",
+        "JetBrainsMono",
+        "Iosevka"
+    ],
+    "python": {
+        "versions": ["3.11", "3.12"],
+        "global_packages": [
+            "ipython",
+            "black",
+            "flake8",
+            "mypy",
+            "pytest",
+            "httpie"
+        ]
+    },
+    "desktop": {
+        "terminal": "kitty",
+        "keyboard": {
+            "caps_lock": "escape"
+        }
+    }
+}

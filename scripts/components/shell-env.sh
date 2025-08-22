@@ -631,13 +631,60 @@ fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Terminal title configuration for kitty (user@hostname(IP) - cmd format)
+function get_local_ip() {
+    # Try different methods to get IP address
+    local ip=""
+    
+    # Method 1: hostname -I (Linux)
+    if command -v hostname >/dev/null 2>&1; then
+        ip=$(hostname -I 2>/dev/null | awk '{print $1}')
+    fi
+    
+    # Method 2: ip route (Linux)
+    if [[ -z "$ip" ]] && command -v ip >/dev/null 2>&1; then
+        ip=$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7; exit}')
+    fi
+    
+    # Method 3: ifconfig (macOS/BSD)
+    if [[ -z "$ip" ]] && command -v ifconfig >/dev/null 2>&1; then
+        ip=$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | head -1 | awk '{print $2}')
+    fi
+    
+    # Method 4: networksetup (macOS)
+    if [[ -z "$ip" ]] && command -v networksetup >/dev/null 2>&1; then
+        local service=$(networksetup -listnetworkserviceorder | grep -E '^\([0-9]+\)' | head -1 | sed 's/^([0-9]*) //')
+        if [[ -n "$service" ]]; then
+            ip=$(networksetup -getinfo "$service" 2>/dev/null | grep '^IP address:' | cut -d' ' -f3)
+        fi
+    fi
+    
+    # Fallback: external IP (slower)
+    if [[ -z "$ip" ]]; then
+        ip=$(curl -s --max-time 2 ifconfig.me 2>/dev/null || echo "no-ip")
+    fi
+    
+    echo "${ip:-no-ip}"
+}
+
 function set_terminal_title() {
     if [[ -n "$KITTY_WINDOW_ID" ]]; then
-        local ip=$(hostname -I | awk '{print $1}' 2>/dev/null || echo "$(curl -s ifconfig.me 2>/dev/null || echo 'no-ip')")
+        # Cache IP address to avoid repeated lookups
+        if [[ -z "$_CACHED_IP" ]]; then
+            _CACHED_IP=$(get_local_ip)
+        fi
+        
+        local hostname="${HOSTNAME:-$(hostname -s 2>/dev/null || echo 'localhost')}"
         local current_dir=$(basename "$PWD")
-        local cmd="${1:-shell}"
-        # Set title format: user@hostname(IP) - command in directory
-        printf '\033]0;%s@%s(%s) - %s in %s\007' "$USER" "${HOSTNAME:-$(hostname)}" "$ip" "$cmd" "$current_dir"
+        local cmd_part=""
+        
+        if [[ -n "$1" && "$1" != "shell" ]]; then
+            # Extract just the command name, not full arguments
+            local cmd_name=$(echo "$1" | awk '{print $1}')
+            cmd_part=" - $cmd_name"
+        fi
+        
+        # Set title format: user@hostname(IP) - command (if running)
+        printf '\033]0;%s@%s(%s)%s\007' "$USER" "$hostname" "$_CACHED_IP" "$cmd_part"
     fi
 }
 
@@ -650,14 +697,23 @@ if [[ -n "$KITTY_WINDOW_ID" ]]; then
     }
     
     function precmd_set_title() {
-        set_terminal_title
+        # Reset to base title (no command) when prompt returns
+        set_terminal_title ""
     }
     
     add-zsh-hook preexec preexec_set_title
     add-zsh-hook precmd precmd_set_title
     
     # Set initial title
-    set_terminal_title
+    set_terminal_title ""
+    
+    # Function to refresh cached IP address
+    function refresh_kitty_ip() {
+        unset _CACHED_IP
+        _CACHED_IP=$(get_local_ip)
+        set_terminal_title ""
+        echo "Kitty title IP refreshed: $_CACHED_IP"
+    }
 fi
 EOF
     

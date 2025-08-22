@@ -123,6 +123,11 @@ install_docker_linux() {
 }
 
 install_docker_macos() {
+    if [[ -d "/Applications/Docker.app" ]]; then
+        success "Docker Desktop already installed at /Applications/Docker.app"
+        return 0
+    fi
+    
     if command -v brew >/dev/null 2>&1; then
         brew install --cask docker
         success "Docker Desktop installed via Homebrew"
@@ -137,8 +142,25 @@ install_docker_compose() {
     
     info "Installing Docker Compose..."
     
-    # Get latest version from GitHub API
-    compose_version=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
+    # Check if docker-compose is already installed
+    if command -v docker-compose >/dev/null 2>&1; then
+        local current_version
+        current_version=$(docker-compose --version 2>/dev/null | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
+        info "Docker Compose $current_version already installed"
+        
+        # Get latest version to check for updates
+        compose_version=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+        
+        if [[ "$current_version" == "$compose_version" ]]; then
+            success "Docker Compose is up to date ($current_version)"
+            return 0
+        else
+            info "Updating Docker Compose from $current_version to $compose_version"
+        fi
+    else
+        # Get latest version from GitHub API
+        compose_version=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+    fi
     
     case "$os" in
         linux)
@@ -162,6 +184,22 @@ install_kubectl() {
     local os="$1"
     
     info "Installing kubectl..."
+    
+    # Check if kubectl is already installed
+    if command -v kubectl >/dev/null 2>&1; then
+        local current_version latest_version
+        current_version=$(kubectl version --client --short 2>/dev/null | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' || kubectl version --client -o json 2>/dev/null | grep -o '"gitVersion":"v[0-9]\+\.[0-9]\+\.[0-9]\+"' | cut -d'"' -f4)
+        latest_version=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+        
+        info "kubectl $current_version already installed"
+        
+        if [[ "$current_version" == "$latest_version" ]]; then
+            success "kubectl is up to date ($current_version)"
+            return 0
+        else
+            info "Updating kubectl from $current_version to $latest_version"
+        fi
+    fi
     
     case "$os" in
         linux)
@@ -187,6 +225,26 @@ install_helm() {
     local os="$1"
     
     info "Installing Helm..."
+    
+    # Check if helm is already installed
+    if command -v helm >/dev/null 2>&1; then
+        local current_version
+        current_version=$(helm version --short 2>/dev/null | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' || helm version --template='{{.Version}}' 2>/dev/null)
+        info "Helm $current_version already installed"
+        
+        case "$os" in
+            macos)
+                if command -v brew >/dev/null 2>&1; then
+                    info "Checking for Helm updates via Homebrew..."
+                    brew upgrade helm 2>/dev/null || success "Helm is up to date"
+                    return 0
+                fi
+                ;;
+        esac
+        
+        # For Linux or non-brew macOS, the installer script handles updates
+        info "Running Helm installer to check for updates..."
+    fi
     
     case "$os" in
         linux)
@@ -219,6 +277,29 @@ install_terraform() {
     
     info "Installing Terraform..."
     
+    # Check if terraform is already installed
+    if command -v terraform >/dev/null 2>&1; then
+        local current_version
+        current_version=$(terraform version | head -1 | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+')
+        info "Terraform $current_version already installed"
+        
+        case "$os" in
+            macos)
+                if command -v brew >/dev/null 2>&1; then
+                    info "Checking for Terraform updates via Homebrew..."
+                    brew upgrade hashicorp/tap/terraform 2>/dev/null || success "Terraform is up to date"
+                    return 0
+                fi
+                ;;
+            linux)
+                info "Checking for Terraform updates via package manager..."
+                sudo apt-get update >/dev/null 2>&1
+                sudo apt-get install -y terraform 2>/dev/null || success "Terraform is up to date"
+                return 0
+                ;;
+        esac
+    fi
+    
     case "$os" in
         linux)
             # Add HashiCorp repository
@@ -245,11 +326,39 @@ install_opentofu() {
     
     info "Installing OpenTofu..."
     
+    # Check if tofu is already installed
+    if command -v tofu >/dev/null 2>&1; then
+        local current_version
+        current_version=$(tofu version | head -1 | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+')
+        info "OpenTofu $current_version already installed"
+        
+        case "$os" in
+            macos)
+                if command -v brew >/dev/null 2>&1; then
+                    info "Checking for OpenTofu updates via Homebrew..."
+                    brew upgrade opentofu 2>/dev/null || success "OpenTofu is up to date"
+                    return 0
+                fi
+                ;;
+        esac
+        
+        # For Linux or non-brew macOS, check latest version
+        local latest_version
+        latest_version=$(curl -s https://api.github.com/repos/opentofu/opentofu/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+        
+        if [[ "$current_version" == "$latest_version" ]]; then
+            success "OpenTofu is up to date ($current_version)"
+            return 0
+        else
+            info "Updating OpenTofu from $current_version to $latest_version"
+        fi
+    fi
+    
     case "$os" in
         linux)
             # Download latest OpenTofu
             local tofu_version
-            tofu_version=$(curl -s https://api.github.com/repos/opentofu/opentofu/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
+            tofu_version=$(curl -s https://api.github.com/repos/opentofu/opentofu/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
             local arch
             arch=$(detect_arch)
             
@@ -276,8 +385,36 @@ install_terragrunt() {
     
     info "Installing Terragrunt..."
     
+    # Check if terragrunt is already installed
+    if command -v terragrunt >/dev/null 2>&1; then
+        local current_version
+        current_version=$(terragrunt --version 2>/dev/null | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+')
+        info "Terragrunt $current_version already installed"
+        
+        case "$os" in
+            macos)
+                if command -v brew >/dev/null 2>&1; then
+                    info "Checking for Terragrunt updates via Homebrew..."
+                    brew upgrade terragrunt 2>/dev/null || success "Terragrunt is up to date"
+                    return 0
+                fi
+                ;;
+        esac
+        
+        # Check latest version
+        local latest_version
+        latest_version=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+        
+        if [[ "$current_version" == "$latest_version" ]]; then
+            success "Terragrunt is up to date ($current_version)"
+            return 0
+        else
+            info "Updating Terragrunt from $current_version to $latest_version"
+        fi
+    fi
+    
     local tg_version
-    tg_version=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
+    tg_version=$(curl -s https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
     
     case "$os" in
         linux)
@@ -314,6 +451,25 @@ install_aws_cli() {
     
     info "Installing AWS CLI v2..."
     
+    # Check if aws is already installed
+    if command -v aws >/dev/null 2>&1; then
+        local current_version
+        current_version=$(aws --version 2>&1 | grep -o 'aws-cli/[0-9]\+\.[0-9]\+\.[0-9]\+' | cut -d'/' -f2)
+        info "AWS CLI v$current_version already installed"
+        
+        case "$os" in
+            macos)
+                if command -v brew >/dev/null 2>&1; then
+                    info "Checking for AWS CLI updates via Homebrew..."
+                    brew upgrade awscli 2>/dev/null || success "AWS CLI is up to date"
+                    return 0
+                fi
+                ;;
+        esac
+        
+        info "AWS CLI v2 installer will handle updates automatically"
+    fi
+    
     case "$os" in
         linux)
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
@@ -340,6 +496,28 @@ install_azure_cli() {
     
     info "Installing Azure CLI..."
     
+    # Check if az is already installed
+    if command -v az >/dev/null 2>&1; then
+        local current_version
+        current_version=$(az version --output tsv --query '"azure-cli"' 2>/dev/null || az --version | head -1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+        info "Azure CLI v$current_version already installed"
+        
+        case "$os" in
+            macos)
+                if command -v brew >/dev/null 2>&1; then
+                    info "Checking for Azure CLI updates via Homebrew..."
+                    brew upgrade azure-cli 2>/dev/null || success "Azure CLI is up to date"
+                    return 0
+                fi
+                ;;
+            linux)
+                info "Checking for Azure CLI updates..."
+                az upgrade --yes 2>/dev/null || success "Azure CLI is up to date"
+                return 0
+                ;;
+        esac
+    fi
+    
     case "$os" in
         linux)
             curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -360,6 +538,28 @@ install_gcloud_cli() {
     local os="$1"
     
     info "Installing Google Cloud CLI..."
+    
+    # Check if gcloud is already installed
+    if command -v gcloud >/dev/null 2>&1; then
+        local current_version
+        current_version=$(gcloud version --format='value(Google Cloud SDK)' 2>/dev/null || gcloud --version | head -1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+        info "Google Cloud CLI v$current_version already installed"
+        
+        case "$os" in
+            macos)
+                if command -v brew >/dev/null 2>&1; then
+                    info "Checking for Google Cloud CLI updates via Homebrew..."
+                    brew upgrade google-cloud-sdk 2>/dev/null || success "Google Cloud CLI is up to date"
+                    return 0
+                fi
+                ;;
+            linux)
+                info "Checking for Google Cloud CLI updates..."
+                gcloud components update --quiet 2>/dev/null || success "Google Cloud CLI is up to date"
+                return 0
+                ;;
+        esac
+    fi
     
     case "$os" in
         linux)

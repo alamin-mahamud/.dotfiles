@@ -169,6 +169,13 @@ show_component_menu() {
 
 run_orchestrator() {
   local orchestrator="$1"
+  
+  # Special handling for macOS since it doesn't have an orchestrator file
+  if [[ "$orchestrator" == "macos/install.sh" ]]; then
+    run_macos_full_installation
+    return
+  fi
+  
   local script_path="$ORCHESTRATORS_DIR/$orchestrator"
   local title="${orchestrator%.*}"
 
@@ -203,13 +210,6 @@ run_component() {
 
 
 run_server_essentials() {
-  local marker="server-essentials-$(date +%Y%m%d)"
-  
-  if is_completed "$marker"; then
-    info "Server essentials already installed today"
-    return 0
-  fi
-  
   info "Installing server essentials..."
 
   # Install minimal server components
@@ -233,8 +233,99 @@ run_server_essentials() {
     fi
   fi
 
-  mark_completed "$marker"
   success "Server essentials installation complete"
+}
+
+run_macos_full_installation() {
+  info "Starting full macOS development environment installation..."
+  
+  # Check for Xcode Command Line Tools
+  if ! xcode-select --print-path &> /dev/null; then
+    info "Installing Xcode Command Line Tools (this may take a while)..."
+    xcode-select --install
+    info "Please complete Xcode installation and run this script again"
+    exit 1
+  fi
+  
+  # Install Homebrew if not present
+  if ! command_exists brew; then
+    info "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    
+    # Add Homebrew to PATH for current session
+    if [[ "${DOTFILES_ARCH}" == "arm64" ]]; then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+      eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    success "Homebrew installed"
+  else
+    debug "Homebrew already installed"
+  fi
+  
+  # Update package manager
+  setup_package_manager
+  update_package_lists
+  
+  # Install essential packages
+  info "Installing essential macOS packages..."
+  install_packages git curl wget jq tree htop ripgrep fd bat eza fzf tmux neovim
+  
+  # Run component installers
+  info "Installing shell environment..."
+  run_component "shell-env.sh"
+  
+  info "Installing Neovim environment..."
+  run_component "neovim-env.sh"
+  
+  info "Installing Python development environment..."
+  run_component "python-env.sh"
+  
+  info "Installing Node.js development environment..."  
+  run_component "nodejs-env.sh"
+  
+  info "Installing Go development environment..."
+  run_component "golang-env.sh"
+  
+  info "Installing DevOps tools..."
+  run_component "devops-tools.sh"
+  
+  # Setup configuration symlinks
+  info "Setting up configuration symlinks..."
+  local dotfiles_dir="$DOTFILES_ROOT"
+  
+  # Git configuration
+  if [[ -f "$dotfiles_dir/git/.gitconfig" ]]; then
+    safe_symlink "$dotfiles_dir/git/.gitconfig" "$HOME/.gitconfig"
+  fi
+  
+  # Configure macOS settings
+  if ! is_completed "macos-settings-configured"; then
+    info "Configuring macOS system settings..."
+    
+    # Dock settings
+    defaults write com.apple.dock autohide -bool true
+    defaults write com.apple.dock tilesize -int 48
+    defaults write com.apple.dock show-recents -bool false
+    
+    # Finder settings
+    defaults write com.apple.finder AppleShowAllFiles -bool true
+    defaults write com.apple.finder ShowPathbar -bool true
+    defaults write com.apple.finder ShowStatusBar -bool true
+    
+    # Keyboard settings
+    defaults write NSGlobalDomain KeyRepeat -int 2
+    defaults write NSGlobalDomain InitialKeyRepeat -int 15
+    
+    # Restart affected services
+    killall Dock 2>/dev/null || true
+    killall Finder 2>/dev/null || true
+    
+    mark_completed "macos-settings-configured"
+    success "macOS settings configured"
+  fi
+  
+  success "macOS full installation complete"
 }
 
 show_completion_message() {

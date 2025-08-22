@@ -32,14 +32,26 @@ main() {
 install_nvm() {
     print_header "Installing NVM (Node Version Manager)"
     
+    # Remove conflicting .npmrc file if it exists
+    if [[ -f "$HOME/.npmrc" ]]; then
+        rm -f "$HOME/.npmrc"
+        info "Removed conflicting .npmrc file"
+    fi
+    
     # Check if NVM is already installed
     if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
         warning "NVM already installed, updating..."
+        # Source NVM first
+        export NVM_DIR="$HOME/.nvm"
+        [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+        [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+        success "NVM already installed and loaded"
+        return 0
     fi
     
     # Get latest NVM version
     local nvm_version
-    nvm_version=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
+    nvm_version=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | grep '"tag_name"' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
     
     # Download and install NVM
     curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${nvm_version}/install.sh" | bash

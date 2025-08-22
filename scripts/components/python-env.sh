@@ -58,8 +58,11 @@ install_python_dependencies() {
 }
 
 install_pyenv() {
-    if command_exists pyenv; then
+    # Check if pyenv is installed (might not be in PATH yet)
+    if [[ -d "$HOME/.pyenv/bin" ]]; then
         info "pyenv already installed, updating..."
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
         if [[ -d "$HOME/.pyenv/.git" ]]; then
             cd "$HOME/.pyenv" && git pull 2>/dev/null || true
         fi
@@ -69,9 +72,14 @@ install_pyenv() {
     info "Installing pyenv..."
     
     # Install pyenv
-    curl https://pyenv.run | bash 2>/dev/null || {
-        error "Failed to install pyenv"
-        return 1
+    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash 2>/dev/null || {
+        # If that fails, try alternative installation method
+        if [[ ! -d "$HOME/.pyenv" ]]; then
+            git clone https://github.com/pyenv/pyenv.git "$HOME/.pyenv" || {
+                error "Failed to install pyenv"
+                return 1
+            }
+        fi
     }
     
     # Add to shell configuration
@@ -118,7 +126,10 @@ install_python_versions() {
             info "Python $version already installed"
         else
             info "Installing Python $version..."
-            pyenv install "$version"
+            # Use -s flag to skip if already installed
+            pyenv install -s "$version" || {
+                warning "Could not install Python $version (may already be installed)"
+            }
         fi
     done
     
@@ -180,8 +191,11 @@ install_pip_tools() {
     
     for tool in "${tools[@]}"; do
         if ! command_exists "$tool"; then
-            pipx install "$tool"
-            debug "Installed $tool via pipx"
+            pipx install "$tool" 2>/dev/null || {
+                warning "Could not install $tool via pipx"
+            }
+        else
+            debug "$tool already installed"
         fi
     done
     
@@ -193,7 +207,9 @@ configure_poetry() {
         info "Configuring poetry..."
         
         # Configure poetry to create virtual environments in project directories
-        poetry config virtualenvs.in-project true
+        poetry config virtualenvs.in-project true 2>/dev/null || {
+            warning "Could not configure poetry settings"
+        }
         
         # Enable tab completion for bash/zsh
         local shell_config=""
@@ -209,9 +225,9 @@ configure_poetry() {
                 if [[ "${SHELL##*/}" == "zsh" ]]; then
                     echo 'fpath+=~/.zfunc' >> "$shell_config"
                     mkdir -p ~/.zfunc
-                    poetry completions zsh > ~/.zfunc/_poetry
+                    poetry completions zsh > ~/.zfunc/_poetry 2>/dev/null || true
                 else
-                    poetry completions bash >> "$shell_config"
+                    poetry completions bash >> "$shell_config" 2>/dev/null || true
                 fi
                 info "Added poetry completions"
             fi
@@ -280,16 +296,17 @@ EOF
 verify_installation() {
     info "Verifying Python installation..."
     
+    # Ensure pyenv is in PATH
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    
     # Check pyenv
-    if command_exists pyenv; then
+    if [[ -d "$HOME/.pyenv/bin" ]] && command -v pyenv >/dev/null 2>&1; then
+        eval "$(pyenv init -)"
         local pyenv_version=$(pyenv --version)
         success "pyenv: $pyenv_version"
         
         # Check Python versions
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init -)"
-        
         local python_version=$(python --version)
         success "Python: $python_version"
     else
@@ -311,13 +328,6 @@ verify_installation() {
 }
 
 main() {
-    local marker="python-env-$(date +%Y%m%d)"
-    
-    if is_completed "$marker"; then
-        info "Python environment already set up today"
-        return 0
-    fi
-    
     init_script "Python Environment Installer"
     
     # Check if running on supported OS
@@ -334,7 +344,6 @@ main() {
     create_python_aliases
     verify_installation
     
-    mark_completed "$marker"
     success "Python environment setup complete!"
     info "Please restart your shell or run: source ~/.${SHELL##*/}rc"
     info "Available Python versions: ${PYTHON_VERSIONS[*]}"

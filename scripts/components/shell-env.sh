@@ -615,6 +615,11 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# Source NVM if installed
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    source "$NVM_DIR/nvm.sh"
+fi
+
 # Load additional configurations
 [ -f ~/.zsh_local ] && source ~/.zsh_local
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -989,13 +994,6 @@ verify_installation() {
 }
 
 main() {
-    local marker="shell-env-$(date +%Y%m%d)"
-    
-    if is_completed "$marker"; then
-        info "Shell environment already set up today"
-        return 0
-    fi
-    
     init_script "Shell Environment Installer"
     
     # Check for required tools
@@ -1030,8 +1028,6 @@ main() {
     execute_step "Configure FZF key bindings" "configure_fzf"
     execute_step "Create local shell aliases and functions" "create_shell_aliases"
     execute_step "Verify installation" "verify_installation"
-    
-    mark_completed "$marker"
     
     show_installation_summary "Shell Environment"
     

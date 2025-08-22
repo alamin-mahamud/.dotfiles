@@ -187,18 +187,20 @@ install_kubectl() {
     
     # Check if kubectl is already installed
     if command -v kubectl >/dev/null 2>&1; then
-        local current_version latest_version
-        current_version=$(kubectl version --client --short 2>/dev/null | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' || kubectl version --client -o json 2>/dev/null | grep -o '"gitVersion":"v[0-9]\+\.[0-9]\+\.[0-9]\+"' | cut -d'"' -f4)
-        latest_version=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+        local current_version
+        current_version=$(kubectl version --client -o json 2>/dev/null | grep '"gitVersion"' | cut -d'"' -f4 || echo "unknown")
         
         info "kubectl $current_version already installed"
         
-        if [[ "$current_version" == "$latest_version" ]]; then
-            success "kubectl is up to date ($current_version)"
+        # For macOS with brew, just upgrade if needed
+        if [[ "$os" == "macos" ]] && command -v brew >/dev/null 2>&1; then
+            brew upgrade kubernetes-cli 2>/dev/null || true
+            success "kubectl updated via brew"
             return 0
-        else
-            info "Updating kubectl from $current_version to $latest_version"
         fi
+        
+        success "kubectl is already installed"
+        return 0
     fi
     
     case "$os" in
@@ -209,11 +211,10 @@ install_kubectl() {
             ;;
         macos)
             if command -v brew >/dev/null 2>&1; then
-                brew install kubernetes-cli
+                brew install kubernetes-cli || brew upgrade kubernetes-cli
             else
-                curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl"
-                sudo mv kubectl /usr/local/bin/kubectl
-                sudo chmod +x /usr/local/bin/kubectl
+                error "Homebrew is required to install kubectl on macOS"
+                return 1
             fi
             ;;
     esac

@@ -39,8 +39,8 @@ install_go() {
         current_version=$(go version | awk '{print $3}' | sed 's/go//')
         warning "Go ${current_version} already installed, upgrading to latest..."
         
-        # Remove existing Go installation
-        if [[ -d "/usr/local/go" ]]; then
+        # Only remove existing Go installation on Linux with sudo
+        if [[ "$os" == "linux" ]] && [[ -d "/usr/local/go" ]]; then
             sudo rm -rf /usr/local/go
         fi
     fi
@@ -69,19 +69,14 @@ install_go() {
             ;;
         macos)
             if command -v brew >/dev/null 2>&1; then
-                brew install go
+                # Use brew for macOS installation
+                if brew list go &>/dev/null; then
+                    brew upgrade go || true
+                else
+                    brew install go
+                fi
             else
-                local arch
-                arch=$(uname -m)
-                case "$arch" in
-                    x86_64) go_arch="amd64" ;;
-                    arm64) go_arch="arm64" ;;
-                    *) error "Unsupported architecture: $arch" ;;
-                esac
-                
-                curl -L "https://golang.org/dl/${go_version}.darwin-${go_arch}.tar.gz" -o "/tmp/${go_version}.darwin-${go_arch}.tar.gz"
-                sudo tar -C /usr/local -xzf "/tmp/${go_version}.darwin-${go_arch}.tar.gz"
-                rm "/tmp/${go_version}.darwin-${go_arch}.tar.gz"
+                error "Homebrew is required to install Go on macOS"
             fi
             ;;
         *)

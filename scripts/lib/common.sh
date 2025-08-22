@@ -32,7 +32,11 @@ log() {
 
 error() {
     log "${RED}ERROR: $1${NC}" >&2
-    exit 1
+    # Only exit if not in a subshell or function call
+    if [[ "${BASH_SUBSHELL:-0}" -eq 0 ]]; then
+        exit 1
+    fi
+    return 1
 }
 
 warning() {
@@ -554,7 +558,7 @@ show_installation_plan() {
     local step_num=1
     for item in "${INSTALLATION_PLAN[@]}"; do
         printf "  %2d. %s\n" "$step_num" "$item"
-        ((step_num++))
+        step_num=$((step_num + 1))
     done
     
     TOTAL_STEPS=${#INSTALLATION_PLAN[@]}
@@ -584,7 +588,7 @@ execute_step() {
     local step_description="$1"
     local command="$2"
     
-    ((CURRENT_STEP++))
+    CURRENT_STEP=$((CURRENT_STEP + 1))
     
     info "Step $CURRENT_STEP/$TOTAL_STEPS: $step_description"
     
@@ -625,7 +629,7 @@ show_installation_summary() {
         local step_num=1
         for item in "${INSTALLATION_SUMMARY[@]}"; do
             printf "  %s %2d. %s\n" "✓" "$step_num" "$item"
-            ((step_num++))
+            step_num=$((step_num + 1))
         done
         echo
     fi
@@ -656,5 +660,7 @@ reset_installation_state() {
     TOTAL_STEPS=0
 }
 
-# Trap cleanup on script exit
-trap 'cleanup_and_exit $?' EXIT
+# Trap cleanup on script exit - only if running as main script
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    trap 'cleanup_and_exit $?' EXIT
+fi

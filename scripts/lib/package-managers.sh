@@ -51,7 +51,16 @@ update_package_lists() {
     
     # Check if recently updated
     if [[ -f "$update_marker" ]]; then
-        local last_update=$(stat -f %m "$update_marker" 2>/dev/null || stat -c %Y "$update_marker" 2>/dev/null || echo 0)
+        local last_update=0
+        # Get file modification time (platform-specific)
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS/BSD stat
+            last_update=$(stat -f %m "$update_marker" 2>/dev/null || echo 0)
+        else
+            # Linux/GNU stat
+            last_update=$(stat -c %Y "$update_marker" 2>/dev/null || echo 0)
+        fi
+        
         local current_time=$(date +%s)
         local time_diff=$((current_time - last_update))
         
@@ -66,31 +75,37 @@ update_package_lists() {
     
     case "$pm" in
         apt)
-            sudo apt-get update -qq && touch "$update_marker"
+            if timeout 60 sudo apt-get update -qq 2>/dev/null; then
+                touch "$update_marker"
+                success "Package lists updated"
+            else
+                warning "Failed to update package lists, continuing anyway"
+            fi
             ;;
         dnf)
-            (sudo dnf check-update -q || true) && touch "$update_marker"
+            (timeout 60 sudo dnf check-update -q || true) && touch "$update_marker"
             ;;
         yum)
-            (sudo yum check-update -q || true) && touch "$update_marker"
+            (timeout 60 sudo yum check-update -q || true) && touch "$update_marker"
             ;;
         pacman)
-            sudo pacman -Sy --noconfirm && touch "$update_marker"
+            timeout 60 sudo pacman -Sy --noconfirm && touch "$update_marker"
             ;;
         zypper)
-            sudo zypper refresh -q && touch "$update_marker"
+            timeout 60 sudo zypper refresh -q && touch "$update_marker"
             ;;
         apk)
-            sudo apk update && touch "$update_marker"
+            timeout 60 sudo apk update && touch "$update_marker"
             ;;
         brew)
-            brew update && touch "$update_marker"
+            timeout 60 brew update && touch "$update_marker"
             ;;
         *)
             warning "Unknown package manager: $pm"
             return 1
             ;;
     esac
+    return 0
 }
 
 # Install packages (idempotent)
@@ -122,25 +137,28 @@ install_packages() {
     
     case "$pm" in
         apt)
-            sudo apt-get install -y "${packages_to_install[@]}"
+            timeout 300 sudo apt-get install -y "${packages_to_install[@]}" || {
+                warning "Package installation may have failed or timed out"
+                return 1
+            }
             ;;
         dnf)
-            sudo dnf install -y "${packages_to_install[@]}"
+            timeout 300 sudo dnf install -y "${packages_to_install[@]}"
             ;;
         yum)
-            sudo yum install -y "${packages_to_install[@]}"
+            timeout 300 sudo yum install -y "${packages_to_install[@]}"
             ;;
         pacman)
-            sudo pacman -S --noconfirm "${packages_to_install[@]}"
+            timeout 300 sudo pacman -S --noconfirm "${packages_to_install[@]}"
             ;;
         zypper)
-            sudo zypper install -y "${packages_to_install[@]}"
+            timeout 300 sudo zypper install -y "${packages_to_install[@]}"
             ;;
         apk)
-            sudo apk add "${packages_to_install[@]}"
+            timeout 300 sudo apk add "${packages_to_install[@]}"
             ;;
         brew)
-            brew install "${packages_to_install[@]}"
+            timeout 300 brew install "${packages_to_install[@]}"
             ;;
         *)
             error "Cannot install packages: unknown package manager '$pm'"

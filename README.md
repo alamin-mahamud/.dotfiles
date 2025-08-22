@@ -17,11 +17,17 @@ cd ~/.dotfiles
 ./bootstrap.sh  # Choose from menu
 ```
 
+### Ubuntu 24.04 Server Setup
+```bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/ubuntu-server-setup.sh | bash
+```
+
 ### Direct Component Installation
 ```bash
-DOTFILES_AUTO_CONFIRM=1 ./scripts/components/shell-env.sh   # Shell (Zsh + Tmux + CLI tools)
-DOTFILES_AUTO_CONFIRM=1 ./scripts/components/neovim-env.sh  # Neovim + LazyVim
-DOTFILES_AUTO_CONFIRM=1 ./scripts/components/python-env.sh  # Python environment
+./scripts/components/shell-env.sh    # Shell (Zsh + Tmux + CLI tools)
+./scripts/components/neovim-env.sh   # Neovim + LazyVim
+./scripts/components/devops-tools.sh # Docker, Terraform, Kubernetes
+./scripts/components/languages.sh   # Python, Node.js, Go
 ```
 
 ## What's Installed
@@ -32,9 +38,16 @@ DOTFILES_AUTO_CONFIRM=1 ./scripts/components/python-env.sh  # Python environment
 - Modern CLI: fzf, ripgrep, fd, bat, eza
 
 **Development Tools**
-- Neovim with LazyVim
+- Neovim with LazyVim (Python, Go, DevOps support)
 - Python (pyenv + poetry + pipx)
-- Language servers and formatters
+- Node.js (nvm + npm + yarn)
+- Go (latest + development tools)
+
+**DevOps Tools**
+- Docker + Docker Compose + Kubernetes CLI
+- Terraform + OpenTofu + Terragrunt
+- Cloud CLIs (AWS, Azure, GCP)
+- Infrastructure as Code support
 
 ## Features
 
@@ -56,4 +69,11 @@ DOTFILES_AUTO_CONFIRM=1 ./scripts/components/python-env.sh  # Python environment
 DEBUG=1 ./bootstrap.sh  # Verbose output
 ```
 
-All scripts tested on Ubuntu 22.04+ and macOS 12+.
+All scripts tested on Ubuntu 24.04 LTS and macOS 14+.
+
+## Documentation
+
+- [Server Setup](docs/SERVER_SETUP.md) - Ubuntu server configuration
+- [DevOps Tools](docs/DEVOPS_TOOLS.md) - Container and IaC tools
+- [Languages](docs/LANGUAGES.md) - Programming language environments
+- [Neovim Setup](docs/NEOVIM_SETUP.md) - Editor configuration

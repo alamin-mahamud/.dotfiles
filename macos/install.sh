@@ -13,7 +13,6 @@ source "$MACOS_SCRIPT_DIR/../scripts/lib/package-managers.sh"
 
 # Configuration
 COMPONENTS_DIR="$MACOS_SCRIPT_DIR/../scripts/components"
-DESKTOP_DIR="$MACOS_SCRIPT_DIR/../scripts/desktop"
 
 install_xcode_cli_tools() {
     if xcode-select --print-path &> /dev/null; then
@@ -124,7 +123,6 @@ setup_directories() {
     
     local dirs=(
         "$HOME/Projects"
-        "$HOME/Projects"
         "$HOME/Pictures/Screenshots"
         "$HOME/.config"
         "$HOME/.local/bin"
@@ -155,47 +153,22 @@ run_component_installer() {
     fi
 }
 
-run_desktop_installer() {
-    local installer="$1"
-    local script_path="$DESKTOP_DIR/$installer"
-    
-    if [[ -x "$script_path" ]]; then
-        info "Running desktop installer: $installer"
-        if "$script_path"; then
-            success "Completed: $installer"
-        else
-            error "Failed: $installer"
-        fi
-    else
-        warning "Desktop installer not found or not executable: $installer"
-    fi
-}
+# Desktop installer function removed - no desktop directory exists
 
 setup_symlinks() {
     info "Setting up configuration symlinks..."
     
     local dotfiles_dir="$HOME/.dotfiles"
     
-    # Zsh configuration
-    safe_symlink "$dotfiles_dir/zsh/.zshrc" "$HOME/.zshrc"
-    
     # Git configuration
     safe_symlink "$dotfiles_dir/git/.gitconfig" "$HOME/.gitconfig"
     
-    # Tmux configuration
-    safe_symlink "$dotfiles_dir/configs/tmux/.tmux.conf" "$HOME/.tmux.conf"
-    
-    # Vim configuration
-    if [[ -f "$dotfiles_dir/vim/.vimrc" ]]; then
-        safe_symlink "$dotfiles_dir/vim/.vimrc" "$HOME/.vimrc"
+    # Powerlevel10k configuration (if exists)
+    if [[ -f "$dotfiles_dir/configs/p10k-lean.zsh" ]]; then
+        safe_symlink "$dotfiles_dir/configs/p10k-lean.zsh" "$HOME/.p10k.zsh"
     fi
     
-    # Neovim configuration
-    if [[ -d "$dotfiles_dir/nvim" ]]; then
-        safe_symlink "$dotfiles_dir/nvim" "$HOME/.config/nvim"
-    fi
-    
-    # macOS-specific configurations
+    # macOS-specific configurations (only if they exist)
     if [[ -d "$dotfiles_dir/macos/.config" ]]; then
         local config_dirs
         config_dirs=($(ls "$dotfiles_dir/macos/.config" 2>/dev/null || true))
@@ -206,7 +179,7 @@ setup_symlinks() {
         done
     fi
     
-    # iTerm2 configuration
+    # iTerm2 configuration (only if it exists)
     if [[ -f "$dotfiles_dir/macos/iterm/com.googlecode.iterm2.plist" ]]; then
         local iterm_dir="$HOME/Library/Preferences"
         safe_symlink "$dotfiles_dir/macos/iterm/com.googlecode.iterm2.plist" "$iterm_dir/com.googlecode.iterm2.plist"
@@ -298,9 +271,6 @@ main() {
     # Component installations
     run_component_installer "shell-env.sh"
     run_component_installer "python-env.sh"
-    
-    # Desktop-specific installations
-    run_desktop_installer "keyboard-setup.sh"
     
     # Configuration
     setup_symlinks

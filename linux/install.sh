@@ -13,7 +13,6 @@ source "$LINUX_SCRIPT_DIR/../scripts/lib/package-managers.sh"
 
 # Configuration
 COMPONENTS_DIR="$LINUX_SCRIPT_DIR/../scripts/components"
-DESKTOP_DIR="$LINUX_SCRIPT_DIR/../scripts/desktop"
 
 install_system_packages() {
     info "Installing essential system packages for Linux..."
@@ -75,47 +74,22 @@ run_component_installer() {
     fi
 }
 
-run_desktop_installer() {
-    local installer="$1"
-    local script_path="$DESKTOP_DIR/$installer"
-    
-    if [[ -x "$script_path" ]]; then
-        info "Running desktop installer: $installer"
-        if "$script_path"; then
-            success "Completed: $installer"
-        else
-            error "Failed: $installer"
-        fi
-    else
-        warning "Desktop installer not found or not executable: $installer"
-    fi
-}
+# Desktop installer function removed - no desktop directory exists
 
 setup_symlinks() {
     info "Setting up configuration symlinks..."
     
     local dotfiles_dir="$HOME/.dotfiles"
     
-    # Zsh configuration
-    safe_symlink "$dotfiles_dir/zsh/.zshrc" "$HOME/.zshrc"
-    
     # Git configuration
     safe_symlink "$dotfiles_dir/git/.gitconfig" "$HOME/.gitconfig"
     
-    # Tmux configuration
-    safe_symlink "$dotfiles_dir/configs/tmux/.tmux.conf" "$HOME/.tmux.conf"
-    
-    # Vim configuration
-    if [[ -f "$dotfiles_dir/vim/.vimrc" ]]; then
-        safe_symlink "$dotfiles_dir/vim/.vimrc" "$HOME/.vimrc"
+    # Powerlevel10k configuration (if exists)
+    if [[ -f "$dotfiles_dir/configs/p10k-lean.zsh" ]]; then
+        safe_symlink "$dotfiles_dir/configs/p10k-lean.zsh" "$HOME/.p10k.zsh"
     fi
     
-    # Neovim configuration
-    if [[ -d "$dotfiles_dir/nvim" ]]; then
-        safe_symlink "$dotfiles_dir/nvim" "$HOME/.config/nvim"
-    fi
-    
-    # Desktop configuration files
+    # Desktop configuration files (only if they exist)
     local config_dirs=("kitty" "alacritty" "rofi" "i3" "sway")
     for config in "${config_dirs[@]}"; do
         if [[ -d "$dotfiles_dir/linux/.config/$config" ]]; then
@@ -234,9 +208,6 @@ main() {
     # Component installations
     run_component_installer "shell-env.sh"
     run_component_installer "python-env.sh"
-    
-    # Desktop-specific installations
-    run_desktop_installer "keyboard-setup.sh"
     
     # Configuration
     setup_symlinks

@@ -21,7 +21,7 @@ This is a comprehensive, modular dotfiles repository optimized for DevOps profes
 - `./scripts/ubuntu-server-setup.sh` - DRY Ubuntu Server setup orchestrator
 - `./scripts/install-shell.sh` - Server-focused shell environment (Zsh + Oh My Zsh + plugins + Tmux)
 - `./scripts/install-desktop-terminal.sh` - Desktop terminal environment (Nerd Fonts + Kitty terminal)
-- `./scripts/vim-installer.sh` - Enhanced vim configuration with plugins
+- `./scripts/components/neovim-env.sh` - Neovim with LazyVim configuration
 - `./scripts/install-dev-tools.sh` - Development tools installation (Git, Docker, Node.js, Python, Rust, Go, etc.)
 - `./scripts/custom-install.sh` - Component-based custom installation
 - `./scripts/tmux-installer.sh` - (Deprecated - now integrated into install-shell.sh)
@@ -44,7 +44,7 @@ curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/mac
 # Individual components (idempotent, standalone)
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash  # Server shell environment
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-desktop-terminal.sh | bash  # Desktop fonts & terminal
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/vim-installer.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/neovim-env.sh | bash
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash
 
 # Development tools - install all

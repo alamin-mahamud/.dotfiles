@@ -206,7 +206,7 @@ install_linux_cli_tools() {
         apt)
             install_packages \
                 ripgrep fd-find bat eza tree jq htop curl wget git \
-                tmux neovim fzf
+                tmux neovim 
             ;;
         dnf|yum)
             install_packages \
@@ -251,6 +251,15 @@ install_additional_tools() {
         fi
     fi
     
+    # Install fzf if not available
+    if ! command_exists fzf; then
+        info "Installing fzf (cmd-line fuzzy finder)..."
+        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+        ~/.fzf/install 2>/dev/null || { 
+            warning "Failed to install fzf"
+        }
+    fi
+ 
     # Install delta (git diff tool)
     if ! command_exists delta; then
         info "Installing delta (git diff tool)..."

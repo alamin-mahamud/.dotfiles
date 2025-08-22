@@ -21,7 +21,10 @@ if [[ -z "${RED:-}" ]]; then
 fi
 
 # Global variables
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Only set SCRIPT_DIR if not already set by the calling script
+if [[ -z "${SCRIPT_DIR:-}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 DOTFILES_ROOT="${DOTFILES_ROOT:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
 LOG_FILE="${LOG_FILE:-/tmp/dotfiles-install-$(date +%Y%m%d-%H%M%S).log}"
 BACKUP_DIR="${BACKUP_DIR:-/tmp/dotfiles-backup-$(date +%Y%m%d-%H%M%S)}"

@@ -117,15 +117,15 @@ update_system() {
     
     # Install essential packages
     install_packages_multi \
-        "curl,curl" \
-        "wget,wget" \
-        "git,git" \
-        "unzip,unzip" \
-        "software-properties-common,software-properties-common" \
-        "apt-transport-https,apt-transport-https" \
-        "ca-certificates,ca-certificates" \
-        "gnupg,gnupg" \
-        "lsb-release,lsb-release"
+        "curl:curl" \
+        "wget:wget" \
+        "git:git" \
+        "unzip:unzip" \
+        "software-properties-common:software-properties-common" \
+        "apt-transport-https:apt-transport-https" \
+        "ca-certificates:ca-certificates" \
+        "gnupg:gnupg" \
+        "lsb-release:lsb-release"
     
     success "System update completed"
 }
@@ -154,7 +154,7 @@ setup_firewall() {
     info "Setting up UFW firewall..."
     
     # Install UFW if not present
-    install_packages_multi "ufw,ufw"
+    install_packages_multi "ufw:ufw"
     
     # Reset UFW to default
     sudo ufw --force reset
@@ -180,7 +180,7 @@ setup_fail2ban() {
     info "Setting up fail2ban..."
     
     # Install fail2ban
-    install_packages_multi "fail2ban,fail2ban"
+    install_packages_multi "fail2ban:fail2ban"
     
     # Backup original config
     if [[ -f /etc/fail2ban/jail.conf ]]; then
@@ -254,7 +254,7 @@ setup_automatic_updates() {
     info "Setting up automatic security updates..."
     
     # Install unattended-upgrades
-    install_packages_multi "unattended-upgrades,unattended-upgrades"
+    install_packages_multi "unattended-upgrades:unattended-upgrades"
     
     # Configure automatic updates for security packages only
     sudo tee /etc/apt/apt.conf.d/50unattended-upgrades > /dev/null << 'EOF'
@@ -286,13 +286,13 @@ install_development_tools() {
     
     # Install basic development packages
     install_packages_multi \
-        "build-essential,build-essential" \
-        "make,make" \
-        "cmake,cmake" \
-        "pkg-config,pkg-config" \
-        "libtool,libtool" \
-        "autoconf,autoconf" \
-        "automake,automake"
+        "build-essential:build-essential" \
+        "make:make" \
+        "cmake:cmake" \
+        "pkg-config:pkg-config" \
+        "libtool:libtool" \
+        "autoconf:autoconf" \
+        "automake:automake"
     
     # Install DevOps tools if script exists
     if [[ -f "$SCRIPT_DIR/components/devops-tools.sh" ]]; then

@@ -467,6 +467,13 @@ alias pip='pip3'
 alias serve='python3 -m http.server'
 alias json='python3 -m json.tool'
 
+# Editor aliases (if neovim is available)
+if command -v nvim >/dev/null 2>&1; then
+    alias vim='nvim'
+    alias vi='nvim'
+    alias vimdiff='nvim -d'
+fi
+
 # Custom functions
 mkcd() {
     mkdir -p "$1" && cd "$1"

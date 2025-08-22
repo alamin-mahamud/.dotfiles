@@ -12,7 +12,6 @@ source "$SCRIPT_DIR/../lib/package-managers.sh"
 
 # Configuration
 NVIM_CONFIG_DIR="$HOME/.config/nvim"
-BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d_%H%M%S)"
 DOTFILES_NVIM_CONFIG="$DOTFILES_ROOT/nvim"
 
 install_neovim_dependencies() {
@@ -57,7 +56,7 @@ install_neovim_dependencies() {
         install_packages "${packages[@]}"
     fi
     
-    log_execution "Install Neovim dependencies" "Completed"
+    success "Neovim dependencies installation completed"
 }
 
 install_neovim_from_source() {
@@ -120,7 +119,7 @@ install_neovim_from_source() {
     # Cleanup
     rm -rf "$temp_dir"
     
-    log_execution "Install Neovim from source" "Completed"
+    success "Neovim installation from source completed"
 }
 
 setup_lazyvim() {
@@ -128,7 +127,9 @@ setup_lazyvim() {
     
     # Backup existing Neovim config
     if [[ -d "$NVIM_CONFIG_DIR" ]]; then
-        backup_file "$NVIM_CONFIG_DIR"
+        local backup_name="nvim-config-$(date +%Y%m%d-%H%M%S)"
+        cp -r "$NVIM_CONFIG_DIR" "$BACKUP_DIR/$backup_name"
+        info "Backed up existing neovim config to $BACKUP_DIR/$backup_name"
     fi
     
     # Clone LazyVim starter template
@@ -143,7 +144,7 @@ setup_lazyvim() {
     rm -rf "$NVIM_CONFIG_DIR/.git"
     
     success "LazyVim configuration installed"
-    log_execution "Setup LazyVim configuration" "Completed"
+    success "LazyVim setup completed"
 }
 
 install_language_servers() {
@@ -238,7 +239,7 @@ install_language_servers() {
             ;;
     esac
     
-    log_execution "Install language servers" "Completed"
+    success "Language servers installation completed"
 }
 
 configure_neovim_integration() {
@@ -274,7 +275,7 @@ configure_neovim_integration() {
         success "Shell integration configured"
     fi
     
-    log_execution "Configure Neovim shell integration" "Completed"
+    success "Neovim shell integration completed"
 }
 
 create_custom_lazyvim_config() {
@@ -285,8 +286,8 @@ create_custom_lazyvim_config() {
     local config_dir="$lua_dir/config"
     local plugins_dir="$lua_dir/plugins"
     
-    ensure_directory "$config_dir"
-    ensure_directory "$plugins_dir"
+    mkdir -p "$config_dir"
+    mkdir -p "$plugins_dir"
     
     # Create options.lua with Python/DevOps optimized defaults
     cat > "$lua_dir/config/options.lua" << 'EOF'
@@ -412,14 +413,14 @@ EOF
     create_devops_plugins
     
     success "Custom LazyVim configuration created"
-    log_execution "Create custom LazyVim config" "Completed"
+    success "Custom LazyVim configuration completed"
 }
 
 create_devops_plugins() {
     info "Creating Python & DevOps plugin configurations..."
     
     local plugins_dir="$NVIM_CONFIG_DIR/lua/plugins"
-    ensure_directory "$plugins_dir"
+    mkdir -p "$plugins_dir"
     
     # Python development plugins
     cat > "$plugins_dir/python.lua" << 'EOF'
@@ -489,6 +490,7 @@ return {
   {
     "nvim-neotest/neotest",
     dependencies = {
+      "nvim-neotest/nvim-nio",
       "nvim-neotest/neotest-python",
     },
     opts = {
@@ -614,18 +616,15 @@ return {
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles" },
   },
   
-  -- REST client for API testing
+  -- REST client for API testing  
   {
-    "rest-nvim/rest.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    "mistweaverco/kulala.nvim",
     ft = "http",
-    config = function()
-      require("rest-nvim").setup({})
-    end,
+    opts = {},
     keys = {
-      { "<leader>rr", "<Plug>RestNvim", desc = "Run REST request" },
-      { "<leader>rp", "<Plug>RestNvimPreview", desc = "Preview REST request" },
-      { "<leader>rl", "<Plug>RestNvimLast", desc = "Run last REST request" },
+      { "<leader>rr", "<cmd>lua require('kulala').run()<cr>", desc = "Run REST request" },
+      { "<leader>rp", "<cmd>lua require('kulala').inspect()<cr>", desc = "Preview REST request" },
+      { "<leader>rl", "<cmd>lua require('kulala').replay()<cr>", desc = "Run last REST request" },
     },
   },
   
@@ -740,7 +739,7 @@ install_keyboard_dependencies() {
             ;;
     esac
     
-    log_execution "Install keyboard dependencies" "Completed"
+    success "Keyboard dependencies installation completed"
 }
 
 setup_caps_to_escape() {
@@ -758,7 +757,7 @@ setup_caps_to_escape() {
             ;;
     esac
     
-    log_execution "Setup Caps Lock to Escape" "Completed"
+    success "Caps Lock to Escape setup completed"
 }
 
 setup_caps_linux() {
@@ -1008,7 +1007,7 @@ optimize_keyboard_for_vim() {
             ;;
     esac
     
-    log_execution "Optimize keyboard for vim" "Completed"
+    success "Keyboard optimization for vim completed"
 }
 
 verify_neovim_installation() {
@@ -1037,7 +1036,7 @@ verify_neovim_installation() {
         warning "Neovim may have configuration issues"
     fi
     
-    log_execution "Verify Neovim installation" "Completed"
+    success "Neovim installation verification completed"
 }
 
 show_neovim_next_steps() {
@@ -1089,52 +1088,42 @@ show_neovim_next_steps() {
 }
 
 main() {
-    local marker="neovim-env-$(date +%Y%m%d)"
+    print_header "Neovim + LazyVim Environment Installer"
     
-    if is_completed "$marker"; then
-        info "Neovim environment already set up today"
-        return 0
+    info "Setting up Neovim with LazyVim for Python & DevOps development"
+    info "Log file: $LOG_FILE"
+    info "Backup directory: $BACKUP_DIR"
+    
+    # Install dependencies
+    install_neovim_dependencies
+    
+    # Install Neovim if not already installed
+    if ! command -v nvim >/dev/null 2>&1; then
+        install_neovim_from_source
+    else
+        local version
+        version=$(nvim --version | head -1)
+        info "Neovim already installed: $version"
     fi
     
-    init_script "Neovim + LazyVim Environment Installer"
+    # Setup LazyVim configuration
+    setup_lazyvim
+    install_language_servers
+    configure_neovim_integration
+    create_custom_lazyvim_config
+    install_python_debugger
     
-    # Planning phase
-    reset_installation_state
-    add_to_plan "Install Neovim dependencies and build tools"
-    add_to_plan "Install latest Neovim from package manager or source"
-    add_to_plan "Setup LazyVim configuration framework"
-    add_to_plan "Install language servers and development tools"
-    add_to_plan "Configure shell integration (EDITOR, aliases)"
-    add_to_plan "Create custom LazyVim configuration files"
-    add_to_plan "Install keyboard dependencies for vim workflow"
-    add_to_plan "Setup Caps Lock → Escape mapping (essential for vim)"
-    add_to_plan "Optimize keyboard settings for vim navigation"
-    add_to_plan "Verify installation and functionality"
+    # Keyboard optimization for vim workflow
+    install_keyboard_dependencies
+    setup_caps_to_escape
+    optimize_keyboard_for_vim
     
-    show_installation_plan "Neovim + LazyVim + Keyboard Environment"
+    # Verify installation
+    verify_neovim_installation
     
-    # Execution phase
-    execute_step "Install Neovim dependencies" "install_neovim_dependencies"
-    
-    # Try package manager first, fallback to source installation
-    if ! command_exists nvim; then
-        execute_step "Install Neovim" "install_neovim_from_source"
-    fi
-    
-    execute_step "Setup LazyVim configuration" "setup_lazyvim"
-    execute_step "Install language servers" "install_language_servers"  
-    execute_step "Configure shell integration" "configure_neovim_integration"
-    execute_step "Create custom configuration" "create_custom_lazyvim_config"
-    execute_step "Install Python debugger" "install_python_debugger"
-    execute_step "Install keyboard dependencies" "install_keyboard_dependencies"
-    execute_step "Setup Caps Lock → Escape mapping" "setup_caps_to_escape"
-    execute_step "Optimize keyboard for vim" "optimize_keyboard_for_vim"
-    execute_step "Verify installation" "verify_neovim_installation"
-    
-    mark_completed "$marker"
-    
-    show_installation_summary "Neovim + LazyVim + Keyboard Environment"
     show_neovim_next_steps
+    
+    success "Neovim + LazyVim environment setup completed!"
 }
 
 install_python_debugger() {

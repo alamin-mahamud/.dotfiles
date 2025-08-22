@@ -24,6 +24,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_ROOT="${DOTFILES_ROOT:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
 LOG_FILE="${LOG_FILE:-/tmp/dotfiles-install-$(date +%Y%m%d-%H%M%S).log}"
+BACKUP_DIR="${BACKUP_DIR:-/tmp/dotfiles-backup-$(date +%Y%m%d-%H%M%S)}"
 
 # Logging functions
 log() {
@@ -151,10 +152,14 @@ is_ssh_session() {
 # File operations
 backup_file() {
     local file="$1"
-    local backup_suffix="${2:-.backup.$(date +%Y%m%d-%H%M%S)}"
+    local custom_backup_dir="$2"
     
     if [[ -e "$file" ]] && [[ ! -L "$file" ]]; then
-        local backup_file="${file}${backup_suffix}"
+        local backup_base_dir="${custom_backup_dir:-$BACKUP_DIR}"
+        mkdir -p "$backup_base_dir"
+        
+        local backup_file="$backup_base_dir/$(basename "$file").$(date +%Y%m%d-%H%M%S)"
+        
         # Only backup if backup doesn't already exist
         if [[ ! -e "$backup_file" ]]; then
             cp "$file" "$backup_file"

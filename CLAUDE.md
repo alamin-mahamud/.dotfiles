@@ -18,10 +18,12 @@ This is a comprehensive, modular dotfiles repository optimized for DevOps profes
 - **Server**: Use component installers directly for minimal installations
 
 ### DRY Standalone Installers (can be run independently via curl)
-- `./scripts/ubuntu-server-setup.sh` - DRY Ubuntu Server setup orchestrator
+- `./scripts/ubuntu-server-setup.sh` - Ubuntu 24.04 LTS server setup with security hardening
 - `./scripts/install-shell.sh` - Server-focused shell environment (Zsh + Oh My Zsh + plugins + Tmux)
 - `./scripts/install-desktop-terminal.sh` - Desktop terminal environment (Nerd Fonts + Kitty terminal)
 - `./scripts/components/neovim-env.sh` - Neovim with LazyVim configuration
+- `./scripts/components/devops-tools.sh` - DevOps tools (Docker, Terraform/Tofu, Kubernetes, Cloud CLIs)
+- `./scripts/components/languages.sh` - Programming languages (Python, Node.js, Go)
 - `./scripts/install-dev-tools.sh` - Development tools installation (Git, Docker, Node.js, Python, Rust, Go, etc.)
 - `./scripts/custom-install.sh` - Component-based custom installation
 - `./scripts/tmux-installer.sh` - (Deprecated - now integrated into install-shell.sh)
@@ -29,6 +31,9 @@ This is a comprehensive, modular dotfiles repository optimized for DevOps profes
 ### Component Installers (Standalone)
 - `./scripts/components/shell-env.sh` - Shell environment (Zsh + Oh My Zsh + Tmux + CLI tools)
 - `./scripts/components/python-env.sh` - Python development environment (pyenv + poetry + pipx)
+- `./scripts/components/nodejs-env.sh` - Node.js development environment (nvm + npm + yarn)
+- `./scripts/components/golang-env.sh` - Go development environment (latest Go + tools)
+- `./scripts/components/devops-tools.sh` - DevOps tools (containers, IaC, cloud CLIs)
 
 ### Desktop Features
 - Keyboard configuration (Caps Lock → Escape) is integrated into the Neovim component
@@ -41,14 +46,20 @@ curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/lin
 # macOS Desktop
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/macos/install.sh | bash
 
+# Ubuntu 24.04 Server Setup
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/ubuntu-server-setup.sh | bash
+
 # Individual components (idempotent, standalone)
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-shell.sh | bash  # Server shell environment
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-desktop-terminal.sh | bash  # Desktop fonts & terminal
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/neovim-env.sh | bash
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/devops-tools.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/languages.sh | bash
 
-# Development tools - install all
-curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-dev-tools.sh | bash -s -- --all
+# Programming languages
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/python-env.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/nodejs-env.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/golang-env.sh | bash
 
 # Shell environment only
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/shell-env.sh | bash
@@ -128,6 +139,7 @@ This repository follows strict DRY (Don't Repeat Yourself) principles with a cle
 
 #### Logging and Monitoring
 - **Detailed Logging**: All operations logged with timestamps to `/tmp/` files
+- **Centralized Backups**: All backups stored in `/tmp/dotfiles-backup-$(date)` directory
 - **Progress Tracking**: Clear status messages with color-coded output
 - **Error Handling**: Graceful error handling with informative messages
 - **Summary Reports**: Comprehensive installation summaries with next steps
@@ -190,13 +202,16 @@ This repository follows strict DRY (Don't Repeat Yourself) principles with a cle
 #### Development Integration
 - **Git**: Enhanced configuration with GitHub CLI integration
 - **Docker**: Container development with compose support
-- **Cloud Native**: kubectl, helm, terraform for infrastructure
-- **Multiple Language Support**: Node.js, Python, Rust, Go environments
+- **Cloud Native**: kubectl, helm, terraform/OpenTofu for infrastructure
+- **Multiple Language Support**: Python (pyenv), Node.js (nvm), Go environments
+- **DevOps Tools**: Terraform, OpenTofu, Terragrunt, AWS/Azure/GCP CLIs
 
 ## Important Notes
 
 - The repository expects to be cloned to `$HOME/.dotfiles`
+- Optimized for Ubuntu 24.04 LTS, compatible with 22.04 and 20.04
 - Linux scripts include sudoers configuration for passwordless package management
+- All backups stored in `/tmp/dotfiles-backup-$(date)` directory
 - Font installation includes Nerd Fonts (FiraCode, JetBrainsMono, Iosevka)
 - Zsh configuration depends on Oh My Zsh framework
 - Git configuration includes personal user details that should be updated

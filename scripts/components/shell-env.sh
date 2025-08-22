@@ -161,15 +161,28 @@ install_powerlevel10k() {
         info "Powerlevel10k already installed, updating..."
         cd "$p10k_dir" && git pull 2>/dev/null || true
         success "Updated Powerlevel10k"
-        return 0
+    else
+        info "Installing Powerlevel10k theme..."
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir" 2>/dev/null || {
+            warning "Failed to clone Powerlevel10k"
+            return 0
+        }
+        success "Powerlevel10k installed"
     fi
     
-    info "Installing Powerlevel10k theme..."
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir" 2>/dev/null || {
-        warning "Failed to clone Powerlevel10k"
-        return 0
-    }
-    success "Powerlevel10k installed"
+    # Install default p10k configuration if none exists
+    if [[ ! -f "$HOME/.p10k.zsh" ]]; then
+        info "Installing default lean p10k configuration..."
+        if [[ -f "$DOTFILES_ROOT/configs/p10k-lean.zsh" ]]; then
+            cp "$DOTFILES_ROOT/configs/p10k-lean.zsh" "$HOME/.p10k.zsh"
+            success "Installed default p10k configuration"
+        else
+            # Fallback: download lean config from GitHub
+            curl -fsSL https://raw.githubusercontent.com/romkatv/powerlevel10k/master/config/p10k-lean.zsh -o "$HOME/.p10k.zsh" 2>/dev/null || {
+                warning "Could not install default p10k configuration"
+            }
+        fi
+    fi
 }
 
 install_cli_tools() {
@@ -475,10 +488,16 @@ extract() {
 [ -f ~/.zsh_local ] && source ~/.zsh_local
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# Disable Powerlevel10k configuration wizard
+typeset -g POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+
 # Powerlevel10k instant prompt
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
+# Load p10k configuration if it exists
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 EOF
     
     success "Created comprehensive .zshrc configuration"

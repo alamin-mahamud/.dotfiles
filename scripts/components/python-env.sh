@@ -6,10 +6,10 @@
 
 set -euo pipefail
 
-# Source libraries from GitHub
-GITHUB_RAW_URL="https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master"
-source <(curl -fsSL "$GITHUB_RAW_URL/scripts/lib/common.sh")
-source <(curl -fsSL "$GITHUB_RAW_URL/scripts/lib/package-managers.sh")
+# Source libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/common.sh"
+source "$SCRIPT_DIR/../lib/package-managers.sh"
 
 # Configuration
 PYTHON_VERSIONS=("3.11" "3.12")

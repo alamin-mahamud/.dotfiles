@@ -6,10 +6,10 @@
 
 set -euo pipefail
 
-# Source libraries from GitHub
-GITHUB_RAW_URL="https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master"
-source <(curl -fsSL "$GITHUB_RAW_URL/scripts/lib/common.sh")
-source <(curl -fsSL "$GITHUB_RAW_URL/scripts/lib/package-managers.sh")
+# Source libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/common.sh"
+source "$SCRIPT_DIR/../lib/package-managers.sh"
 
 # Initialize environment variables
 setup_environment
@@ -610,6 +610,11 @@ extract() {
     fi
 }
 
+# NVM configuration
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 # Load additional configurations
 [ -f ~/.zsh_local ] && source ~/.zsh_local
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -624,6 +629,36 @@ fi
 
 # Load p10k configuration if it exists
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Terminal title configuration for kitty (user@hostname(IP) - cmd format)
+function set_terminal_title() {
+    if [[ -n "$KITTY_WINDOW_ID" ]]; then
+        local ip=$(hostname -I | awk '{print $1}' 2>/dev/null || echo "$(curl -s ifconfig.me 2>/dev/null || echo 'no-ip')")
+        local current_dir=$(basename "$PWD")
+        local cmd="${1:-shell}"
+        # Set title format: user@hostname(IP) - command in directory
+        printf '\033]0;%s@%s(%s) - %s in %s\007' "$USER" "${HOSTNAME:-$(hostname)}" "$ip" "$cmd" "$current_dir"
+    fi
+}
+
+# Set title before each command (zsh preexec hook)
+if [[ -n "$KITTY_WINDOW_ID" ]]; then
+    autoload -Uz add-zsh-hook
+    
+    function preexec_set_title() {
+        set_terminal_title "$1"
+    }
+    
+    function precmd_set_title() {
+        set_terminal_title
+    }
+    
+    add-zsh-hook preexec preexec_set_title
+    add-zsh-hook precmd precmd_set_title
+    
+    # Set initial title
+    set_terminal_title
+fi
 EOF
     
     success "Created comprehensive .zshrc configuration"

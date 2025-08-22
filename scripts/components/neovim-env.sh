@@ -10,6 +10,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/common.sh"
 source "$SCRIPT_DIR/../lib/package-managers.sh"
 
+# Initialize environment variables
+setup_environment
+
 # Configuration
 NVIM_CONFIG_DIR="$HOME/.config/nvim"
 DOTFILES_NVIM_CONFIG="$DOTFILES_ROOT/nvim"
@@ -128,6 +131,7 @@ setup_lazyvim() {
     # Backup existing Neovim config
     if [[ -d "$NVIM_CONFIG_DIR" ]]; then
         local backup_name="nvim-config-$(date +%Y%m%d-%H%M%S)"
+        mkdir -p "$BACKUP_DIR"
         cp -r "$NVIM_CONFIG_DIR" "$BACKUP_DIR/$backup_name"
         info "Backed up existing neovim config to $BACKUP_DIR/$backup_name"
     fi
@@ -1136,7 +1140,7 @@ install_python_debugger() {
     
     # Create debug configuration
     local dap_config_dir="$NVIM_CONFIG_DIR/lua/plugins"
-    ensure_directory "$dap_config_dir"
+    mkdir -p "$dap_config_dir"
     
     cat > "$dap_config_dir/dap-config.lua" << 'EOF'
 return {

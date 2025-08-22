@@ -5,9 +5,9 @@
 
 set -euo pipefail
 
-# Get script directory and source common libraries
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../lib/common.sh"
+# Source libraries from GitHub
+GITHUB_RAW_URL="https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master"
+source <(curl -fsSL "$GITHUB_RAW_URL/scripts/lib/common.sh")
 
 # Parse command line arguments
 INSTALL_ALL=true

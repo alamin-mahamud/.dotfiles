@@ -21,7 +21,7 @@
 # `p10k configure` and pick "Lean" style. This will give you slick minimalist prompt while taking
 # advantage of Powerlevel10k features that aren't present in Pure.
 
-# Temporarily change options.
+# Temporarily change optio:ns.
 'builtin' 'local' '-a' 'p10k_config_opts'
 [[ ! -o 'aliases'         ]] || p10k_config_opts+=('aliases')
 [[ ! -o 'sh_glob'         ]] || p10k_config_opts+=('sh_glob')
@@ -63,7 +63,6 @@
     pyenv
     virtualenv                # python virtual environment
     context                   # user@host
-    ip
     public_ip
     ssh
     time                      # current time
@@ -196,3 +195,4 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
 
 (( ${#p10k_config_opts} )) && setopt ${p10k_config_opts[@]}
 'builtin' 'unset' 'p10k_config_opts'
+

@@ -10,6 +10,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/common.sh"
 source "$SCRIPT_DIR/../lib/package-managers.sh"
 
+# Initialize environment variables
+setup_environment
+
 # Configuration
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d_%H%M%S)"
 
@@ -76,11 +79,27 @@ install_zsh() {
 install_oh_my_zsh() {
     local oh_my_zsh_dir="$HOME/.oh-my-zsh"
     
+    # Always ensure parent directory exists
+    mkdir -p "$(dirname "$oh_my_zsh_dir")" 2>/dev/null || true
+    
     if [[ -d "$oh_my_zsh_dir" ]]; then
         info "Oh My Zsh already installed, updating..."
-        cd "$oh_my_zsh_dir" && git pull origin master 2>/dev/null || true
-        success "Updated Oh My Zsh"
-        return 0
+        if [[ -d "$oh_my_zsh_dir/.git" ]]; then
+            cd "$oh_my_zsh_dir" && git pull origin master 2>/dev/null || {
+                warning "Failed to update Oh My Zsh, backing up and reinstalling..."
+                backup_file "$oh_my_zsh_dir"
+                rm -rf "$oh_my_zsh_dir"
+            }
+        else
+            warning "Oh My Zsh directory exists but not a git repo, backing up and reinstalling..."
+            backup_file "$oh_my_zsh_dir"
+            rm -rf "$oh_my_zsh_dir"
+        fi
+        
+        if [[ -d "$oh_my_zsh_dir" ]]; then
+            success "Updated Oh My Zsh"
+            return 0
+        fi
     fi
     
     info "Installing Oh My Zsh..."
@@ -97,6 +116,9 @@ install_oh_my_zsh() {
 install_zsh_plugins() {
     local oh_my_zsh_custom="$HOME/.oh-my-zsh/custom"
     
+    # Ensure Oh My Zsh custom directories exist
+    mkdir -p "$oh_my_zsh_custom/plugins" "$oh_my_zsh_custom/themes" 2>/dev/null || true
+    
     info "Installing Zsh plugins..."
     
     # zsh-autosuggestions
@@ -108,7 +130,19 @@ install_zsh_plugins() {
         }
         success "Installed zsh-autosuggestions"
     else
-        cd "$autosuggestions_dir" && git pull 2>/dev/null || true
+        if [[ -d "$autosuggestions_dir/.git" ]]; then
+            cd "$autosuggestions_dir" && git pull 2>/dev/null || {
+                warning "Failed to update zsh-autosuggestions, backing up and reinstalling..."
+                backup_file "$autosuggestions_dir"
+                rm -rf "$autosuggestions_dir"
+                git clone https://github.com/zsh-users/zsh-autosuggestions "$autosuggestions_dir" 2>/dev/null || true
+            }
+        else
+            warning "zsh-autosuggestions exists but not a git repo, backing up and reinstalling..."
+            backup_file "$autosuggestions_dir"
+            rm -rf "$autosuggestions_dir"
+            git clone https://github.com/zsh-users/zsh-autosuggestions "$autosuggestions_dir" 2>/dev/null || true
+        fi
         info "Updated zsh-autosuggestions"
     fi
     
@@ -121,7 +155,19 @@ install_zsh_plugins() {
         }
         success "Installed zsh-syntax-highlighting"
     else
-        cd "$highlighting_dir" && git pull 2>/dev/null || true
+        if [[ -d "$highlighting_dir/.git" ]]; then
+            cd "$highlighting_dir" && git pull 2>/dev/null || {
+                warning "Failed to update zsh-syntax-highlighting, backing up and reinstalling..."
+                backup_file "$highlighting_dir"
+                rm -rf "$highlighting_dir"
+                git clone https://github.com/zsh-users/zsh-syntax-highlighting "$highlighting_dir" 2>/dev/null || true
+            }
+        else
+            warning "zsh-syntax-highlighting exists but not a git repo, backing up and reinstalling..."
+            backup_file "$highlighting_dir"
+            rm -rf "$highlighting_dir"
+            git clone https://github.com/zsh-users/zsh-syntax-highlighting "$highlighting_dir" 2>/dev/null || true
+        fi
         info "Updated zsh-syntax-highlighting"
     fi
     
@@ -134,7 +180,19 @@ install_zsh_plugins() {
         }
         success "Installed zsh-completions"
     else
-        cd "$completions_dir" && git pull 2>/dev/null || true
+        if [[ -d "$completions_dir/.git" ]]; then
+            cd "$completions_dir" && git pull 2>/dev/null || {
+                warning "Failed to update zsh-completions, backing up and reinstalling..."
+                backup_file "$completions_dir"
+                rm -rf "$completions_dir"
+                git clone https://github.com/zsh-users/zsh-completions "$completions_dir" 2>/dev/null || true
+            }
+        else
+            warning "zsh-completions exists but not a git repo, backing up and reinstalling..."
+            backup_file "$completions_dir"
+            rm -rf "$completions_dir"
+            git clone https://github.com/zsh-users/zsh-completions "$completions_dir" 2>/dev/null || true
+        fi
         info "Updated zsh-completions"
     fi
     
@@ -148,7 +206,19 @@ install_zsh_plugins() {
             }
             success "Installed fzf-tab"
         else
-            cd "$fzf_tab_dir" && git pull 2>/dev/null || true
+            if [[ -d "$fzf_tab_dir/.git" ]]; then
+                cd "$fzf_tab_dir" && git pull 2>/dev/null || {
+                    warning "Failed to update fzf-tab, backing up and reinstalling..."
+                    backup_file "$fzf_tab_dir"
+                    rm -rf "$fzf_tab_dir"
+                    git clone https://github.com/Aloxaf/fzf-tab "$fzf_tab_dir" 2>/dev/null || true
+                }
+            else
+                warning "fzf-tab exists but not a git repo, backing up and reinstalling..."
+                backup_file "$fzf_tab_dir"
+                rm -rf "$fzf_tab_dir"
+                git clone https://github.com/Aloxaf/fzf-tab "$fzf_tab_dir" 2>/dev/null || true
+            fi
             info "Updated fzf-tab"
         fi
     fi
@@ -157,9 +227,24 @@ install_zsh_plugins() {
 install_powerlevel10k() {
     local p10k_dir="$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
     
+    # Ensure themes directory exists
+    mkdir -p "$(dirname "$p10k_dir")" 2>/dev/null || true
+    
     if [[ -d "$p10k_dir" ]]; then
         info "Powerlevel10k already installed, updating..."
-        cd "$p10k_dir" && git pull 2>/dev/null || true
+        if [[ -d "$p10k_dir/.git" ]]; then
+            cd "$p10k_dir" && git pull 2>/dev/null || {
+                warning "Failed to update Powerlevel10k, backing up and reinstalling..."
+                backup_file "$p10k_dir"
+                rm -rf "$p10k_dir"
+                git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir" 2>/dev/null || true
+            }
+        else
+            warning "Powerlevel10k exists but not a git repo, backing up and reinstalling..."
+            backup_file "$p10k_dir"
+            rm -rf "$p10k_dir"
+            git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir" 2>/dev/null || true
+        fi
         success "Updated Powerlevel10k"
     else
         info "Installing Powerlevel10k theme..."
@@ -254,8 +339,32 @@ install_additional_tools() {
     # Install fzf if not available
     if ! command_exists fzf; then
         info "Installing fzf (cmd-line fuzzy finder)..."
-        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-        ~/.fzf/install 2>/dev/null || { 
+        local fzf_dir="$HOME/.fzf"
+        
+        # Ensure parent directory exists
+        mkdir -p "$(dirname "$fzf_dir")" 2>/dev/null || true
+        
+        if [[ -d "$fzf_dir" ]]; then
+            if [[ -d "$fzf_dir/.git" ]]; then
+                cd "$fzf_dir" && git pull 2>/dev/null || {
+                    warning "Failed to update fzf, backing up and reinstalling..."
+                    backup_file "$fzf_dir"
+                    rm -rf "$fzf_dir"
+                }
+            else
+                backup_file "$fzf_dir"
+                rm -rf "$fzf_dir"
+            fi
+        fi
+        
+        if [[ ! -d "$fzf_dir" ]]; then
+            git clone --depth 1 https://github.com/junegunn/fzf.git "$fzf_dir" 2>/dev/null || {
+                warning "Failed to clone fzf"
+                return 0
+            }
+        fi
+        
+        "$fzf_dir/install" --all 2>/dev/null || { 
             warning "Failed to install fzf"
         }
     fi
@@ -530,11 +639,30 @@ install_tmux() {
     
     # Install TPM (Tmux Plugin Manager)
     local tpm_dir="$HOME/.tmux/plugins/tpm"
+    
+    # Ensure .tmux/plugins directory exists
+    mkdir -p "$(dirname "$tpm_dir")" 2>/dev/null || true
+    
     if [[ ! -d "$tpm_dir" ]]; then
-        git clone https://github.com/tmux-plugins/tpm "$tpm_dir"
+        git clone https://github.com/tmux-plugins/tpm "$tpm_dir" 2>/dev/null || {
+            error "Failed to clone TPM"
+            return 1
+        }
         success "Installed TPM (Tmux Plugin Manager)"
     else
-        cd "$tpm_dir" && git pull
+        if [[ -d "$tpm_dir/.git" ]]; then
+            cd "$tpm_dir" && git pull 2>/dev/null || {
+                warning "Failed to update TPM, backing up and reinstalling..."
+                backup_file "$tpm_dir"
+                rm -rf "$tpm_dir"
+                git clone https://github.com/tmux-plugins/tpm "$tpm_dir" 2>/dev/null || true
+            }
+        else
+            warning "TPM exists but not a git repo, backing up and reinstalling..."
+            backup_file "$tpm_dir"
+            rm -rf "$tpm_dir"
+            git clone https://github.com/tmux-plugins/tpm "$tpm_dir" 2>/dev/null || true
+        fi
         info "Updated TPM"
     fi
     

@@ -152,7 +152,7 @@ is_ssh_session() {
 # File operations
 backup_file() {
     local file="$1"
-    local custom_backup_dir="$2"
+    local custom_backup_dir="${2:-}"
     
     if [[ -e "$file" ]] && [[ ! -L "$file" ]]; then
         local backup_base_dir="${custom_backup_dir:-$BACKUP_DIR}"

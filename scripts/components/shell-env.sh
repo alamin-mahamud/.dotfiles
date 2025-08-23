@@ -620,6 +620,10 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
     source "$NVM_DIR/nvm.sh"
 fi
 
+# Claude API configuration
+# Set your Anthropic API key as environment variable:
+# export ANTHROPIC_API_KEY="your-api-key-here"
+
 # Load additional configurations
 [ -f ~/.zsh_local ] && source ~/.zsh_local
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

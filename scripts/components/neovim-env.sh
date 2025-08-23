@@ -408,9 +408,15 @@ map("n", "<leader>tf", "<cmd>!terraform fmt %<cr>", { desc = "Terraform format" 
 map("n", "<leader>tv", "<cmd>!terraform validate<cr>", { desc = "Terraform validate" })
 
 -- Git (enhanced)
+map("n", "<leader>gs", "<cmd>Git<cr>", { desc = "Git status" })
 map("n", "<leader>gp", "<cmd>!git push<cr>", { desc = "Git push" })
 map("n", "<leader>gpu", "<cmd>!git pull<cr>", { desc = "Git pull" })
 map("n", "<leader>gc", "<cmd>!git commit<cr>", { desc = "Git commit" })
+map("n", "<leader>ga", "<cmd>!git add .<cr>", { desc = "Git add all" })
+map("n", "<leader>gb", "<cmd>Gblame<cr>", { desc = "Git blame" })
+map("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "Git diff view" })
+map("n", "<leader>gl", "<cmd>!git log --oneline -10<cr>", { desc = "Git log" })
+map("n", "<leader>gco", "<cmd>!git checkout ", { desc = "Git checkout" })
 EOF
     
     

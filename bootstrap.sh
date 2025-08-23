@@ -21,6 +21,155 @@ source "$BOOTSTRAP_SCRIPT_DIR/scripts/lib/package-managers.sh"
 ORCHESTRATORS_DIR="$BOOTSTRAP_SCRIPT_DIR"
 COMPONENTS_DIR="$BOOTSTRAP_SCRIPT_DIR/scripts/components"
 
+# Flag-based deployment variables
+INSTALL_MODE="interactive"  # interactive, server, desktop, custom
+INSTALL_SHELL=false
+INSTALL_NEOVIM=false
+INSTALL_PYTHON=false
+INSTALL_NODEJS=false
+INSTALL_GOLANG=false
+INSTALL_DEVOPS=false
+INSTALL_ALL=false
+SKIP_CONFIRM=false
+VERBOSE=false
+
+print_usage() {
+  cat << EOF
+Usage: $(basename "$0") [OPTIONS]
+
+Dotfiles Bootstrap Script - Flag-based deployment for automated installations
+
+OPTIONS:
+  -m, --mode MODE      Installation mode: interactive|server|desktop|custom (default: interactive)
+  -s, --shell          Install shell environment (Zsh + Oh My Zsh + Tmux + CLI tools)
+  -n, --neovim         Install Neovim + LazyVim + keyboard setup
+  -p, --python         Install Python development environment (pyenv + poetry + pipx)
+  -j, --nodejs         Install Node.js development environment (nvm + npm + yarn)
+  -g, --golang         Install Go development environment
+  -d, --devops         Install DevOps tools (Docker, Terraform, Kubernetes, Cloud CLIs)
+  -a, --all            Install all components
+  -y, --yes            Skip confirmation prompts (non-interactive mode)
+  -v, --verbose        Enable verbose output
+  -h, --help           Show this help message
+
+EXAMPLES:
+  # Interactive mode (default)
+  ./bootstrap.sh
+
+  # Server mode with default components (shell + neovim)
+  ./bootstrap.sh --mode server
+
+  # Server with specific components
+  ./bootstrap.sh --mode server --shell --neovim --python
+
+  # Install everything without prompts
+  ./bootstrap.sh --all --yes
+
+  # Custom installation with specific components
+  ./bootstrap.sh --mode custom --shell --neovim --devops --yes
+
+NOTES:
+  - Server mode defaults to installing shell + neovim if no components specified
+  - Desktop mode installs all components by default
+  - Use --yes for CI/CD and automated deployments
+
+EOF
+  exit 0
+}
+
+parse_arguments() {
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      -m|--mode)
+        INSTALL_MODE="$2"
+        shift 2
+        ;;
+      -s|--shell)
+        INSTALL_SHELL=true
+        shift
+        ;;
+      -n|--neovim)
+        INSTALL_NEOVIM=true
+        shift
+        ;;
+      -p|--python)
+        INSTALL_PYTHON=true
+        shift
+        ;;
+      -j|--nodejs)
+        INSTALL_NODEJS=true
+        shift
+        ;;
+      -g|--golang)
+        INSTALL_GOLANG=true
+        shift
+        ;;
+      -d|--devops)
+        INSTALL_DEVOPS=true
+        shift
+        ;;
+      -a|--all)
+        INSTALL_ALL=true
+        shift
+        ;;
+      -y|--yes)
+        SKIP_CONFIRM=true
+        export DOTFILES_AUTO_CONFIRM=1
+        shift
+        ;;
+      -v|--verbose)
+        VERBOSE=true
+        export DOTFILES_VERBOSE=1
+        shift
+        ;;
+      -h|--help)
+        print_usage
+        ;;
+      *)
+        error "Unknown option: $1"
+        print_usage
+        ;;
+    esac
+  done
+
+  # Validate mode
+  case "$INSTALL_MODE" in
+    interactive|server|desktop|custom)
+      ;;
+    *)
+      error "Invalid mode: $INSTALL_MODE"
+      print_usage
+      ;;
+  esac
+
+  # Set defaults based on mode
+  if [[ "$INSTALL_MODE" == "server" ]]; then
+    # If no specific components selected, default to shell + neovim for server
+    if [[ "$INSTALL_SHELL" == false && "$INSTALL_NEOVIM" == false && \
+          "$INSTALL_PYTHON" == false && "$INSTALL_NODEJS" == false && \
+          "$INSTALL_GOLANG" == false && "$INSTALL_DEVOPS" == false && \
+          "$INSTALL_ALL" == false ]]; then
+      INSTALL_SHELL=true
+      INSTALL_NEOVIM=true
+    fi
+  elif [[ "$INSTALL_MODE" == "desktop" ]]; then
+    # Desktop mode defaults to all components
+    if [[ "$INSTALL_ALL" == false ]]; then
+      INSTALL_ALL=true
+    fi
+  fi
+
+  # If --all is set, enable all components
+  if [[ "$INSTALL_ALL" == true ]]; then
+    INSTALL_SHELL=true
+    INSTALL_NEOVIM=true
+    INSTALL_PYTHON=true
+    INSTALL_NODEJS=true
+    INSTALL_GOLANG=true
+    INSTALL_DEVOPS=true
+  fi
+}
+
 print_banner() {
   echo -e "${CYAN}"
   echo "╔═══════════════════════════════════════════════════╗"
@@ -353,6 +502,110 @@ show_completion_message() {
 }
 
 
+run_automated_installation() {
+  print_header "Automated Installation"
+  
+  info "Installation mode: ${INSTALL_MODE}"
+  info "Components to install:"
+  
+  local components_to_install=()
+  
+  [[ "$INSTALL_SHELL" == true ]] && components_to_install+=("Shell Environment") && info "  • Shell Environment (Zsh + Oh My Zsh + Tmux + CLI tools)"
+  [[ "$INSTALL_NEOVIM" == true ]] && components_to_install+=("Neovim Environment") && info "  • Neovim + LazyVim + Keyboard Setup"
+  [[ "$INSTALL_PYTHON" == true ]] && components_to_install+=("Python Development") && info "  • Python Development Environment"
+  [[ "$INSTALL_NODEJS" == true ]] && components_to_install+=("Node.js Development") && info "  • Node.js Development Environment"
+  [[ "$INSTALL_GOLANG" == true ]] && components_to_install+=("Go Development") && info "  • Go Development Environment"
+  [[ "$INSTALL_DEVOPS" == true ]] && components_to_install+=("DevOps Tools") && info "  • DevOps Tools (Docker, Terraform, K8s, Cloud CLIs)"
+  
+  if [[ ${#components_to_install[@]} -eq 0 ]]; then
+    warning "No components selected for installation"
+    info "Use --help to see available options"
+    exit 1
+  fi
+  
+  # Confirm installation unless --yes is provided
+  if [[ "$SKIP_CONFIRM" == false ]]; then
+    echo
+    if ! ask_yes_no "Proceed with installation?" "yes"; then
+      info "Installation cancelled"
+      exit 0
+    fi
+  fi
+  
+  echo
+  info "Starting automated installation..."
+  
+  # Run installations based on flags
+  local install_success=true
+  
+  if [[ "$INSTALL_SHELL" == true ]]; then
+    info "Installing Shell Environment..."
+    if ! run_component "shell-env.sh"; then
+      error "Failed to install Shell Environment"
+      install_success=false
+    fi
+  fi
+  
+  if [[ "$INSTALL_NEOVIM" == true ]]; then
+    info "Installing Neovim Environment..."
+    if ! run_component "neovim-env.sh"; then
+      error "Failed to install Neovim Environment"
+      install_success=false
+    fi
+  fi
+  
+  if [[ "$INSTALL_PYTHON" == true ]]; then
+    info "Installing Python Development Environment..."
+    if ! run_component "python-env.sh"; then
+      error "Failed to install Python Development Environment"
+      install_success=false
+    fi
+  fi
+  
+  if [[ "$INSTALL_NODEJS" == true ]]; then
+    info "Installing Node.js Development Environment..."
+    if ! run_component "nodejs-env.sh"; then
+      error "Failed to install Node.js Development Environment"
+      install_success=false
+    fi
+  fi
+  
+  if [[ "$INSTALL_GOLANG" == true ]]; then
+    info "Installing Go Development Environment..."
+    if ! run_component "golang-env.sh"; then
+      error "Failed to install Go Development Environment"
+      install_success=false
+    fi
+  fi
+  
+  if [[ "$INSTALL_DEVOPS" == true ]]; then
+    info "Installing DevOps Tools..."
+    if ! run_component "devops-tools.sh"; then
+      error "Failed to install DevOps Tools"
+      install_success=false
+    fi
+  fi
+  
+  # Show completion message
+  if [[ "$install_success" == true ]]; then
+    print_header "Installation Complete!"
+    success "All selected components installed successfully"
+    
+    info ""
+    info "Next steps:"
+    [[ "$INSTALL_SHELL" == true ]] && info "  1. Restart your terminal or run: exec zsh"
+    [[ "$INSTALL_SHELL" == true ]] && info "  2. Run 'p10k configure' to set up your prompt theme"
+    [[ "$INSTALL_SHELL" == true ]] && info "  3. Open tmux and press Ctrl-a + I to install plugins"
+    [[ "$INSTALL_NEOVIM" == true ]] && info "  4. Open Neovim to complete LazyVim setup"
+    
+    info ""
+    info "Log file: $LOG_FILE"
+  else
+    error "Some components failed to install. Check the log file: $LOG_FILE"
+    exit 1
+  fi
+}
+
 check_prerequisites() {
   info "Checking prerequisites..."
 
@@ -398,6 +651,9 @@ check_prerequisites() {
 }
 
 main() {
+  # Parse command line arguments first
+  parse_arguments "$@"
+  
   # Initialize
   init_script "Dotfiles Bootstrap"
 
@@ -409,8 +665,21 @@ main() {
   # Check prerequisites
   check_prerequisites
 
-  # Show installation options
-  show_main_menu
+  # Run based on mode
+  case "$INSTALL_MODE" in
+    interactive)
+      # Show installation options menu
+      show_main_menu
+      ;;
+    server|desktop|custom)
+      # Run automated installation based on flags
+      run_automated_installation
+      ;;
+    *)
+      error "Invalid installation mode: $INSTALL_MODE"
+      exit 1
+      ;;
+  esac
 }
 
 # Handle script interruption

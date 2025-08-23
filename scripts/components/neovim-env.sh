@@ -410,7 +410,7 @@ map("n", "<leader>tv", "<cmd>!terraform validate<cr>", { desc = "Terraform valid
 -- Git (enhanced)
 map("n", "<leader>gp", "<cmd>!git push<cr>", { desc = "Git push" })
 map("n", "<leader>gpu", "<cmd>!git pull<cr>", { desc = "Git pull" })
-map("n", "<leader>gc", "<cmd>!git commit -m "<cr>", { desc = "Git commit" })
+map("n", "<leader>gc", "<cmd>!git commit<cr>", { desc = "Git commit" })
 EOF
     
     

@@ -698,13 +698,13 @@ return {
   {
     "Exafunction/codeium.vim",
     event = "BufEnter",
-    enabled = false, -- Disabled by default to prevent API key prompt during installation
     config = function()
-      -- Disable automatic prompting for API key
+      -- Disable Codeium by default to prevent auto-prompt for API key
       vim.g.codeium_enabled = false
       vim.g.codeium_manual = true
+      vim.g.codeium_no_map_tab = true
       
-      -- Custom keymaps for Codeium
+      -- Custom keymaps for Codeium (only work when enabled)
       vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
       vim.keymap.set('i', '<C-;>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true, silent = true })
       vim.keymap.set('i', '<C-,>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true, silent = true })
@@ -732,7 +732,17 @@ return {
       
       vim.api.nvim_create_user_command('CodeiumDisable', function()
         vim.g.codeium_enabled = false
+        vim.g.codeium_manual = true
         vim.notify("Codeium disabled", vim.log.levels.INFO)
+      end, {})
+      
+      -- Show status
+      vim.api.nvim_create_user_command('CodeiumStatus', function()
+        if vim.g.codeium_enabled then
+          vim.notify("Codeium is enabled", vim.log.levels.INFO)
+        else
+          vim.notify("Codeium is disabled. Run :CodeiumEnable to activate", vim.log.levels.INFO)
+        end
       end, {})
     end
   },

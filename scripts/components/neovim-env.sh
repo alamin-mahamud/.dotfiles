@@ -641,19 +641,226 @@ return {
 }
 EOF
     
-    # Additional productivity plugins
-    cat > "$plugins_dir/productivity.lua" << 'EOF'
+    # AI-powered completion configuration (Cursor-like)
+    cat > "$plugins_dir/ai-completion.lua" << 'EOF'
 return {
-  -- GitHub Copilot (optional, comment out if not needed)
+  -- Enhanced AI-powered completion similar to Cursor
   {
     "github/copilot.vim",
     event = "InsertEnter",
     config = function()
+      -- Disable default tab mapping
       vim.g.copilot_no_tab_map = true
       vim.g.copilot_assume_mapped = true
-      vim.api.nvim_set_keymap("i", "<C-j>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+      
+      -- Custom keymaps for Copilot
+      vim.keymap.set("i", "<C-j>", 'copilot#Accept("\\<CR>")', {
+        expr = true,
+        replace_keycodes = false,
+        desc = "Accept Copilot suggestion"
+      })
+      
+      vim.keymap.set("i", "<C-l>", "<Plug>(copilot-accept-word)", {
+        desc = "Accept Copilot word"
+      })
+      
+      vim.keymap.set("i", "<C-h>", "<Plug>(copilot-dismiss)", {
+        desc = "Dismiss Copilot suggestion"
+      })
+      
+      vim.keymap.set("i", "<C-n>", "<Plug>(copilot-next)", {
+        desc = "Next Copilot suggestion"
+      })
+      
+      vim.keymap.set("i", "<C-p>", "<Plug>(copilot-previous)", {
+        desc = "Previous Copilot suggestion"
+      })
+      
+      -- Auto-trigger on certain filetypes
+      vim.g.copilot_filetypes = {
+        ["*"] = true,
+        gitcommit = false,
+        gitrebase = false,
+        hgcommit = false,
+        svn = false,
+        cvs = false,
+        [".env"] = false,
+      }
     end,
   },
+
+  -- AI-powered code suggestions (Codeium - free alternative)
+  {
+    "Exafunction/codeium.vim",
+    event = "BufEnter",
+    config = function()
+      -- Custom keymaps for Codeium
+      vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-;>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-,>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-x>', function() return vim.fn['codeium#Clear']() end, { expr = true, silent = true })
+      
+      -- Disable for certain file types
+      vim.g.codeium_disable_bindings = 1
+      vim.g.codeium_filetypes = {
+        gitcommit = false,
+        gitrebase = false,
+        help = false,
+        hgcommit = false,
+        svn = false,
+        cvs = false,
+        [".env"] = false,
+      }
+    end
+  },
+
+  -- Enhanced snippet support
+  {
+    "L3MON4D3/LuaSnip",
+    build = "make install_jsregexp",
+    dependencies = {
+      "rafamadriz/friendly-snippets",
+    },
+    config = function()
+      local luasnip = require("luasnip")
+      
+      -- Load snippets
+      require("luasnip.loaders.from_vscode").lazy_load()
+      
+      -- Custom snippets for common patterns
+      luasnip.add_snippets("python", {
+        luasnip.snippet("def", {
+          luasnip.text_node("def "),
+          luasnip.insert_node(1, "function_name"),
+          luasnip.text_node("("),
+          luasnip.insert_node(2, "args"),
+          luasnip.text_node("):"),
+          luasnip.text_node({"", "    "}),
+          luasnip.insert_node(0),
+        }),
+        luasnip.snippet("class", {
+          luasnip.text_node("class "),
+          luasnip.insert_node(1, "ClassName"),
+          luasnip.text_node("("),
+          luasnip.insert_node(2, "object"),
+          luasnip.text_node("):"),
+          luasnip.text_node({"", "    def __init__(self"}),
+          luasnip.insert_node(3),
+          luasnip.text_node("):"),
+          luasnip.text_node({"", "        "}),
+          luasnip.insert_node(0),
+        }),
+      })
+      
+      -- Keymaps for LuaSnip
+      vim.keymap.set({"i", "s"}, "<C-k>", function()
+        if luasnip.expand_or_jumpable() then
+          luasnip.expand_or_jump()
+        end
+      end, {silent = true})
+      
+      vim.keymap.set({"i", "s"}, "<C-j>", function()
+        if luasnip.jumpable(-1) then
+          luasnip.jump(-1)
+        end
+      end, {silent = true})
+    end,
+  },
+
+  -- Intelligent auto-pairs
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      local autopairs = require("nvim-autopairs")
+      autopairs.setup({
+        check_ts = true,
+        ts_config = {
+          lua = { "string", "source" },
+          javascript = { "string", "template_string" },
+          java = false,
+        },
+        disable_filetype = { "TelescopePrompt", "spectre_panel" },
+        fast_wrap = {
+          map = "<M-e>",
+          chars = { "{", "[", "(", '"', "'" },
+          pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
+          offset = 0,
+          end_key = "$",
+          keys = "qwertyuiopzxcvbnmasdfghjkl",
+          check_comma = true,
+          highlight = "PmenuSel",
+          highlight_grey = "LineNr",
+        },
+      })
+    end,
+  },
+
+  -- Smart commenting with context awareness
+  {
+    "numToStr/Comment.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "JoosepAlviste/nvim-ts-context-commentstring",
+    },
+    config = function()
+      require("Comment").setup({
+        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+      })
+    end,
+  },
+
+  -- Enhanced text objects for better code manipulation
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    event = "VeryLazy",
+    dependencies = "nvim-treesitter/nvim-treesitter",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        textobjects = {
+          select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+              ["af"] = "@function.outer",
+              ["if"] = "@function.inner",
+              ["ac"] = "@class.outer",
+              ["ic"] = "@class.inner",
+              ["aa"] = "@parameter.outer",
+              ["ia"] = "@parameter.inner",
+            },
+          },
+          move = {
+            enable = true,
+            set_jumps = true,
+            goto_next_start = {
+              ["]f"] = "@function.outer",
+              ["]c"] = "@class.outer",
+            },
+            goto_next_end = {
+              ["]F"] = "@function.outer",
+              ["]C"] = "@class.outer",
+            },
+            goto_previous_start = {
+              ["[f"] = "@function.outer",
+              ["[c"] = "@class.outer",
+            },
+            goto_previous_end = {
+              ["[F"] = "@function.outer",
+              ["[C"] = "@class.outer",
+            },
+          },
+        },
+      })
+    end,
+  },
+}
+EOF
+
+    # Additional productivity plugins
+    cat > "$plugins_dir/productivity.lua" << 'EOF'
+return {
+  -- AI completion is now handled by ai-completion.lua
   
   -- Better terminal integration
   {
@@ -700,6 +907,198 @@ return {
     },
     init = function()
       vim.g.db_ui_use_nerd_fonts = 1
+    end,
+  },
+}
+EOF
+    
+    # Claude Code integration plugin
+    cat > "$plugins_dir/claude-code.lua" << 'EOF'
+return {
+  -- Claude Code integration plugin
+  {
+    "akinsho/toggleterm.nvim", 
+    opts = function(_, opts)
+      -- Add Claude Code terminal configuration
+      opts.float_opts = vim.tbl_extend("force", opts.float_opts or {}, {
+        border = "curved",
+        width = function() return math.floor(vim.o.columns * 0.9) end,
+        height = function() return math.floor(vim.o.lines * 0.8) end,
+        winblend = 10,
+      })
+      return opts
+    end,
+    keys = {
+      -- Quick Claude Code terminal
+      { "<leader>cc", function() 
+        local Terminal = require('toggleterm.terminal').Terminal
+        local claude_term = Terminal:new({
+          cmd = "claude",
+          hidden = true,
+          direction = "float",
+          float_opts = {
+            border = "curved",
+            width = function() return math.floor(vim.o.columns * 0.9) end,
+            height = function() return math.floor(vim.o.lines * 0.8) end,
+          },
+          on_open = function(term)
+            vim.cmd("startinsert!")
+            -- Send vim mode command when opening
+            vim.defer_fn(function()
+              term:send("/vim")
+            end, 100)
+          end,
+          on_close = function()
+            vim.cmd("startinsert!")
+          end,
+        })
+        claude_term:toggle()
+      end, desc = "Open Claude Code Terminal" },
+      
+      -- Send selection to Claude Code
+      { "<leader>cs", function()
+        -- Get visual selection
+        local start_pos = vim.fn.getpos("'<")
+        local end_pos = vim.fn.getpos("'>")
+        local lines = vim.fn.getline(start_pos[2], end_pos[2])
+        
+        if #lines == 0 then return end
+        
+        -- If single line, get partial selection
+        if #lines == 1 then
+          local start_col = start_pos[3]
+          local end_col = end_pos[3]
+          lines[1] = string.sub(lines[1], start_col, end_col)
+        else
+          -- Multi-line selection
+          lines[1] = string.sub(lines[1], start_pos[3])
+          lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
+        end
+        
+        local text = table.concat(lines, "\n")
+        
+        -- Copy to clipboard for Claude Code
+        vim.fn.setreg("+", text)
+        
+        -- Open Claude Code terminal
+        local Terminal = require('toggleterm.terminal').Terminal
+        local claude_term = Terminal:new({
+          cmd = "claude",
+          hidden = true,
+          direction = "float",
+          float_opts = {
+            border = "curved",
+            width = function() return math.floor(vim.o.columns * 0.9) end,
+            height = function() return math.floor(vim.o.lines * 0.8) end,
+          },
+          on_open = function(term)
+            vim.cmd("startinsert!")
+            -- Automatically paste the selection
+            vim.defer_fn(function()
+              term:send("/vim")
+              term:send("Look at this code:\n```\n" .. text .. "\n```")
+            end, 200)
+          end,
+        })
+        claude_term:toggle()
+        
+        vim.notify("Sent selection to Claude Code")
+      end, mode = "v", desc = "Send Selection to Claude Code" },
+      
+      -- Send current file to Claude Code
+      { "<leader>cf", function()
+        local filepath = vim.fn.expand("%:p")
+        local filename = vim.fn.expand("%:t")
+        
+        if filepath == "" then
+          vim.notify("No file is currently open", vim.log.levels.WARN)
+          return
+        end
+        
+        -- Read file content
+        local lines = vim.fn.readfile(filepath)
+        local content = table.concat(lines, "\n")
+        
+        -- Open Claude Code terminal
+        local Terminal = require('toggleterm.terminal').Terminal
+        local claude_term = Terminal:new({
+          cmd = "claude",
+          hidden = true,
+          direction = "float",
+          float_opts = {
+            border = "curved", 
+            width = function() return math.floor(vim.o.columns * 0.9) end,
+            height = function() return math.floor(vim.o.lines * 0.8) end,
+          },
+          on_open = function(term)
+            vim.cmd("startinsert!")
+            -- Send file content to Claude
+            vim.defer_fn(function()
+              term:send("/vim")
+              term:send("Help me with this file (" .. filename .. "):\n```\n" .. content .. "\n```")
+            end, 200)
+          end,
+        })
+        claude_term:toggle()
+        
+        vim.notify("Sent " .. filename .. " to Claude Code")
+      end, desc = "Send Current File to Claude Code" },
+      
+      -- Quick code explanation
+      { "<leader>ce", function()
+        -- Get visual selection or current line
+        local mode = vim.fn.mode()
+        local text = ""
+        
+        if mode == "v" or mode == "V" then
+          local start_pos = vim.fn.getpos("'<")
+          local end_pos = vim.fn.getpos("'>")
+          local lines = vim.fn.getline(start_pos[2], end_pos[2])
+          text = table.concat(lines, "\n")
+        else
+          text = vim.fn.getline(".")
+        end
+        
+        if text == "" then return end
+        
+        -- Open Claude Code terminal with explanation request
+        local Terminal = require('toggleterm.terminal').Terminal
+        local claude_term = Terminal:new({
+          cmd = "claude",
+          hidden = true,
+          direction = "float",
+          float_opts = {
+            border = "curved",
+            width = function() return math.floor(vim.o.columns * 0.9) end,
+            height = function() return math.floor(vim.o.lines * 0.8) end,
+          },
+          on_open = function(term)
+            vim.cmd("startinsert!")
+            vim.defer_fn(function()
+              term:send("/vim")
+              term:send("Explain this code:\n```\n" .. text .. "\n```")
+            end, 200)
+          end,
+        })
+        claude_term:toggle()
+        
+      end, mode = {"n", "v"}, desc = "Explain Code with Claude" },
+    }
+  },
+  
+  -- Which-key descriptions for Claude Code commands
+  {
+    "folke/which-key.nvim",
+    opts = function(_, opts)
+      opts.spec = opts.spec or {}
+      table.insert(opts.spec, {
+        { "<leader>c", group = "Claude Code" },
+        { "<leader>cc", desc = "Open Claude Code Terminal" },
+        { "<leader>cs", desc = "Send Selection to Claude Code", mode = "v" },
+        { "<leader>cf", desc = "Send Current File to Claude Code" },
+        { "<leader>ce", desc = "Explain Code with Claude", mode = {"n", "v"} },
+      })
+      return opts
     end,
   },
 }
@@ -1089,7 +1488,26 @@ show_neovim_next_steps() {
     info "  <leader>rr = Run REST request"
     
     echo
-    success "Neovim with LazyVim and optimized keyboard layout is ready!"
+    info "Claude Code Integration:"
+    info "  <leader>cc = Open Claude Code terminal (with vim mode)"
+    info "  <leader>cs = Send selection to Claude Code (visual mode)"
+    info "  <leader>cf = Send current file to Claude Code"
+    info "  <leader>ce = Explain code with Claude (normal/visual mode)"
+    info "  Note: Make sure 'claude' CLI is installed and authenticated"
+    
+    echo
+    info "AI Auto-Completion (Cursor-like):"
+    info "  <C-j> = Accept Copilot/AI suggestion"
+    info "  <C-g> = Accept Codeium suggestion"
+    info "  <C-l> = Accept word from Copilot"
+    info "  <C-h> = Dismiss Copilot suggestion"
+    info "  <C-n>/<C-p> = Cycle through AI suggestions"
+    info "  <C-;>/<C-,> = Cycle Codeium completions"
+    info "  Tab/S-Tab = Navigate snippets"
+    info "  Note: Run ':Copilot setup' and ':Codeium Auth' to authenticate"
+    
+    echo
+    success "Neovim with LazyVim, AI completion, Claude Code integration, and optimized keyboard layout is ready!"
 }
 
 main() {

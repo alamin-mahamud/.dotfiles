@@ -237,7 +237,8 @@ install_helm() {
             macos)
                 if command -v brew >/dev/null 2>&1; then
                     info "Checking for Helm updates via Homebrew..."
-                    brew upgrade helm 2>/dev/null || success "Helm is up to date"
+                    brew upgrade helm 2>/dev/null || true
+                    success "Helm is up to date"
                     return 0
                 fi
                 ;;
@@ -288,7 +289,8 @@ install_terraform() {
             macos)
                 if command -v brew >/dev/null 2>&1; then
                     info "Checking for Terraform updates via Homebrew..."
-                    brew upgrade hashicorp/tap/terraform 2>/dev/null || success "Terraform is up to date"
+                    brew upgrade hashicorp/tap/terraform 2>/dev/null || true
+                    success "Terraform is up to date"
                     return 0
                 fi
                 ;;
@@ -337,7 +339,8 @@ install_opentofu() {
             macos)
                 if command -v brew >/dev/null 2>&1; then
                     info "Checking for OpenTofu updates via Homebrew..."
-                    brew upgrade opentofu 2>/dev/null || success "OpenTofu is up to date"
+                    brew upgrade opentofu 2>/dev/null || true
+                    success "OpenTofu is up to date"
                     return 0
                 fi
                 ;;
@@ -389,14 +392,16 @@ install_terragrunt() {
     # Check if terragrunt is already installed
     if command -v terragrunt >/dev/null 2>&1; then
         local current_version
-        current_version=$(terragrunt --version 2>/dev/null | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+')
+        current_version=$(terragrunt --version 2>/dev/null | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
+        current_version="v${current_version}"  # Add 'v' prefix for consistency
         info "Terragrunt $current_version already installed"
         
         case "$os" in
             macos)
                 if command -v brew >/dev/null 2>&1; then
                     info "Checking for Terragrunt updates via Homebrew..."
-                    brew upgrade terragrunt 2>/dev/null || success "Terragrunt is up to date"
+                    brew upgrade terragrunt 2>/dev/null || true
+                    success "Terragrunt is up to date"
                     return 0
                 fi
                 ;;
@@ -462,7 +467,8 @@ install_aws_cli() {
             macos)
                 if command -v brew >/dev/null 2>&1; then
                     info "Checking for AWS CLI updates via Homebrew..."
-                    brew upgrade awscli 2>/dev/null || success "AWS CLI is up to date"
+                    brew upgrade awscli 2>/dev/null || true
+                    success "AWS CLI is up to date"
                     return 0
                 fi
                 ;;
@@ -507,7 +513,8 @@ install_azure_cli() {
             macos)
                 if command -v brew >/dev/null 2>&1; then
                     info "Checking for Azure CLI updates via Homebrew..."
-                    brew upgrade azure-cli 2>/dev/null || success "Azure CLI is up to date"
+                    brew upgrade azure-cli 2>/dev/null || true
+                    success "Azure CLI is up to date"
                     return 0
                 fi
                 ;;
@@ -550,7 +557,8 @@ install_gcloud_cli() {
             macos)
                 if command -v brew >/dev/null 2>&1; then
                     info "Checking for Google Cloud CLI updates via Homebrew..."
-                    brew upgrade google-cloud-sdk 2>/dev/null || success "Google Cloud CLI is up to date"
+                    brew upgrade google-cloud-sdk 2>/dev/null || true
+                    success "Google Cloud CLI is up to date"
                     return 0
                 fi
                 ;;

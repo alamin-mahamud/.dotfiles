@@ -672,32 +672,41 @@ function get_local_ip() {
 }
 
 function set_terminal_title() {
-    if [[ -n "$KITTY_WINDOW_ID" ]]; then
+    # Only set title for kitty terminal
+    if [[ -n "$KITTY_WINDOW_ID" ]] || [[ "$TERM" == *"kitty"* ]]; then
         # Cache IP address to avoid repeated lookups
         if [[ -z "$_CACHED_IP" ]]; then
             _CACHED_IP=$(get_local_ip)
         fi
         
         local hostname="${HOSTNAME:-$(hostname -s 2>/dev/null || echo 'localhost')}"
-        local current_dir=$(basename "$PWD")
+        local base_title="${USER}@${hostname}(${_CACHED_IP})"
         local cmd_part=""
         
-        if [[ -n "$1" && "$1" != "shell" ]]; then
+        if [[ -n "$1" ]]; then
             # Extract just the command name, not full arguments
-            local cmd_name=$(echo "$1" | awk '{print $1}')
-            cmd_part=" - $cmd_name"
+            local cmd_name=$(echo "$1" | sed 's/^sudo //' | awk '{print $1}' | xargs basename 2>/dev/null)
+            if [[ -n "$cmd_name" && "$cmd_name" != "shell" && "$cmd_name" != "zsh" && "$cmd_name" != "bash" ]]; then
+                cmd_part=" - $cmd_name"
+            fi
         fi
         
-        # Set title format: user@hostname(IP) - command (if running)
-        printf '\033]0;%s@%s(%s)%s\007' "$USER" "$hostname" "$_CACHED_IP" "$cmd_part"
+        # Set window and tab title
+        printf '\033]0;%s%s\007' "$base_title" "$cmd_part"
+        # Also set the tab title specifically for kitty
+        printf '\033]2;%s%s\007' "$base_title" "$cmd_part"
     fi
 }
 
 # Set title before each command (zsh preexec hook)
-if [[ -n "$KITTY_WINDOW_ID" ]]; then
+if [[ -n "$KITTY_WINDOW_ID" ]] || [[ "$TERM" == *"kitty"* ]]; then
     autoload -Uz add-zsh-hook
     
+    # Disable automatic title updates from Oh My Zsh and other frameworks
+    export DISABLE_AUTO_TITLE=true
+    
     function preexec_set_title() {
+        # Set title with the command being executed
         set_terminal_title "$1"
     }
     
@@ -706,6 +715,11 @@ if [[ -n "$KITTY_WINDOW_ID" ]]; then
         set_terminal_title ""
     }
     
+    # Remove any existing hooks that might interfere
+    add-zsh-hook -d precmd omz_termsupport_precmd 2>/dev/null || true
+    add-zsh-hook -d preexec omz_termsupport_preexec 2>/dev/null || true
+    
+    # Add our hooks
     add-zsh-hook preexec preexec_set_title
     add-zsh-hook precmd precmd_set_title
     
@@ -718,6 +732,12 @@ if [[ -n "$KITTY_WINDOW_ID" ]]; then
         _CACHED_IP=$(get_local_ip)
         set_terminal_title ""
         echo "Kitty title IP refreshed: $_CACHED_IP"
+    }
+    
+    # Override the title function if it exists (from oh-my-zsh or other frameworks)
+    function title() {
+        # Ignore title changes from other sources
+        return 0
     }
 fi
 EOF

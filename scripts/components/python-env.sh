@@ -57,78 +57,52 @@ install_python_dependencies() {
     esac
 }
 
+configure_pyenv_in_shells() {
+    info "Configuring pyenv in shell..."
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    if command_exists pyenv; then
+        eval "$(pyenv init --path)"
+        eval "$(pyenv init -)"
+        success "pyenv configured in shell"
+    fi
+}
+
 install_pyenv() {
-    # Check if pyenv is installed (might not be in PATH yet)
-    if [[ -d "$HOME/.pyenv/bin" ]]; then
-        info "pyenv already installed, updating..."
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
+    # Check if pyenv directory exists
+    if [[ -d "$HOME/.pyenv" ]]; then
+        info "pyenv directory found, updating..."
         if [[ -d "$HOME/.pyenv/.git" ]]; then
             cd "$HOME/.pyenv" && git pull 2>/dev/null || true
         fi
+        configure_pyenv_in_shells
         return 0
     fi
     
     info "Installing pyenv..."
     
-    # Install pyenv
-    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash 2>/dev/null || {
-        # If that fails, try alternative installation method
-        if [[ ! -d "$HOME/.pyenv" ]]; then
-            git clone https://github.com/pyenv/pyenv.git "$HOME/.pyenv" || {
-                error "Failed to install pyenv"
-                return 1
-            }
-        fi
+    # Install pyenv using the official installer
+    curl -L https://pyenv.run | bash || {
+        error "Failed to install pyenv"
+        return 1
     }
     
-    # Add to shell configuration
-    local shell_config=""
-    case "${SHELL##*/}" in
-        zsh) shell_config="$HOME/.zshrc" ;;
-        bash) shell_config="$HOME/.bashrc" ;;
-        *) shell_config="$HOME/.profile" ;;
-    esac
-    
-    if [[ -f "$shell_config" ]] && ! grep -q 'pyenv' "$shell_config"; then
-        {
-            echo ''
-            echo '# pyenv configuration'
-            echo 'export PYENV_ROOT="$HOME/.pyenv"'
-            echo 'export PATH="$PYENV_ROOT/bin:$PATH"'
-            echo 'if command -v pyenv 1>/dev/null 2>&1; then'
-            echo '  eval "$(pyenv init -)"'
-            echo 'fi'
-        } >> "$shell_config"
-        info "Added pyenv configuration to $shell_config"
-    fi
-    
-    # Load pyenv in current session
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    if command -v pyenv >/dev/null 2>&1; then
-        eval "$(pyenv init -)"
-    fi
-    
+    configure_pyenv_in_shells
     success "pyenv installed successfully"
 }
 
 install_python_versions() {
     info "Installing Python versions..."
     
-    # Ensure pyenv is in PATH
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
+    configure_pyenv_in_shells
     
     for version in "${PYTHON_VERSIONS[@]}"; do
         if pyenv versions | grep -q "$version"; then
             info "Python $version already installed"
         else
             info "Installing Python $version..."
-            # Use -s flag to skip if already installed
-            pyenv install -s "$version" || {
-                warning "Could not install Python $version (may already be installed)"
+            pyenv install "$version" || {
+                warning "Could not install Python $version"
             }
         fi
     done
@@ -138,28 +112,53 @@ install_python_versions() {
     success "Set Python $DEFAULT_PYTHON_VERSION as global default"
 }
 
-install_pip_tools() {
-    info "Installing pip tools..."
-    
-    # Ensure we're using the pyenv Python
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
-    
-    # Upgrade pip
+install_pip() {
+    if ! command_exists pip; then
+        info "Installing pip..."
+        curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        python get-pip.py --user
+        rm get-pip.py
+    fi
     python -m pip install --upgrade pip
-    
-    # Install pipx for isolated global packages
+    success "pip upgraded"
+}
+
+install_pipx() {
     if ! command_exists pipx; then
+        info "Installing pipx..."
         python -m pip install --user pipx
         python -m pipx ensurepath
         
-        # Add pipx to PATH for current session
-        export PATH="$HOME/.local/bin:$PATH"
+        # Check if $HOME/.local/bin is already in PATH
+        case ":$PATH:" in
+            *":$HOME/.local/bin:"*) ;;
+            *) export PATH="$HOME/.local/bin:$PATH"; info "$HOME/.local/bin added to PATH" ;;
+        esac
         success "pipx installed"
     else
         info "pipx already installed"
     fi
+}
+
+install_pipenv() {
+    if ! command_exists pipenv; then
+        info "Installing pipenv..."
+        pipx install pipenv
+        export PIPENV_PYTHON="$HOME/.pyenv/shims/python"
+        success "pipenv installed via pipx"
+    else
+        info "pipenv already installed"
+    fi
+}
+
+install_pip_tools() {
+    info "Installing pip tools..."
+    
+    configure_pyenv_in_shells
+    
+    install_pip
+    install_pipx
+    install_pipenv
     
     # Install poetry via pipx
     if ! command_exists poetry; then
@@ -167,14 +166,6 @@ install_pip_tools() {
         success "poetry installed via pipx"
     else
         info "poetry already installed"
-    fi
-    
-    # Install pipenv
-    if ! command_exists pipenv; then
-        pipx install pipenv
-        success "pipenv installed via pipx"
-    else
-        info "pipenv already installed"
     fi
     
     # Install other useful tools
@@ -288,43 +279,54 @@ EOF
             echo "source '$alias_file'" >> "$shell_config"
             info "Added Python aliases to $shell_config"
         fi
+        
+        # Add pyenv configuration if not already present
+        if ! grep -q 'PYENV_ROOT' "$shell_config"; then
+            cat >> "$shell_config" << 'PYENV_EOF'
+
+# pyenv configuration
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+
+# Initialize pyenv if available
+if command -v pyenv >/dev/null 2>&1; then
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+fi
+
+# pipx configuration
+export PATH="$HOME/.local/bin:$PATH"
+PYENV_EOF
+            info "Added pyenv configuration to $shell_config"
+        fi
     fi
     
     success "Python aliases created"
 }
 
-verify_installation() {
-    info "Verifying Python installation..."
+display_installation_summary() {
+    info "Installation Summary:"
+    configure_pyenv_in_shells
     
-    # Ensure pyenv is in PATH
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    
-    # Check pyenv
-    if [[ -d "$HOME/.pyenv/bin" ]] && command -v pyenv >/dev/null 2>&1; then
-        eval "$(pyenv init -)"
-        local pyenv_version=$(pyenv --version)
-        success "pyenv: $pyenv_version"
-        
-        # Check Python versions
-        local python_version=$(python --version)
-        success "Python: $python_version"
-    else
-        error "pyenv installation failed"
+    if command_exists python; then
+        success "Python Version: $(python --version)"
     fi
     
-    # Check pip tools
-    export PATH="$HOME/.local/bin:$PATH"
+    if command_exists pip; then
+        success "pip Version: $(pip --version)"
+    fi
     
-    local tools=("pipx" "poetry" "pipenv")
-    for tool in "${tools[@]}"; do
-        if command_exists "$tool"; then
-            local tool_version=$($tool --version 2>/dev/null || echo "installed")
-            success "$tool: $tool_version"
-        else
-            warning "$tool not found"
-        fi
-    done
+    if command_exists pipx; then
+        success "pipx Version: $(pipx --version)"
+    fi
+    
+    if command_exists pipenv; then
+        success "pipenv Version: $(pipenv --version)"
+    fi
+    
+    if command_exists poetry; then
+        success "poetry Version: $(poetry --version)"
+    fi
 }
 
 main() {
@@ -342,7 +344,7 @@ main() {
     install_pip_tools
     configure_poetry
     create_python_aliases
-    verify_installation
+    display_installation_summary
     
     success "Python environment setup complete!"
     info "Please restart your shell or run: source ~/.${SHELL##*/}rc"

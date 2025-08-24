@@ -3,7 +3,10 @@
     "allow": [
       "Bash(nvim:*)",
       "Bash(timeout 3 nvim:*)",
-      "Bash(echo \"Exit code: $?\")"
+      "Bash(echo \"Exit code: $?\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl:*)",
+      "Read(//Users/alamin/.pyenv/**)"
     ],
     "deny": [],
     "ask": []

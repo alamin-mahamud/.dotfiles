@@ -890,6 +890,93 @@ return {
 }
 EOF
 
+    # Theme configuration with Catppuccin Frappe
+    cat >"$plugins_dir/colorscheme.lua" <<'EOF'
+return {
+  -- Catppuccin Frappe colorscheme
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    opts = {
+      flavour = "frappe", -- latte, frappe, macchiato, mocha
+      background = {
+        light = "latte",
+        dark = "frappe",
+      },
+      transparent_background = false,
+      show_end_of_buffer = false,
+      term_colors = true,
+      dim_inactive = {
+        enabled = false,
+        shade = "dark",
+        percentage = 0.15,
+      },
+      no_italic = false,
+      no_bold = false,
+      no_underline = false,
+      styles = {
+        comments = { "italic" },
+        conditionals = { "italic" },
+        loops = {},
+        functions = {},
+        keywords = {},
+        strings = {},
+        variables = {},
+        numbers = {},
+        booleans = {},
+        properties = {},
+        types = {},
+        operators = {},
+      },
+      color_overrides = {},
+      custom_highlights = {},
+      integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        notify = false,
+        mini = {
+          enabled = true,
+          indentscope_color = "",
+        },
+        telescope = true,
+        which_key = true,
+        mason = true,
+        neotest = true,
+        dap = {
+          enabled = true,
+          enable_ui = true,
+        },
+        native_lsp = {
+          enabled = true,
+          virtual_text = {
+            errors = { "italic" },
+            hints = { "italic" },
+            warnings = { "italic" },
+            information = { "italic" },
+          },
+          underlines = {
+            errors = { "underline" },
+            hints = { "underline" },
+            warnings = { "underline" },
+            information = { "underline" },
+          },
+          inlay_hints = {
+            background = true,
+          },
+        },
+      },
+    },
+    config = function(_, opts)
+      require("catppuccin").setup(opts)
+      vim.cmd.colorscheme("catppuccin-frappe")
+    end,
+  },
+}
+EOF
+
     # Additional productivity plugins
     cat >"$plugins_dir/productivity.lua" <<'EOF'
 return {
@@ -966,7 +1053,7 @@ return {
       { "<leader>cc", function() 
         local Terminal = require('toggleterm.terminal').Terminal
         local claude_term = Terminal:new({
-          cmd = "claude",
+          cmd = "claude --dangerously-skip-permissions",
           hidden = true,
           direction = "float",
           float_opts = {
@@ -1016,7 +1103,7 @@ return {
         -- Open Claude Code terminal
         local Terminal = require('toggleterm.terminal').Terminal
         local claude_term = Terminal:new({
-          cmd = "claude",
+          cmd = "claude --dangerously-skip-permissions",
           hidden = true,
           direction = "float",
           float_opts = {
@@ -1055,7 +1142,7 @@ return {
         -- Open Claude Code terminal
         local Terminal = require('toggleterm.terminal').Terminal
         local claude_term = Terminal:new({
-          cmd = "claude",
+          cmd = "claude --dangerously-skip-permissions",
           hidden = true,
           direction = "float",
           float_opts = {
@@ -1097,7 +1184,7 @@ return {
         -- Open Claude Code terminal with explanation request
         local Terminal = require('toggleterm.terminal').Terminal
         local claude_term = Terminal:new({
-          cmd = "claude",
+          cmd = "claude --dangerously-skip-permissions",
           hidden = true,
           direction = "float",
           float_opts = {

@@ -173,8 +173,8 @@ parse_arguments() {
 print_banner() {
   echo -e "${CYAN}"
   echo "╔═══════════════════════════════════════════════════╗"
-  echo "║          Dotfiles Bootstrap Script v3.0          ║"
-  echo "║         DRY Architecture • Modular Design        ║"
+  echo "║          Dotfiles Bootstrap Script v3.0           ║"
+  echo "║         DRY Architecture • Modular Design         ║"
   echo "╚═══════════════════════════════════════════════════╝"
   echo -e "${NC}"
 }

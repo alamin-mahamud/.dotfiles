@@ -620,6 +620,19 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
     source "$NVM_DIR/nvm.sh"
 fi
 
+# pyenv configuration
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+
+# Initialize pyenv if available
+if command -v pyenv >/dev/null 2>&1; then
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+fi
+
+# pipx configuration
+export PATH="$HOME/.local/bin:$PATH"
+
 # Claude API configuration
 # Set your Anthropic API key as environment variable:
 # export ANTHROPIC_API_KEY="your-api-key-here"
@@ -882,35 +895,33 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @plugin 'tmux-plugins/tmux-copycat'
 
-# Theme
-set -g @plugin 'folke/tokyonight.nvim'
+# Theme - Catppuccin Frappe
+set -g @plugin 'catppuccin/tmux'
 
 # Plugin configurations
 set -g @resurrect-strategy-nvim 'session'
 set -g @continuum-restore 'on'
 set -g @continuum-save-interval '15'
 
-# Status bar
-set -g status-position top
-set -g status-justify left
-set -g status-style 'bg=#1a1b26 fg=#c0caf5'
-set -g status-left '#[bg=#7aa2f7,fg=#1a1b26,bold] #S '
-set -g status-right '#[bg=#414868,fg=#c0caf5] %Y-%m-%d #[bg=#7aa2f7,fg=#1a1b26,bold] %H:%M '
-set -g status-right-length 50
-set -g status-left-length 20
-
-# Window status
-setw -g window-status-current-style 'bg=#7aa2f7 fg=#1a1b26 bold'
-setw -g window-status-current-format ' #I#[fg=#1a1b26]:#[fg=#1a1b26]#W#[fg=#1a1b26]#F '
-setw -g window-status-style 'bg=#414868 fg=#c0caf5'
-setw -g window-status-format ' #I#[fg=#c0caf5]:#[fg=#c0caf5]#W#[fg=#c0caf5]#F '
-
-# Pane borders
-set -g pane-border-style 'fg=#414868'
-set -g pane-active-border-style 'fg=#7aa2f7'
-
-# Message text
-set -g message-style 'bg=#7aa2f7 fg=#1a1b26 bold'
+# Catppuccin theme configuration
+set -g @catppuccin_flavour 'frappe'
+set -g @catppuccin_window_left_separator ""
+set -g @catppuccin_window_right_separator " "
+set -g @catppuccin_window_middle_separator " █"
+set -g @catppuccin_window_number_position "right"
+set -g @catppuccin_window_default_fill "number"
+set -g @catppuccin_window_default_text "#W"
+set -g @catppuccin_window_current_fill "number"
+set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,(),}"
+set -g @catppuccin_status_modules_right "directory date_time"
+set -g @catppuccin_status_modules_left "session"
+set -g @catppuccin_status_left_separator  " "
+set -g @catppuccin_status_right_separator " "
+set -g @catppuccin_status_right_separator_inverse "no"
+set -g @catppuccin_status_fill "icon"
+set -g @catppuccin_status_connect_separator "no"
+set -g @catppuccin_directory_text "#{b:pane_current_path}"
+set -g @catppuccin_date_time_text "%H:%M"
 
 # Initialize TMUX plugin manager (keep this line at the very bottom)
 run '~/.tmux/plugins/tpm/tpm'
@@ -941,6 +952,7 @@ configure_fzf() {
         success "FZF configured"
     fi
 }
+
 
 create_shell_aliases() {
     local alias_file="$HOME/.zsh_local"
@@ -1046,7 +1058,7 @@ main() {
     add_to_plan "Install Powerlevel10k theme"
     add_to_plan "Install modern CLI tools (fzf, ripgrep, fd, bat, eza)"
     add_to_plan "Create comprehensive .zshrc configuration"
-    add_to_plan "Configure Tmux with Tokyo Night theme and plugins"
+    add_to_plan "Configure Tmux with Catppuccin Frappe theme and plugins"
     add_to_plan "Configure FZF key bindings and fuzzy search"
     add_to_plan "Create local shell aliases and functions"
     add_to_plan "Verify installation and functionality"

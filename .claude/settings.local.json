@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nvim:*)",
+      "Bash(timeout 3 nvim:*)",
+      "Bash(echo \"Exit code: $?\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -628,6 +628,19 @@ fi
 [ -f ~/.zsh_local ] && source ~/.zsh_local
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# Custom FZF keybindings (override defaults)
+# Change directory search from Alt-c to Ctrl-e (macOS compatibility)
+# FZF Default Keybindings:
+#   Ctrl-t: File search
+#   Ctrl-r: Command history search
+#   Ctrl-e: Directory search (changed from Alt-c for macOS compatibility)
+if command -v fzf >/dev/null 2>&1; then
+    # Override FZF ALT-C (directory search) to use CTRL-E instead
+    bindkey '^e' fzf-cd-widget 2>/dev/null || true
+    # Unbind the default Alt-c if it exists
+    bindkey -r '\ec' 2>/dev/null || true
+fi
+
 # Disable Powerlevel10k configuration wizard
 typeset -g POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 

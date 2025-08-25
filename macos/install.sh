@@ -271,6 +271,8 @@ main() {
     # Component installations
     run_component_installer "shell-env.sh"
     run_component_installer "python-env.sh"
+    run_component_installer "devops-tools.sh"
+    run_component_installer "networking-tools.sh"
     
     # Configuration
     setup_symlinks

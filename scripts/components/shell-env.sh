@@ -337,6 +337,36 @@ install_additional_tools() {
         fi
     fi
     
+    # Install superfile (modern file manager) if not available
+    if ! command_exists spf; then
+        info "Installing superfile (terminal file manager)..."
+        case "${DOTFILES_OS}" in
+            macos)
+                if command_exists brew; then
+                    brew install superfile 2>/dev/null || {
+                        warning "Failed to install superfile via brew, trying install script..."
+                        bash -c "$(curl -sLo- https://superfile.netlify.app/install.sh)" 2>/dev/null || {
+                            warning "Failed to install superfile"
+                        }
+                    }
+                else
+                    bash -c "$(curl -sLo- https://superfile.netlify.app/install.sh)" 2>/dev/null || {
+                        warning "Failed to install superfile"
+                    }
+                fi
+                ;;
+            linux)
+                bash -c "$(curl -sLo- https://superfile.netlify.app/install.sh)" 2>/dev/null || {
+                    warning "Failed to install superfile"
+                }
+                ;;
+        esac
+        
+        if command_exists spf; then
+            success "Installed superfile"
+        fi
+    fi
+    
     # Install fzf if not available
     if ! command_exists fzf; then
         info "Installing fzf (cmd-line fuzzy finder)..."
@@ -548,12 +578,21 @@ alias d='docker'
 alias dc='docker-compose'
 alias dps='docker ps'
 alias di='docker images'
+alias ld='lazydocker'
 
 # Kubernetes aliases
 alias k='kubectl'
 alias kgp='kubectl get pods'
 alias kgs='kubectl get services'
 alias kgd='kubectl get deployments'
+alias kd='k9s'
+
+# DevOps aliases
+alias lg='lazygit'
+alias spf='superfile'
+alias tms='tmux new-session -s'
+alias tma='tmux attach-session -t'
+alias tml='tmux list-sessions'
 
 # System aliases
 alias h='history'
@@ -833,6 +872,14 @@ set -g mouse on
 # Improve colors
 set -g default-terminal "screen-256color"
 set-option -ga terminal-overrides ",*256col*:Tc"
+set -as terminal-features ',*:RGB' # Better color support for Warp
+
+# Terminal-specific settings
+if-shell 'test "$TERM_PROGRAM" = "WarpTerminal"' {
+    set -g default-terminal "xterm-256color"
+    set -g allow-passthrough on   # Allow OSC escape sequences 
+    set -g set-clipboard on       # Use system clipboard
+}
 
 # Start window and pane numbering at 1
 set -g base-index 1
@@ -845,17 +892,18 @@ setw -g monitor-activity on
 set -g visual-activity on
 
 # Increase scrollback buffer size
-set -g history-limit 10000
+set -g history-limit 20000
 
 # Decrease command delay (increases vim responsiveness)
-set -sg escape-time 1
+set -sg escape-time 0  # 0ms for neovim/warp
 
 # Increase repeat time for repeatable commands
 set -g repeat-time 1000
 
 # Split panes using | and -
-bind | split-window -h
-bind - split-window -v
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+bind c new-window -c "#{pane_current_path}"
 unbind '"'
 unbind %
 
@@ -887,6 +935,32 @@ bind-key -T copy-mode-vi 'y' send -X copy-selection-and-cancel
 # Enable vi mode
 setw -g mode-keys vi
 
+# Smart window renaming - auto-rename only if not set manually
+set -g automatic-rename on
+set -g automatic-rename-format '#{b:pane_current_path}'
+set -g allow-rename on
+
+# --- Productivity Enhancements ---
+
+# Popup Windows for Fast DevOps Workflows
+bind f display-popup -E -w 80% -h 80% "cd #{pane_current_path}; spf"
+bind g display-popup -E -w 80% -h 80% "cd #{pane_current_path}; lazygit"
+bind p display-popup -E -w 80% -h 80% "htop"
+bind d display-popup -E -w 80% -h 80% "lazydocker"
+bind k display-popup -E -w 80% -h 80% "k9s"
+
+# Better clipboard integration
+set -g set-clipboard on
+
+# Improved borders with smooth utf-8 characters
+set -g pane-border-style "fg=#4c566a"
+set -g pane-active-border-style "fg=#a6e3a1" # Catppuccin green
+set -g popup-border-style "fg=#f4b8e4"        # Catppuccin mauve
+set -g popup-border-lines rounded
+
+# Hook to set window name to Git repo dir (if inside one)
+set-hook -g pane-focus-in 'if-shell "command -v git && git rev-parse --git-dir > /dev/null 2>&1" "rename-window \"$(basename $(git rev-parse --show-toplevel))\""'
+
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
@@ -894,6 +968,10 @@ set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @plugin 'tmux-plugins/tmux-copycat'
+set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
+set -g @plugin 'tmux-plugins/tmux-fzf'
+set -g @plugin 'nhdaly/tmux-better-mouse-mode'
+set -g @plugin 'tmux-plugins/tmux-thumbs'
 
 # Theme - Catppuccin Frappe
 set -g @plugin 'catppuccin/tmux'
@@ -901,7 +979,9 @@ set -g @plugin 'catppuccin/tmux'
 # Plugin configurations
 set -g @resurrect-strategy-nvim 'session'
 set -g @continuum-restore 'on'
-set -g @continuum-save-interval '15'
+set -g @continuum-save-interval '10'  # Faster autosave
+set -g @emulate-scroll-for-no-mouse-alternate-buffer 'on' # Better scroll
+set -g @thumbs-key F  # Quick copy-paste with F
 
 # Catppuccin theme configuration
 set -g @catppuccin_flavour 'frappe'
@@ -912,16 +992,24 @@ set -g @catppuccin_window_number_position "right"
 set -g @catppuccin_window_default_fill "number"
 set -g @catppuccin_window_default_text "#W"
 set -g @catppuccin_window_current_fill "number"
-set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,(),}"
-set -g @catppuccin_status_modules_right "directory date_time"
-set -g @catppuccin_status_modules_left "session"
-set -g @catppuccin_status_left_separator  " "
-set -g @catppuccin_status_right_separator " "
+set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,🔍,}"
+
+# Enhanced status bar
+set -g @catppuccin_status_modules_right "directory session date_time"
+set -g @catppuccin_status_modules_left "prefix_highlight"
+set -g @catppuccin_status_left_separator  ""
+set -g @catppuccin_status_right_separator " │"
 set -g @catppuccin_status_right_separator_inverse "no"
 set -g @catppuccin_status_fill "icon"
 set -g @catppuccin_status_connect_separator "no"
 set -g @catppuccin_directory_text "#{b:pane_current_path}"
 set -g @catppuccin_date_time_text "%H:%M"
+
+# Prefix highlight
+set -g @prefix_highlight_fg 'black'
+set -g @prefix_highlight_bg '#f4b8e4' # Catppuccin mauve
+set -g @prefix_highlight_show_copy_mode 'on'
+set -g @prefix_highlight_copy_mode_attr 'fg=black,bg=#f9e2af' # Catppuccin yellow
 
 # Initialize TMUX plugin manager (keep this line at the very bottom)
 run '~/.tmux/plugins/tpm/tpm'

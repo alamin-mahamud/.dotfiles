@@ -29,6 +29,7 @@ INSTALL_PYTHON=false
 INSTALL_NODEJS=false
 INSTALL_GOLANG=false
 INSTALL_DEVOPS=false
+INSTALL_NETWORKING=false
 INSTALL_ALL=false
 SKIP_CONFIRM=false
 VERBOSE=false
@@ -47,6 +48,7 @@ OPTIONS:
   -j, --nodejs         Install Node.js development environment (nvm + npm + yarn)
   -g, --golang         Install Go development environment
   -d, --devops         Install DevOps tools (Docker, Terraform, Kubernetes, Cloud CLIs)
+  -N, --networking     Install networking tools (DNS, packet analysis, monitoring, security)
   -a, --all            Install all components
   -y, --yes            Skip confirmation prompts (non-interactive mode)
   -v, --verbose        Enable verbose output
@@ -108,6 +110,10 @@ parse_arguments() {
         INSTALL_DEVOPS=true
         shift
         ;;
+      -N|--networking)
+        INSTALL_NETWORKING=true
+        shift
+        ;;
       -a|--all)
         INSTALL_ALL=true
         shift
@@ -148,7 +154,7 @@ parse_arguments() {
     if [[ "$INSTALL_SHELL" == false && "$INSTALL_NEOVIM" == false && \
           "$INSTALL_PYTHON" == false && "$INSTALL_NODEJS" == false && \
           "$INSTALL_GOLANG" == false && "$INSTALL_DEVOPS" == false && \
-          "$INSTALL_ALL" == false ]]; then
+          "$INSTALL_NETWORKING" == false && "$INSTALL_ALL" == false ]]; then
       INSTALL_SHELL=true
       INSTALL_NEOVIM=true
     fi
@@ -167,6 +173,7 @@ parse_arguments() {
     INSTALL_NODEJS=true
     INSTALL_GOLANG=true
     INSTALL_DEVOPS=true
+    INSTALL_NETWORKING=true
   fi
 }
 
@@ -298,15 +305,23 @@ show_component_menu() {
   echo "1) Shell Environment (Zsh + Oh My Zsh + Tmux + CLI tools)"
   echo "2) Neovim + LazyVim + Keyboard Setup (Editor + Caps Lock → Escape)"
   echo "3) Python Environment (pyenv + poetry + pipx)"
+  echo "4) Node.js Environment (nvm + npm + yarn)"
+  echo "5) Go Environment (latest Go + tools)"
+  echo "6) DevOps Tools (Docker, Terraform, Kubernetes, Cloud CLIs)"
+  echo "7) Networking Tools (DNS, packet analysis, monitoring, security)"
   echo "b) Back to main menu"
   echo "q) Quit"
   echo
-  read -p "Choose a component [1-3, b, q]: " choice
+  read -p "Choose a component [1-7, b, q]: " choice
 
   case $choice in
   1) run_component "shell-env.sh" && show_completion_message ;;
   2) run_component "neovim-env.sh" && show_completion_message ;;
   3) run_component "python-env.sh" && show_completion_message ;;
+  4) run_component "nodejs-env.sh" && show_completion_message ;;
+  5) run_component "golang-env.sh" && show_completion_message ;;
+  6) run_component "devops-tools.sh" && show_completion_message ;;
+  7) run_component "networking-tools.sh" && show_completion_message ;;
   b | B) show_main_menu ;;
   q | Q) exit 0 ;;
   *)
@@ -516,6 +531,7 @@ run_automated_installation() {
   [[ "$INSTALL_NODEJS" == true ]] && components_to_install+=("Node.js Development") && info "  • Node.js Development Environment"
   [[ "$INSTALL_GOLANG" == true ]] && components_to_install+=("Go Development") && info "  • Go Development Environment"
   [[ "$INSTALL_DEVOPS" == true ]] && components_to_install+=("DevOps Tools") && info "  • DevOps Tools (Docker, Terraform, K8s, Cloud CLIs)"
+  [[ "$INSTALL_NETWORKING" == true ]] && components_to_install+=("Networking Tools") && info "  • Networking Tools (DNS, packet analysis, monitoring, security)"
   
   if [[ ${#components_to_install[@]} -eq 0 ]]; then
     warning "No components selected for installation"
@@ -582,6 +598,14 @@ run_automated_installation() {
     info "Installing DevOps Tools..."
     if ! run_component "devops-tools.sh"; then
       error "Failed to install DevOps Tools"
+      install_success=false
+    fi
+  fi
+  
+  if [[ "$INSTALL_NETWORKING" == true ]]; then
+    info "Installing Networking Tools..."
+    if ! run_component "networking-tools.sh"; then
+      error "Failed to install Networking Tools"
       install_success=false
     fi
   fi

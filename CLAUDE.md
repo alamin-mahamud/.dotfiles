@@ -34,6 +34,7 @@ This is a comprehensive, modular dotfiles repository optimized for DevOps profes
 - `./scripts/components/nodejs-env.sh` - Node.js development environment (nvm + npm + yarn)
 - `./scripts/components/golang-env.sh` - Go development environment (latest Go + tools)
 - `./scripts/components/devops-tools.sh` - DevOps tools (containers, IaC, cloud CLIs)
+- `./scripts/components/networking-tools.sh` - Networking tools (DNS, packet analysis, monitoring, security)
 
 ### Desktop Features
 - Keyboard configuration (Caps Lock → Escape) is integrated into the Neovim component
@@ -54,6 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scr
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/install-desktop-terminal.sh | bash  # Desktop fonts & terminal
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/neovim-env.sh | bash
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/devops-tools.sh | bash
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/networking-tools.sh | bash
 curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/languages.sh | bash
 
 # Programming languages
@@ -205,6 +207,96 @@ This repository follows strict DRY (Don't Repeat Yourself) principles with a cle
 - **Cloud Native**: kubectl, helm, terraform/OpenTofu for infrastructure
 - **Multiple Language Support**: Python (pyenv), Node.js (nvm), Go environments
 - **DevOps Tools**: Terraform, OpenTofu, Terragrunt, AWS/Azure/GCP CLIs
+
+#### Networking Tools (`components/networking-tools.sh`)
+Comprehensive networking suite for network analysis, security, and monitoring:
+
+**DNS Tools**
+- **dig, nslookup, host**: Standard DNS lookup utilities
+- **whois**: Domain registration information
+- **dnsutils/bind-utils**: Complete DNS toolchain
+
+**Packet Analysis & Capture**
+- **tcpdump**: Command-line packet analyzer with capabilities setup
+- **tshark**: CLI version of Wireshark for packet analysis
+- **tcpflow**: TCP flow recorder and analyzer
+- **Non-root capture**: Automatic group setup and capability configuration
+
+**Performance Testing**
+- **iperf3**: Network bandwidth measurement tool
+- **netperf**: Network performance measurement (where available)
+- **speedtest-cli**: Internet speed testing via Python
+- **hyperfine**: Command-line benchmarking tool
+
+**Security & Reconnaissance**
+- **nmap**: Network exploration and security auditing
+- **masscan**: High-speed port scanner (where available)
+- **nikto**: Web server vulnerability scanner
+- **whois**: Domain and IP information lookup
+
+**Network Monitoring & Visualization**
+- **netstat/ss**: Network connection monitoring
+- **lsof**: List open files and network connections
+- **iftop**: Network interface bandwidth monitor
+- **vnstat**: Network traffic statistics
+- **bandwhich**: Modern network utilization tool by process
+- **htop**: Enhanced process viewer
+
+**Routing & BGP Tools**
+- **traceroute**: Network path tracing
+- **mtr**: Enhanced traceroute with statistics
+- **iproute2**: Advanced IP routing utilities
+- **bird/bird2**: BGP routing daemon (where available)
+
+**VPN & Tunneling**
+- **openvpn**: OpenVPN client tools
+- **wireguard-tools**: WireGuard VPN utilities
+- **cloudflared**: Cloudflare Argo Tunnel client
+- **ngrok**: Secure tunneling to localhost
+
+**Installation Options**
+```bash
+# Install all networking tools
+./scripts/components/networking-tools.sh
+
+# Install specific categories
+./scripts/components/networking-tools.sh --dns-only
+./scripts/components/networking-tools.sh --packet-only
+./scripts/components/networking-tools.sh --security-only
+./scripts/components/networking-tools.sh --monitoring-only
+
+# One-liner installation
+curl -fsSL https://raw.githubusercontent.com/alamin-mahamud/.dotfiles/master/scripts/components/networking-tools.sh | bash
+```
+
+**Built-in Networking Aliases**
+The installer automatically adds useful aliases to your shell:
+```bash
+# DNS utilities
+alias dnsinfo='dig +noall +answer'
+alias dnsmx='dig MX +short'
+alias dnsreverse='dig -x'
+
+# Network analysis
+alias sniff='sudo tcpdump -i any -nn -s0'
+alias ports='netstat -tulanp 2>/dev/null || ss -tulanp'
+alias trace='mtr --report'
+
+# Performance & security
+alias speed='speedtest-cli'
+alias netscan='nmap -sn'
+alias portscan='nmap -sS -O'
+
+# VPN & tunneling
+alias tunnel='cloudflared tunnel'
+alias wgup='sudo wg-quick up'
+```
+
+**Permission Setup**
+- Automatic group creation and user addition for packet capture
+- Sets appropriate capabilities for tcpdump and dumpcap on Linux
+- Handles macOS permission requirements
+- Clear instructions for any manual steps required
 
 ## Important Notes
 

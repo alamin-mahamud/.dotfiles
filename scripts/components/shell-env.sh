@@ -19,31 +19,31 @@ BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d_%H%M%S)"
 
 install_shell_dependencies() {
     info "Installing shell dependencies..."
-    
+
     local packages=()
-    
+
     case "${DOTFILES_OS}" in
-        linux)
-            case "$(detect_package_manager)" in
-                apt)
-                    packages=(zsh git curl wget unzip build-essential)
-                    ;;
-                dnf|yum)
-                    packages=(zsh git curl wget unzip gcc gcc-c++ make)
-                    ;;
-                pacman)
-                    packages=(zsh git curl wget unzip base-devel)
-                    ;;
-                apk)
-                    packages=(zsh git curl wget unzip build-base)
-                    ;;
-            esac
+    linux)
+        case "$(detect_package_manager)" in
+        apt)
+            packages=(zsh git curl wget unzip build-essential)
             ;;
-        macos)
-            packages=(zsh git curl wget)
+        dnf | yum)
+            packages=(zsh git curl wget unzip gcc gcc-c++ make)
             ;;
+        pacman)
+            packages=(zsh git curl wget unzip base-devel)
+            ;;
+        apk)
+            packages=(zsh git curl wget unzip build-base)
+            ;;
+        esac
+        ;;
+    macos)
+        packages=(zsh git curl wget)
+        ;;
     esac
-    
+
     if [[ ${#packages[@]} -gt 0 ]]; then
         update_package_lists
         install_packages "${packages[@]}"
@@ -55,18 +55,18 @@ install_zsh() {
         info "Zsh is already the default shell"
         return 0
     fi
-    
+
     info "Setting up Zsh as default shell..."
-    
+
     # Ensure zsh is in /etc/shells
     local zsh_path
     zsh_path=$(which zsh)
-    
+
     if ! grep -q "$zsh_path" /etc/shells 2>/dev/null; then
         echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null 2>&1 || true
         success "Added $zsh_path to /etc/shells"
     fi
-    
+
     # Change default shell
     if [[ "$SHELL" != "$zsh_path" ]]; then
         chsh -s "$zsh_path" 2>/dev/null || {
@@ -79,10 +79,10 @@ install_zsh() {
 
 install_oh_my_zsh() {
     local oh_my_zsh_dir="$HOME/.oh-my-zsh"
-    
+
     # Always ensure parent directory exists
     mkdir -p "$(dirname "$oh_my_zsh_dir")" 2>/dev/null || true
-    
+
     if [[ -d "$oh_my_zsh_dir" ]]; then
         info "Oh My Zsh already installed, updating..."
         if [[ -d "$oh_my_zsh_dir/.git" ]]; then
@@ -96,32 +96,32 @@ install_oh_my_zsh() {
             backup_file "$oh_my_zsh_dir"
             rm -rf "$oh_my_zsh_dir"
         fi
-        
+
         if [[ -d "$oh_my_zsh_dir" ]]; then
             success "Updated Oh My Zsh"
             return 0
         fi
     fi
-    
+
     info "Installing Oh My Zsh..."
-    
+
     # Download and install Oh My Zsh
     RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" 2>/dev/null || {
         error "Failed to install Oh My Zsh"
         return 1
     }
-    
+
     success "Oh My Zsh installed"
 }
 
 install_zsh_plugins() {
     local oh_my_zsh_custom="$HOME/.oh-my-zsh/custom"
-    
+
     # Ensure Oh My Zsh custom directories exist
     mkdir -p "$oh_my_zsh_custom/plugins" "$oh_my_zsh_custom/themes" 2>/dev/null || true
-    
+
     info "Installing Zsh plugins..."
-    
+
     # zsh-autosuggestions
     local autosuggestions_dir="$oh_my_zsh_custom/plugins/zsh-autosuggestions"
     if [[ ! -d "$autosuggestions_dir" ]]; then
@@ -146,7 +146,7 @@ install_zsh_plugins() {
         fi
         info "Updated zsh-autosuggestions"
     fi
-    
+
     # zsh-syntax-highlighting
     local highlighting_dir="$oh_my_zsh_custom/plugins/zsh-syntax-highlighting"
     if [[ ! -d "$highlighting_dir" ]]; then
@@ -171,7 +171,7 @@ install_zsh_plugins() {
         fi
         info "Updated zsh-syntax-highlighting"
     fi
-    
+
     # zsh-completions
     local completions_dir="$oh_my_zsh_custom/plugins/zsh-completions"
     if [[ ! -d "$completions_dir" ]]; then
@@ -196,7 +196,7 @@ install_zsh_plugins() {
         fi
         info "Updated zsh-completions"
     fi
-    
+
     # fzf-tab (if desktop environment)
     if is_desktop_environment; then
         local fzf_tab_dir="$oh_my_zsh_custom/plugins/fzf-tab"
@@ -225,12 +225,26 @@ install_zsh_plugins() {
     fi
 }
 
+# Install Z directory jumper (idempotent)
+install_z() {
+    print_status "Installing Z directory jumper..."
+
+    if [[ -f "$HOME/.z.sh" ]]; then
+        print_success "Z is already installed"
+        return 0
+    fi
+
+    curl -fsSL https://raw.githubusercontent.com/rupa/z/master/z.sh -o "$HOME/.z.sh"
+    chmod +x "$HOME/.z.sh"
+    print_success "Z installed"
+}
+
 install_powerlevel10k() {
     local p10k_dir="$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
-    
+
     # Ensure themes directory exists
     mkdir -p "$(dirname "$p10k_dir")" 2>/dev/null || true
-    
+
     if [[ -d "$p10k_dir" ]]; then
         info "Powerlevel10k already installed, updating..."
         if [[ -d "$p10k_dir/.git" ]]; then
@@ -255,7 +269,7 @@ install_powerlevel10k() {
         }
         success "Powerlevel10k installed"
     fi
-    
+
     # Install default p10k configuration if none exists
     if [[ ! -f "$HOME/.p10k.zsh" ]]; then
         info "Installing default lean p10k configuration..."
@@ -273,45 +287,45 @@ install_powerlevel10k() {
 
 install_cli_tools() {
     info "Installing modern CLI tools..."
-    
+
     case "${DOTFILES_OS}" in
-        linux)
-            install_linux_cli_tools
-            ;;
-        macos)
-            install_macos_cli_tools
-            ;;
+    linux)
+        install_linux_cli_tools
+        ;;
+    macos)
+        install_macos_cli_tools
+        ;;
     esac
 }
 
 install_linux_cli_tools() {
     local pm="$(detect_package_manager)"
-    
+
     # Install via package manager where available
     case "$pm" in
-        apt)
-            install_packages \
-                ripgrep fd-find bat eza tree jq htop curl wget git \
-                tmux neovim 
-            ;;
-        dnf|yum)
-            install_packages \
-                ripgrep fd-find bat eza tree jq htop curl wget git \
-                tmux neovim fzf
-            ;;
-        pacman)
-            install_packages \
-                ripgrep fd bat eza tree jq htop curl wget git \
-                tmux neovim fzf
-            ;;
-        apk)
-            install_packages \
-                ripgrep fd bat tree jq htop curl wget git \
-                tmux neovim fzf
-            # eza not available in Alpine, will install via cargo
-            ;;
+    apt)
+        install_packages \
+            ripgrep fd-find bat eza tree jq htop curl wget git \
+            tmux neovim
+        ;;
+    dnf | yum)
+        install_packages \
+            ripgrep fd-find bat eza tree jq htop curl wget git \
+            tmux neovim fzf
+        ;;
+    pacman)
+        install_packages \
+            ripgrep fd bat eza tree jq htop curl wget git \
+            tmux neovim fzf
+        ;;
+    apk)
+        install_packages \
+            ripgrep fd bat tree jq htop curl wget git \
+            tmux neovim fzf
+        # eza not available in Alpine, will install via cargo
+        ;;
     esac
-    
+
     # Install tools that may not be in package managers
     install_additional_tools
 }
@@ -320,7 +334,7 @@ install_macos_cli_tools() {
     install_packages \
         ripgrep fd bat eza tree jq htop curl wget git \
         tmux neovim fzf
-    
+
     install_additional_tools
 }
 
@@ -336,45 +350,49 @@ install_additional_tools() {
             warning "eza requires Rust. Install Rust first or use ls"
         fi
     fi
-    
+
     # Install superfile (modern file manager) if not available
     if ! command_exists spf; then
         info "Installing superfile (terminal file manager)..."
         case "${DOTFILES_OS}" in
-            macos)
-                if command_exists brew; then
-                    brew install superfile 2>/dev/null || {
-                        warning "Failed to install superfile via brew, trying install script..."
-                        bash -c "$(curl -sLo- https://superfile.netlify.app/install.sh)" 2>/dev/null || {
-                            warning "Failed to install superfile"
-                        }
-                    }
-                else
+        macos)
+            if command_exists brew; then
+                brew install superfile 2>/dev/null || {
+                    warning "Failed to install superfile via brew, trying install script..."
                     bash -c "$(curl -sLo- https://superfile.netlify.app/install.sh)" 2>/dev/null || {
                         warning "Failed to install superfile"
                     }
-                fi
-                ;;
-            linux)
+                }
+            else
                 bash -c "$(curl -sLo- https://superfile.netlify.app/install.sh)" 2>/dev/null || {
                     warning "Failed to install superfile"
                 }
-                ;;
+            fi
+            ;;
+        linux)
+            bash -c "$(curl -sLo- https://superfile.netlify.app/install.sh)" 2>/dev/null || {
+                warning "Failed to install superfile"
+            }
+            ;;
         esac
-        
+
         if command_exists spf; then
             success "Installed superfile"
         fi
     fi
-    
+
+    # Install z.sh Directory Jumper
+    info "Installing z.sh if not already installed"
+    install_z
+
     # Install fzf if not available
     if ! command_exists fzf; then
         info "Installing fzf (cmd-line fuzzy finder)..."
         local fzf_dir="$HOME/.fzf"
-        
+
         # Ensure parent directory exists
         mkdir -p "$(dirname "$fzf_dir")" 2>/dev/null || true
-        
+
         if [[ -d "$fzf_dir" ]]; then
             if [[ -d "$fzf_dir/.git" ]]; then
                 cd "$fzf_dir" && git pull 2>/dev/null || {
@@ -387,74 +405,74 @@ install_additional_tools() {
                 rm -rf "$fzf_dir"
             fi
         fi
-        
+
         if [[ ! -d "$fzf_dir" ]]; then
             git clone --depth 1 https://github.com/junegunn/fzf.git "$fzf_dir" 2>/dev/null || {
                 warning "Failed to clone fzf"
                 return 0
             }
         fi
-        
-        "$fzf_dir/install" --all 2>/dev/null || { 
+
+        "$fzf_dir/install" --all 2>/dev/null || {
             warning "Failed to install fzf"
         }
     fi
- 
+
     # Install delta (git diff tool)
     if ! command_exists delta; then
         info "Installing delta (git diff tool)..."
         case "${DOTFILES_OS}" in
-            linux)
-                local arch
-                arch="$(detect_arch)"
-                local delta_version="0.16.5"
-                local delta_url="https://github.com/dandavison/delta/releases/download/${delta_version}/git-delta_${delta_version}_${arch}.deb"
-                
-                if [[ "$(detect_package_manager)" == "apt" ]]; then
-                    install_package_from_url "$delta_url" 2>/dev/null || {
-                        warning "Failed to install delta from URL"
-                    }
-                fi
-                ;;
-            macos)
-                install_packages git-delta
-                ;;
+        linux)
+            local arch
+            arch="$(detect_arch)"
+            local delta_version="0.16.5"
+            local delta_url="https://github.com/dandavison/delta/releases/download/${delta_version}/git-delta_${delta_version}_${arch}.deb"
+
+            if [[ "$(detect_package_manager)" == "apt" ]]; then
+                install_package_from_url "$delta_url" 2>/dev/null || {
+                    warning "Failed to install delta from URL"
+                }
+            fi
+            ;;
+        macos)
+            install_packages git-delta
+            ;;
         esac
     fi
 }
 
 cleanup_zsh_completions() {
     info "Cleaning up Zsh completions..."
-    
+
     # Remove broken symlinks from zsh site-functions directories
     local dirs=(
         "/usr/local/share/zsh/site-functions"
         "/opt/homebrew/share/zsh/site-functions"
     )
-    
+
     for dir in "${dirs[@]}"; do
         if [[ -d "$dir" ]]; then
             # Find and remove broken symlinks
             find "$dir" -type l ! -exec test -e {} \; -delete 2>/dev/null || true
         fi
     done
-    
+
     # Clean up zcompdump files
     rm -rf "$HOME"/.zcompdump* 2>/dev/null || true
-    
+
     success "Cleaned up Zsh completions"
 }
 
 configure_zsh() {
     info "Configuring Zsh..."
-    
+
     # Clean up any broken completions first
     cleanup_zsh_completions
-    
+
     backup_file "$HOME/.zshrc"
-    
+
     # Create comprehensive .zshrc
-    cat > "$HOME/.zshrc" << 'EOF'
+    cat >"$HOME/.zshrc" <<'EOF'
 # Zsh configuration generated by dotfiles
 
 # Path to oh-my-zsh installation
@@ -679,6 +697,7 @@ export PATH="$HOME/.local/bin:$PATH"
 # Load additional configurations
 [ -f ~/.zsh_local ] && source ~/.zsh_local
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.z.sh ] && source ~/.z.sh
 
 # Custom FZF keybindings (override defaults)
 # Change directory search from Alt-c to Ctrl-e (macOS compatibility)
@@ -810,25 +829,25 @@ if [[ -n "$KITTY_WINDOW_ID" ]] || [[ "$TERM" == *"kitty"* ]]; then
     }
 fi
 EOF
-    
+
     success "Created comprehensive .zshrc configuration"
 }
 
 install_tmux() {
     info "Setting up Tmux..."
-    
+
     # Ensure tmux is installed
     if ! command_exists tmux; then
         error "tmux installation failed"
         return 1
     fi
-    
+
     # Install TPM (Tmux Plugin Manager)
     local tpm_dir="$HOME/.tmux/plugins/tpm"
-    
+
     # Ensure .tmux/plugins directory exists
     mkdir -p "$(dirname "$tpm_dir")" 2>/dev/null || true
-    
+
     if [[ ! -d "$tpm_dir" ]]; then
         git clone https://github.com/tmux-plugins/tpm "$tpm_dir" 2>/dev/null || {
             error "Failed to clone TPM"
@@ -851,14 +870,14 @@ install_tmux() {
         fi
         info "Updated TPM"
     fi
-    
+
     configure_tmux
 }
 
 configure_tmux() {
     backup_file "$HOME/.tmux.conf"
-    
-    cat > "$HOME/.tmux.conf" << 'EOF'
+
+    cat >"$HOME/.tmux.conf" <<'EOF'
 # Tmux configuration
 
 # Change prefix to Ctrl-a
@@ -946,20 +965,19 @@ set -g allow-rename on
 bind f display-popup -E -w 80% -h 80% "cd #{pane_current_path}; spf"
 bind g display-popup -E -w 80% -h 80% "cd #{pane_current_path}; lazygit"
 bind p display-popup -E -w 80% -h 80% "htop"
-bind d display-popup -E -w 80% -h 80% "lazydocker"
 bind k display-popup -E -w 80% -h 80% "k9s"
 
 # Better clipboard integration
 set -g set-clipboard on
+
+# Detach Session
+bind d detach-client
 
 # Improved borders with smooth utf-8 characters
 set -g pane-border-style "fg=#4c566a"
 set -g pane-active-border-style "fg=#a6e3a1" # Catppuccin green
 set -g popup-border-style "fg=#f4b8e4"        # Catppuccin mauve
 set -g popup-border-lines rounded
-
-# Hook to set window name to Git repo dir (if inside one)
-set-hook -g pane-focus-in 'if-shell "command -v git && git rev-parse --git-dir > /dev/null 2>&1" "rename-window \"$(basename $(git rev-parse --show-toplevel))\""'
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'
@@ -978,22 +996,13 @@ set -g @plugin 'catppuccin/tmux'
 
 # Plugin configurations
 set -g @resurrect-strategy-nvim 'session'
-set -g @continuum-restore 'on'
+set -g @continuum-restore 'off'
 set -g @continuum-save-interval '10'  # Faster autosave
 set -g @emulate-scroll-for-no-mouse-alternate-buffer 'on' # Better scroll
 set -g @thumbs-key F  # Quick copy-paste with F
 
 # Catppuccin theme configuration
 set -g @catppuccin_flavour 'frappe'
-set -g @catppuccin_window_left_separator ""
-set -g @catppuccin_window_right_separator " "
-set -g @catppuccin_window_middle_separator " █"
-set -g @catppuccin_window_number_position "right"
-set -g @catppuccin_window_default_fill "number"
-set -g @catppuccin_window_default_text "#W"
-set -g @catppuccin_window_current_fill "number"
-set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,🔍,}"
-
 # Enhanced status bar
 set -g @catppuccin_status_modules_right "directory session date_time"
 set -g @catppuccin_status_modules_left "prefix_highlight"
@@ -1014,9 +1023,9 @@ set -g @prefix_highlight_copy_mode_attr 'fg=black,bg=#f9e2af' # Catppuccin yello
 # Initialize TMUX plugin manager (keep this line at the very bottom)
 run '~/.tmux/plugins/tpm/tpm'
 EOF
-    
+
     success "Created tmux configuration"
-    
+
     # Install plugins
     if [[ -d "$HOME/.tmux/plugins/tpm" ]]; then
         "$HOME/.tmux/plugins/tpm/bin/install_plugins"
@@ -1027,26 +1036,25 @@ EOF
 configure_fzf() {
     if command_exists fzf; then
         info "Configuring FZF..."
-        
+
         # Install fzf key bindings and fuzzy completion
         if [[ "${DOTFILES_OS}" == "linux" ]]; then
-            /usr/share/doc/fzf/examples/install --all 2>/dev/null || \
-            ~/.fzf/install --all 2>/dev/null || \
-            fzf --version >/dev/null # fallback
+            /usr/share/doc/fzf/examples/install --all 2>/dev/null ||
+                ~/.fzf/install --all 2>/dev/null ||
+                fzf --version >/dev/null # fallback
         elif [[ "${DOTFILES_OS}" == "macos" ]]; then
             $(brew --prefix)/opt/fzf/install --all
         fi
-        
+
         success "FZF configured"
     fi
 }
 
-
 create_shell_aliases() {
     local alias_file="$HOME/.zsh_local"
-    
+
     if [[ ! -f "$alias_file" ]]; then
-        cat > "$alias_file" << 'EOF'
+        cat >"$alias_file" <<'EOF'
 # Local Zsh configuration
 # Add your custom aliases and functions here
 
@@ -1092,35 +1100,35 @@ cheat() {
     curl cht.sh/$1
 }
 EOF
-        
+
         success "Created local shell aliases"
     fi
 }
 
 verify_installation() {
     info "Verifying shell installation..."
-    
+
     # Check Zsh
     if command_exists zsh; then
         success "Zsh: $(zsh --version)"
     else
         warning "Zsh not found"
     fi
-    
+
     # Check Oh My Zsh
     if [[ -d "$HOME/.oh-my-zsh" ]]; then
         success "Oh My Zsh: installed"
     else
         warning "Oh My Zsh not found"
     fi
-    
+
     # Check tmux
     if command_exists tmux; then
         success "Tmux: $(tmux -V)"
     else
         warning "Tmux not found"
     fi
-    
+
     # Check modern CLI tools
     local tools=("rg" "fd" "bat" "eza" "fzf" "jq")
     for tool in "${tools[@]}"; do
@@ -1132,11 +1140,11 @@ verify_installation() {
 
 main() {
     init_script "Shell Environment Installer"
-    
+
     # Check for required tools
     require_command git
     require_command curl
-    
+
     # Planning phase
     reset_installation_state
     add_to_plan "Install shell dependencies (zsh, git, curl, build tools)"
@@ -1150,9 +1158,9 @@ main() {
     add_to_plan "Configure FZF key bindings and fuzzy search"
     add_to_plan "Create local shell aliases and functions"
     add_to_plan "Verify installation and functionality"
-    
+
     show_installation_plan "Shell Environment"
-    
+
     # Execution phase with enhanced logging
     execute_step "Install shell dependencies" "install_shell_dependencies"
     execute_step "Configure Zsh as default shell" "install_zsh"
@@ -1165,16 +1173,16 @@ main() {
     execute_step "Configure FZF key bindings" "configure_fzf"
     execute_step "Create local shell aliases and functions" "create_shell_aliases"
     execute_step "Verify installation" "verify_installation"
-    
+
     show_installation_summary "Shell Environment"
-    
+
     print_header "Shell Environment Setup Complete!"
     info "Next steps:"
     info "1. Restart your terminal or run: exec zsh"
     info "2. Run 'p10k configure' to set up Powerlevel10k theme"
     info "3. Tmux prefix key is Ctrl-a"
     info "4. Use 'fzf' for interactive file search"
-    
+
     if [[ "$SHELL" != *zsh* ]]; then
         warning "Default shell is not Zsh. Please log out and log back in."
     fi

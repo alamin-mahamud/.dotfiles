@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# tmux-agent-state <busy|blocked|done|unblock|clear>
+#
+# Stamps the Claude Code pane that calls it with its own agent state, so the
+# status bar can say which agent is thinking, which has finished, and which one
+# is blocked on a human. Called from Claude Code hooks (~/.claude/settings.json);
+# read back by @wglyph in configs/tmux/tmux.conf.
+#
+# Why a pane option and not `rename-window`: a window name is set once and goes
+# stale, renaming fights `automatic-rename`, and it clobbers names chosen by
+# hand. A pane option is per-pane, dies with the pane, survives a manual rename,
+# and is readable from a window-level status format.
+#
+# Claude Code exports TMUX_PANE to every process it spawns, so the hook needs no
+# guessing about which pane it belongs to -- but that cuts both ways: a nested
+# `claude -p` (a harness role, a subagent CLI call, plan-gate-hook) inherits the
+# SAME TMUX_PANE and fires its own SessionStart/Stop/SessionEnd. Measured on this
+# box: a nested run reports TMUX_PANE=%30 ATTENDED=0 ENTRYPOINT=sdk-cli, while
+# the interactive session reports ATTENDED=1 ENTRYPOINT=cli. Without the guard
+# below, every nested call would stamp "done" on a pane that is still working.
+#
+# Contract: silent and exit 0 on every path. A UserPromptSubmit hook's stdout is
+# injected into the model's context, so this script must never print anything.
+set -uo pipefail
+
+state="${1:-}"
+
+[ "${CLAUDE_CODE_SESSION_ATTENDED:-0}" = 1 ] || exit 0   # nested/headless run: not ours
+[ -n "${TMUX:-}" ] || exit 0                             # not inside tmux
+[ -n "${TMUX_PANE:-}" ] || exit 0                        # no pane to stamp
+command -v tmux >/dev/null 2>&1 || exit 0
+
+stamp() { tmux set -p -t "$TMUX_PANE" @agent_state "$1" 2>/dev/null || exit 0; }
+
+case "$state" in
+  busy|blocked|done)
+    stamp "$state"
+    ;;
+  unblock)
+    # Fires per tool call, so it only writes on the transition that matters:
+    # the owner has just approved something and the pane is no longer waiting.
+    cur="$(tmux show -pqv -t "$TMUX_PANE" @agent_state 2>/dev/null)"
+    [ "$cur" = blocked ] || exit 0
+    stamp busy
+    ;;
+  clear)
+    tmux set -pu -t "$TMUX_PANE" @agent_state 2>/dev/null || exit 0
+    ;;
+  *)
+    exit 0                                               # unknown state: do nothing
+    ;;
+esac
+
+tmux refresh-client -S 2>/dev/null || true               # redraw now, not in 5s
+exit 0

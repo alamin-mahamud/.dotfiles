@@ -11,13 +11,23 @@ TAB=$'\t'
 # ------------------------------------------------------------------ list -----
 # Emits "target<TAB>display", most recently active first.
 list_windows() {
+  # Field 1 is the sort key: panes blocked on a human sort above everything,
+  # then most-recently-active. With a dozen agents open, the first row of the
+  # picker should be the one that is waiting for you.
   tmux list-windows -a -F \
-    "#{window_activity}${TAB}#{session_name}:#{window_index}${TAB}#{?window_active,>,}${TAB}#{session_name}:#{window_index}${TAB}#{window_name}${TAB}#{pane_current_command}${TAB}#{pane_current_path}${TAB}#{?window_activity_flag,*,}${TAB}#{pane_title}" \
+    "#{?#{m:blocked,#{@agent_state}},9,0}#{window_activity}${TAB}#{session_name}:#{window_index}${TAB}#{?window_active,>,}${TAB}#{session_name}:#{window_index}${TAB}#{window_name}${TAB}#{pane_current_command}${TAB}#{pane_current_path}${TAB}#{?window_activity_flag,*,}${TAB}#{pane_title}${TAB}#{@agent_state}" \
   | sort -t"${TAB}" -k1 -rn \
   | awk -F"${TAB}" -v tab="${TAB}" -v home="${HOME}" '
       function trunc(s, n) { return (length(s) > n) ? substr(s, 1, n - 1) "~" : s }
+      # blocked ● / busy · / done ✓, same glyphs as the status bar
+      function mark(st) {
+        if (st == "blocked") return "\033[38;2;224;175;104m●\033[0m"
+        if (st == "busy")    return "\033[38;2;65;72;104m·\033[0m"
+        if (st == "done")    return "\033[38;2;125;207;255m✓\033[0m"
+        return " "
+      }
       {
-        name = $5; cmd = $6; path = $7; title = $9
+        name = $5; cmd = $6; path = $7; title = $9; state = $10
 
         # Claude Code puts the conversation topic in the terminal title, which
         # is the only thing that tells eleven "claude" windows apart.
@@ -33,8 +43,8 @@ list_windows() {
         short = path
         if (index(short, home) == 1) { short = "~" substr(short, length(home) + 1) }
 
-        printf "%s%s%-1s %-13s %-38s %-9s %-28s %s\n", \
-          $2, tab, $3, trunc($4, 13), trunc(label, 38), trunc(cmd, 9), trunc(short, 28), $8
+        printf "%s%s%-1s %s %-13s %-38s %-9s %-28s %s\n", \
+          $2, tab, $3, mark(state), trunc($4, 13), trunc(label, 38), trunc(cmd, 9), trunc(short, 28), $8
       }'
 }
 

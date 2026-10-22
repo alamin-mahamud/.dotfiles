@@ -875,156 +875,20 @@ install_tmux() {
 }
 
 configure_tmux() {
-    backup_file "$HOME/.tmux.conf"
+    local conf_src="$DOTFILES_ROOT/configs/tmux/tmux.conf"
 
-    cat >"$HOME/.tmux.conf" <<'EOF'
-# Tmux configuration
+    if [[ ! -f "$conf_src" ]]; then
+        error "Missing tmux config in dotfiles: $conf_src"
+        return 1
+    fi
 
-# Change prefix to Ctrl-a
-unbind C-b
-set-option -g prefix C-a
-bind-key C-a send-prefix
-
-# Enable mouse mode
-set -g mouse on
-
-# Improve colors
-set -g default-terminal "screen-256color"
-set-option -ga terminal-overrides ",*256col*:Tc"
-set -as terminal-features ',*:RGB' # Better color support for Warp
-
-# Terminal-specific settings
-if-shell 'test "$TERM_PROGRAM" = "WarpTerminal"' {
-    set -g default-terminal "xterm-256color"
-    set -g allow-passthrough on   # Allow OSC escape sequences 
-    set -g set-clipboard on       # Use system clipboard
-}
-
-# Start window and pane numbering at 1
-set -g base-index 1
-set -g pane-base-index 1
-set-window-option -g pane-base-index 1
-set-option -g renumber-windows on
-
-# Enable activity alerts
-setw -g monitor-activity on
-set -g visual-activity on
-
-# Increase scrollback buffer size
-set -g history-limit 20000
-
-# Decrease command delay (increases vim responsiveness)
-set -sg escape-time 0  # 0ms for neovim/warp
-
-# Increase repeat time for repeatable commands
-set -g repeat-time 1000
-
-# Split panes using | and -
-bind | split-window -h -c "#{pane_current_path}"
-bind - split-window -v -c "#{pane_current_path}"
-bind c new-window -c "#{pane_current_path}"
-unbind '"'
-unbind %
-
-# Reload config file
-bind r source-file ~/.tmux.conf \; display-message "Config reloaded!"
-
-# Switch panes using Alt-arrow without prefix
-bind -n M-Left select-pane -L
-bind -n M-Right select-pane -R
-bind -n M-Up select-pane -U
-bind -n M-Down select-pane -D
-
-# Vim-like pane switching
-bind h select-pane -L
-bind j select-pane -D
-bind k select-pane -U
-bind l select-pane -R
-
-# Vim-like pane resizing
-bind -r H resize-pane -L 5
-bind -r J resize-pane -D 5
-bind -r K resize-pane -U 5
-bind -r L resize-pane -R 5
-
-# Copy mode using 'v' and 'y'
-bind-key -T copy-mode-vi 'v' send -X begin-selection
-bind-key -T copy-mode-vi 'y' send -X copy-selection-and-cancel
-
-# Enable vi mode
-setw -g mode-keys vi
-
-# Smart window renaming - auto-rename only if not set manually
-set -g automatic-rename on
-set -g automatic-rename-format '#{b:pane_current_path}'
-set -g allow-rename on
-
-# --- Productivity Enhancements ---
-
-# Popup Windows for Fast DevOps Workflows
-bind f display-popup -E -w 80% -h 80% "cd #{pane_current_path}; spf"
-bind g display-popup -E -w 80% -h 80% "cd #{pane_current_path}; lazygit"
-bind p display-popup -E -w 80% -h 80% "htop"
-bind k display-popup -E -w 80% -h 80% "k9s"
-
-# Better clipboard integration
-set -g set-clipboard on
-
-# Detach Session
-bind d detach-client
-
-# Improved borders with smooth utf-8 characters
-set -g pane-border-style "fg=#4c566a"
-set -g pane-active-border-style "fg=#a6e3a1" # Catppuccin green
-set -g popup-border-style "fg=#f4b8e4"        # Catppuccin mauve
-set -g popup-border-lines rounded
-
-# List of plugins
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @plugin 'tmux-plugins/tmux-resurrect'
-set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'tmux-plugins/tmux-yank'
-set -g @plugin 'tmux-plugins/tmux-copycat'
-set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
-set -g @plugin 'tmux-plugins/tmux-fzf'
-set -g @plugin 'nhdaly/tmux-better-mouse-mode'
-set -g @plugin 'tmux-plugins/tmux-thumbs'
-
-# Theme - Catppuccin Frappe
-set -g @plugin 'catppuccin/tmux'
-
-# Plugin configurations
-set -g @resurrect-strategy-nvim 'session'
-set -g @continuum-restore 'off'
-set -g @continuum-save-interval '10'  # Faster autosave
-set -g @emulate-scroll-for-no-mouse-alternate-buffer 'on' # Better scroll
-set -g @thumbs-key F  # Quick copy-paste with F
-
-# Catppuccin theme configuration
-set -g @catppuccin_flavour 'frappe'
-# Enhanced status bar
-set -g @catppuccin_status_modules_right "directory session date_time"
-set -g @catppuccin_status_modules_left "prefix_highlight"
-set -g @catppuccin_status_left_separator  ""
-set -g @catppuccin_status_right_separator " │"
-set -g @catppuccin_status_right_separator_inverse "no"
-set -g @catppuccin_status_fill "icon"
-set -g @catppuccin_status_connect_separator "no"
-set -g @catppuccin_directory_text "#{b:pane_current_path}"
-set -g @catppuccin_date_time_text "%H:%M"
-
-# Prefix highlight
-set -g @prefix_highlight_fg 'black'
-set -g @prefix_highlight_bg '#f4b8e4' # Catppuccin mauve
-set -g @prefix_highlight_show_copy_mode 'on'
-set -g @prefix_highlight_copy_mode_attr 'fg=black,bg=#f9e2af' # Catppuccin yellow
-
-# Initialize TMUX plugin manager (keep this line at the very bottom)
-run '~/.tmux/plugins/tpm/tpm'
-EOF
-
-    success "Created tmux configuration"
+    # Symlink, never generate. The config is tracked in the repo, so a change
+    # here reaches every box and editing ~/.tmux.conf edits the repo copy.
+    # The previous heredoc meant the live config was untracked and a bootstrap
+    # re-run silently overwrote it.
+    safe_symlink "$conf_src" "$HOME/.tmux.conf"
+    chmod +x "$DOTFILES_ROOT/configs/tmux/scripts/"* 2>/dev/null || true
+    success "Linked tmux configuration"
 
     # Install plugins
     if [[ -d "$HOME/.tmux/plugins/tpm" ]]; then

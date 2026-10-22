@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# Fuzzy jump across every session/window of this tmux server, in a popup.
+#   tmux-jump window   -> all windows of all sessions, live pane preview
+#   tmux-jump session  -> sessions only
+# Bound to prefix+Space and prefix+g. Needs only tmux >= 3.2 and fzf.
+set -euo pipefail
+
+self="$(readlink -f "$0")"
+TAB=$'\t'
+
+# ------------------------------------------------------------------ list -----
+# Emits "target<TAB>display", most recently active first.
+list_windows() {
+  tmux list-windows -a -F \
+    "#{window_activity}${TAB}#{session_name}:#{window_index}${TAB}#{?window_active,>,}${TAB}#{session_name}:#{window_index}${TAB}#{window_name}${TAB}#{pane_current_command}${TAB}#{pane_current_path}${TAB}#{?window_activity_flag,*,}${TAB}#{pane_title}" \
+  | sort -t"${TAB}" -k1 -rn \
+  | awk -F"${TAB}" -v tab="${TAB}" -v home="${HOME}" '
+      function trunc(s, n) { return (length(s) > n) ? substr(s, 1, n - 1) "~" : s }
+      {
+        name = $5; cmd = $6; path = $7; title = $9
+
+        # Claude Code puts the conversation topic in the terminal title, which
+        # is the only thing that tells eleven "claude" windows apart.
+        label = ""
+        if (title ~ /^[\342\234\263\342\217\272\342\217\265]/) {        # starts with the agent glyph
+          sub(/^[^ ]+ +/, "", title); label = title
+        } else if (name ~ /^(claude|zsh|bash|sh|node|python3?)$/) {
+          n = split(path, parts, "/"); label = (n > 0 && parts[n] != "") ? parts[n] : path
+        } else {
+          label = name
+        }
+
+        short = path
+        if (index(short, home) == 1) { short = "~" substr(short, length(home) + 1) }
+
+        printf "%s%s%-1s %-13s %-38s %-9s %-28s %s\n", \
+          $2, tab, $3, trunc($4, 13), trunc(label, 38), trunc(cmd, 9), trunc(short, 28), $8
+      }'
+}
+
+list_sessions() {
+  tmux list-sessions -F \
+    "#{session_activity}${TAB}#{session_name}${TAB}#{?session_attached,>,}${TAB}#{session_name}${TAB}#{session_windows}${TAB}#{?session_attached,attached,}" \
+  | sort -t"${TAB}" -k1 -rn \
+  | awk -F"${TAB}" -v tab="${TAB}" '{
+      printf "%s%s%-1s %-24s %3s windows  %s\n", $2, tab, $3, $4, $5, $6
+    }'
+}
+
+# ---------------------------------------------------------------- dispatch ---
+case "${1:-window}" in
+  --list-window)  list_windows;  exit 0 ;;
+  --list-session) list_sessions; exit 0 ;;
+esac
+
+# ------------------------------------------------------------------ pick -----
+if [[ "${1}" == "--pick-window" || "${1}" == "--pick-session" ]]; then
+  kind="${1#--pick-}"
+
+  case "${kind}" in
+    window)
+      header="windows   enter switch · ctrl-x kill window · ctrl-r refresh"
+      preview="tmux capture-pane -ep -t {1} 2>/dev/null | tail -n 80"
+      killer="tmux kill-window -t {1}"
+      ;;
+    session)
+      header="sessions   enter switch · ctrl-x kill session · ctrl-r refresh"
+      preview="tmux capture-pane -ep -t {1} 2>/dev/null | tail -n 80"
+      killer="tmux kill-session -t {1}"
+      ;;
+  esac
+
+  sel="$(
+    "${self}" "--list-${kind}" \
+      | fzf --ansi \
+            --delimiter="${TAB}" --with-nth=2 \
+            --layout=reverse --info=inline --cycle --no-separator \
+            --prompt='  ' --pointer='|' --header="${header}" \
+            --color='bg+:-1,fg+:#c0caf5:regular,hl:#7dcfff,hl+:#7dcfff,prompt:#7dcfff,pointer:#e0af68,header:#565f89,info:#414868,border:#414868,gutter:-1' \
+            --preview-window='right,56%,border-left' \
+            --preview="${preview}" \
+            --bind="ctrl-x:execute-silent(${killer})+reload(${self} --list-${kind})" \
+            --bind="ctrl-r:reload(${self} --list-${kind})" \
+      | cut -f1
+  )" || exit 0
+
+  [[ -n "${sel}" ]] || exit 0
+  tmux switch-client -t "${sel%%:*}"
+  [[ "${sel}" == *:* ]] && tmux select-window -t "${sel}"
+  exit 0
+fi
+
+# -------------------------------------------------------------- launcher -----
+case "${1:-window}" in
+  window)  flag="--pick-window"  ;;
+  session) flag="--pick-session" ;;
+  *) echo "usage: tmux-jump {window|session}" >&2; exit 2 ;;
+esac
+
+tmux display-popup -E -w 86% -h 72% -- "${self}" "${flag}"

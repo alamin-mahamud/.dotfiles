@@ -4,7 +4,18 @@ Built for one workload: SSH into a jump host and drive many concurrent Claude
 Code / agent sessions. `~/.tmux.conf` is a symlink to `tmux.conf` here, created
 by `scripts/components/shell-env.sh:configure_tmux()`.
 
-Prefix is `C-a`.
+Prefix is **`C-Space`** — Ctrl under the pinky/palm edge, Space under the thumb,
+so no single finger plays both halves of the chord the way it does for `C-a`.
+`C-a` stays live as `prefix2`, so old muscle memory keeps working and a terminal
+that refuses to transmit NUL (`0x00`) cannot lock you out. Verified free of
+conflicts on this box: nothing in nvim, zsh, tmux or Claude Code binds it.
+
+Double-tapping it — `C-Space C-Space` — opens the fuzzy jump, because nothing in
+this stack consumes a literal `C-Space`, so the second tap is better spent than
+on `send-prefix`. `prefix C-a` still passes one through if you ever need it.
+
+The deeper fix for pinky strain is not in tmux at all: remap **Caps Lock to
+Ctrl** on the machine you SSH *from*, so the pinky barely travels.
 
 ## The two things that matter
 
@@ -22,6 +33,7 @@ collapses idle windows to bare indices to stay on one line.
 
 | Key | Action |
 | --- | --- |
+| `C-Space C-Space` | fuzzy jump (double-tap the prefix) |
 | `prefix Space` | fuzzy jump: all windows, all sessions, live preview (`ctrl-x` kills, `ctrl-r` refreshes) |
 | `prefix g` | session picker |
 | `prefix o` | throwaway shell popup in the current directory |
